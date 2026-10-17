@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ION Bikestore — Bicicletas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800;1,900&amp;family=DM+Sans:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0B}
+a{color:#F2C40F}a:hover{color:#FFD83D}
+</style>
+</helmet>
+<div style="background: #0B0B0B; color: #F4F4F2; font-family: 'DM Sans', system-ui, sans-serif; min-height: 100vh">
+
+<div style="background: {{accent}}; color: #0B0B0B; font-size: 14px; font-weight: 500">
+<div style="max-width: 1280px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 32px">
+<span>Envío gratis a todo el país desde $300.000</span>
+<span>Hasta 12 cuotas sin interés</span>
+<span>Retirá gratis en Monte Grande</span>
+</div>
+</div>
+
+<header style="border-bottom: 1px solid #222222">
+<div style="max-width: 1280px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 40px">
+<a href="Main.dc.html" style="text-decoration: none; display: flex; flex-direction: column; line-height: 1">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; font-size: 44px; letter-spacing: 2px; color: {{accent}}">ION</span>
+<span style="font-size: 9px; letter-spacing: 6px; color: #F4F4F2; margin-top: 2px">BIKESTORE</span>
+</a>
+<nav aria-label="Principal" style="flex: 1 1 520px">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 28px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: 1px; text-transform: uppercase">
+<li><a href="Main.dc.html" style="color: #F4F4F2; text-decoration: none">Inicio</a></li>
+<li><a href="#" style="color: {{accent}}; text-decoration: none">Bicicletas</a></li>
+<li><a href="#" style="color: #F4F4F2; text-decoration: none">E-Bike</a></li>
+<li><a href="#" style="color: #F4F4F2; text-decoration: none">Repuestos</a></li>
+<li><a href="#" style="color: #F4F4F2; text-decoration: none">Accesorios</a></li>
+<li><a href="#" style="color: #F4F4F2; text-decoration: none">Indumentaria</a></li>
+<li><a href="#" style="color: #F4F4F2; text-decoration: none">Contacto</a></li>
+</ul>
+</nav>
+<div style="display: flex; align-items: center; gap: 8px">
+<label for="buscar2" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar productos</label>
+<div style="display: flex; align-items: center; background: #181818; border: 1px solid #2A2A2A; border-radius: 999px; padding: 0 6px 0 16px; height: 44px">
+<input id="buscar2" type="search" placeholder="Buscar bicis, repuestos…" style="background: transparent; border: 0; outline: none; color: #F4F4F2; font: inherit; font-size: 14px; width: 200px">
+<button type="button" aria-label="Buscar" style="width: 36px; height: 36px; border-radius: 999px; border: 0; background: transparent; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+</button>
+</div>
+<button type="button" aria-label="Mi cuenta" style="width: 44px; height: 44px; border-radius: 999px; border: 0; background: transparent; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+</button>
+<button type="button" aria-label="Carrito, 0 productos" style="position: relative; width: 44px; height: 44px; border-radius: 999px; border: 0; background: transparent; color: #F4F4F2; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h11.2L21 8H6.2"></path><circle cx="9" cy="20" r="1.4"></circle><circle cx="18" cy="20" r="1.4"></circle></svg>
+<span style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; border-radius: 999px; background: {{accent}}; color: #0B0B0B; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">0</span>
+</button>
+</div>
+</div>
+</header>
+
+<!-- Encabezado de categoría -->
+<section style="max-width: 1280px; margin: 0 auto; padding: 40px 24px 0">
+<nav aria-label="Ruta de navegación" style="font-size: 14px; color: #A3A3A0">
+<a href="Main.dc.html" style="color: #A3A3A0; text-decoration: none">Inicio</a> / <span style="color: #F4F4F2">Bicicletas</span>
+</nav>
+<h1 style="margin: 12px 0 0; font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; font-size: 88px; line-height: 0.9; text-transform: uppercase">Bicicletas</h1>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px" role="group" aria-label="Disciplina">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+</section>
+
+<!-- Contenido: filtros + grilla -->
+<section style="max-width: 1280px; margin: 0 auto; padding: 36px 24px 88px; display: flex; flex-wrap: wrap; gap: 32px">
+
+<aside aria-label="Filtros" style="flex: 1 1 240px; max-width: 100%; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; text-transform: uppercase">Filtros</h2>
+<a href="#" style="font-size: 14px">Limpiar</a>
+</div>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="font-weight: 700; font-size: 15px; margin-bottom: 10px">Rodado</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{sizes}}" as="z" hint-placeholder-count="5">
+<label style="display: inline-flex; align-items: center; justify-content: center; min-width: 56px; height: 44px; padding: 0 12px; box-sizing: border-box; border: 1px solid #333333; border-radius: 12px; font-size: 14px; cursor: pointer"><input type="checkbox" style="position: absolute; opacity: 0; width: 1px; height: 1px">R{{z}}</label>
+</sc-for>
+</div>
+</fieldset>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="font-weight: 700; font-size: 15px; margin-bottom: 10px">Marca</legend>
+<sc-for list="{{brands}}" as="m" hint-placeholder-count="4">
+<label style="display: flex; align-items: center; gap: 10px; font-size: 15px; min-height: 32px; cursor: pointer"><input type="checkbox" style="width: 18px; height: 18px; accent-color: #F2C40F">{{m.name}} <span style="color: #8A8A86">({{m.n}})</span></label>
+</sc-for>
+</fieldset>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="font-weight: 700; font-size: 15px; margin-bottom: 10px">Color</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{colors}}" as="col" hint-placeholder-count="8">
+<label style="width: 36px; height: 36px; border-radius: 999px; background: {{col.hex}}; border: 2px solid #3A3A3A; box-sizing: border-box; cursor: pointer" title="{{col.name}}"><input type="checkbox" aria-label="{{col.name}}" style="position: absolute; opacity: 0; width: 1px; height: 1px"></label>
+</sc-for>
+</div>
+</fieldset>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="font-weight: 700; font-size: 15px; margin-bottom: 10px">Precio</legend>
+<div style="display: flex; gap: 8px; align-items: center">
+<label for="pmin" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Precio mínimo</label>
+<input id="pmin" type="text" placeholder="Mín." style="flex: 1; min-width: 0; height: 44px; border-radius: 12px; border: 1px solid #333333; background: #161616; color: #F4F4F2; font: inherit; font-size: 14px; padding: 0 12px">
+<span style="color: #8A8A86">–</span>
+<label for="pmax" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Precio máximo</label>
+<input id="pmax" type="text" placeholder="Máx." style="flex: 1; min-width: 0; height: 44px; border-radius: 12px; border: 1px solid #333333; background: #161616; color: #F4F4F2; font: inherit; font-size: 14px; padding: 0 12px">
+</div>
+</fieldset>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 15px; cursor: pointer"><input type="checkbox" style="width: 18px; height: 18px; accent-color: #F2C40F">Solo con envío gratis</label>
+</aside>
+
+<div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<span style="font-size: 15px; color: #A3A3A0">{{count}} productos</span>
+<div style="display: flex; align-items: center; gap: 10px">
+<label for="orden" style="font-size: 14px; color: #A3A3A0">Ordenar por</label>
+<select id="orden" style="height: 44px; border-radius: 12px; border: 1px solid #333333; background: #161616; color: #F4F4F2; font: inherit; font-size: 14px; padding: 0 12px">
+<option>Más vendidos</option>
+<option>Menor precio</option>
+<option>Mayor precio</option>
+<option>Más nuevos</option>
+</select>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px">
+<sc-for list="{{products}}" as="p" hint-placeholder-count="9">
+<article style="display: flex; flex-direction: column; border-radius: 20px; overflow: hidden; background: #161616; border: 1px solid #262626">
+<div style="position: relative; aspect-ratio: 4 / 3; background: #ECEBE6; color: #6B6B66; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px">
+<svg width="84" height="52" viewBox="0 0 48 30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="20" r="8"></circle><circle cx="38" cy="20" r="8"></circle><path d="M10 20l8-12h14l6 12M18 8l6 12h8M24 20l-6-12M30 4h5"></path></svg>
+<span style="font-size: 12px">[FOTO PRODUCTO]</span>
+<span style="position: absolute; top: 12px; left: 12px; display: flex; gap: 6px">
+<span style="background: #0B0B0B; color: #F4F4F2; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px">Envío gratis</span>
+<sc-if value="{{p.off}}" hint-placeholder-val="{{false}}">
+<span style="background: {{accent}}; color: #0B0B0B; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px">20% OFF</span>
+</sc-if>
+</span>
+<button type="button" aria-label="Agregar a favoritos" style="position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #0B0B0B; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"></path></svg>
+</button>
+</div>
+<div style="padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 2px; color: #A3A3A0; text-transform: uppercase">{{p.brand}} · {{p.cat}}</span>
+<h3 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.1; text-transform: uppercase">{{p.name}}</h3>
+<span style="font-size: 13px; color: #A3A3A0">{{p.colors}}</span>
+<div style="margin-top: auto; padding-top: 8px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; color: #A3A3A0">{{p.list}} con tarjeta</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 30px; color: {{accent}}; line-height: 1">{{p.transfer}}</span>
+<span style="font-size: 13px; color: #C9C9C5">con transferencia · o 12 cuotas de {{p.cuota}}</span>
+</div>
+<button type="button" style="margin-top: 12px; height: 46px; border-radius: 999px; border: 0; background: {{accent}}; color: #0B0B0B; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 17px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer">Agregar al carrito</button>
+</div>
+</article>
+</sc-for>
+</div>
+<nav aria-label="Paginación" style="display: flex; justify-content: center; gap: 8px; margin-top: 24px">
+<a href="#" aria-current="page" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; color: #0B0B0B; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 700">1</a>
+<a href="#" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #333333; color: #F4F4F2; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 700">2</a>
+<a href="#" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #333333; color: #F4F4F2; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 700">3</a>
+<a href="#" aria-label="Página siguiente" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #333333; color: #F4F4F2; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+</nav>
+</div>
+</section>
+
+<footer style="background: {{accent}}; color: #0B0B0B">
+<div style="max-width: 1280px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px">
+<span>© 2026 IonBikeStore · Av. Fair 328, Monte Grande · +54 11 2829-1177</span>
+<span style="display: flex; flex-wrap: wrap; gap: 8px 20px">
+<a href="#" style="color: #0B0B0B">Defensa del consumidor</a>
+<a href="#" style="color: #0B0B0B">Botón de arrepentimiento</a>
+</span>
+</div>
+</footer>
+
+<a href="https://wa.me/5491128291177" aria-label="Escribinos por WhatsApp" style="position: fixed; right: 24px; bottom: 24px; width: 60px; height: 60px; border-radius: 999px; background: #1DA851; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.4)">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"></path><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8c-1-.5-1.8-1.3-2.3-2.3l.8-1-1-2z"></path></svg>
+</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2C40F","options":["#F2C40F","#FFD400","#FF8A00"]},"$preview":{"width":1440,"height":2100}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { cat: 'Todas' };
+}
+renderVals() {
+const accent = this.props.accent ?? '#F2C40F';
+const all = [
+{ brand: 'Zion', cat: 'MTB', name: 'Zion Aspro Rodado 29 21V', colors: '6 colores', list: '$565.978', transfer: '$424.483', cuota: '$47.165', off: false },
+{ brand: 'Zion', cat: 'MTB', name: 'Zion Ovanta R29 Monoplato', colors: '4 colores', list: '$750.428', transfer: '$562.821', cuota: '$62.536', off: false },
+{ brand: 'SPY', cat: 'MTB', name: 'SPY Ridder Rodado 26 Shimano', colors: '11 colores', list: '$632.584', transfer: '$474.438', cuota: '$52.715', off: false },
+{ brand: 'SPY', cat: 'Dirt Jump', name: 'SPY Ridder R26 2026', colors: '3 colores', list: '$632.584', transfer: '$474.438', cuota: '$52.715', off: false },
+{ brand: 'Eurobike', cat: 'MTB', name: 'Eurobike Dallas', colors: '[COLORES]', list: '[PRECIO]', transfer: '[PRECIO]', cuota: '[CUOTA]', off: true },
+{ brand: 'Gravity', cat: 'MTB', name: 'Gravity Benz', colors: '[COLORES]', list: '[PRECIO]', transfer: '[PRECIO]', cuota: '[CUOTA]', off: true },
+{ brand: '[MARCA]', cat: 'Gravel', name: '[NOMBRE DEL PRODUCTO]', colors: '[COLORES]', list: '[PRECIO]', transfer: '[PRECIO]', cuota: '[CUOTA]', off: false },
+{ brand: '[MARCA]', cat: 'Ruta', name: '[NOMBRE DEL PRODUCTO]', colors: '[COLORES]', list: '[PRECIO]', transfer: '[PRECIO]', cuota: '[CUOTA]', off: false },
+{ brand: '[MARCA]', cat: 'Usados / Outlet', name: '[NOMBRE DEL PRODUCTO]', colors: '[COLORES]', list: '[PRECIO]', transfer: '[PRECIO]', cuota: '[CUOTA]', off: false }
+];
+const sel = this.state.cat;
+const products = sel === 'Todas' ? all : all.filter((p) => p.cat === sel);
+const base = "height: 44px; padding: 0 20px; border-radius: 999px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; ";
+const cats = ['Todas', 'MTB', 'Gravel', 'Ruta', 'Dirt Jump', 'Usados / Outlet'].map((label) => ({
+label: label,
+on: label === sel,
+style: base + (label === sel ? 'background: ' + accent + '; color: #0B0B0B; border: 1px solid ' + accent + ';' : 'background: transparent; color: #F4F4F2; border: 1px solid #3A3A3A;'),
+pick: () => this.setState({ cat: label })
+}));
+return {
+accent: accent,
+cats: cats,
+products: products,
+count: products.length,
+sizes: ['16', '20', '24', '26', '29'],
+brands: [{ name: 'Zion', n: 2 }, { name: 'SPY', n: 2 }, { name: 'Eurobike', n: 1 }, { name: 'Gravity', n: 1 }],
+colors: [
+{ name: 'Negro', hex: '#111111' }, { name: 'Rojo', hex: '#C62828' }, { name: 'Verde', hex: '#2E7D32' }, { name: 'Crema', hex: '#EFE6CF' },
+{ name: 'Marrón', hex: '#6D4C41' }, { name: 'Bordó', hex: '#7B1E3A' }, { name: 'Violeta', hex: '#6A3FA0' }, { name: 'Celeste', hex: '#5BB8E8' }
+]
+};
+}
+}
+</script>
+</body>
+</html>
