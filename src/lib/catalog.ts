@@ -1,5 +1,10 @@
+import { connection } from "next/server";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
+import { demoCategories, demoProducts, withRelations } from "@/lib/demo-store";
+
+// Vista previa estática (GitHub Pages): sin base de datos, lee el catálogo de ejemplo.
+export const isStaticDemo = process.env.DEMO_STATIC === "1";
 
 const cardInclude = {
   brand: true,
@@ -49,7 +54,18 @@ function toCard(p: ProductWithRelations): ProductCardData {
   };
 }
 
+const bySales = (a: { salesCount: number }, b: { salesCount: number }) => b.salesCount - a.salesCount;
+const demoCards = (filter: (p: (typeof demoProducts)[number]) => boolean = () => true) =>
+  demoProducts.filter(filter).map(withRelations).sort(bySales).map(toCard);
+
+// En el servidor real, las consultas se resuelven en cada visita (datos siempre frescos)
+async function live() {
+  if (!isStaticDemo) await connection();
+}
+
 export async function getFeaturedProducts(limit = 4) {
+  if (isStaticDemo) return demoCards().slice(0, limit);
+  await live();
   const products = await db.product.findMany({
     where: { active: true },
     include: cardInclude,
@@ -59,7 +75,25 @@ export async function getFeaturedProducts(limit = 4) {
   return products.map(toCard);
 }
 
+export async function getAllProducts() {
+  if (isStaticDemo) return demoCards();
+  await live();
+  const products = await db.product.findMany({ where: { active: true }, include: cardInclude, orderBy: { salesCount: "desc" } });
+  return products.map(toCard);
+}
+
 export async function getCategoryWithProducts(slug: string) {
+  if (isStaticDemo) {
+    const category = demoCategories.find((c) => c.slug === slug);
+    if (!category) return null;
+    const children = demoCategories.filter((c) => c.parentId === category.id).sort((a, b) => a.sort - b.sort);
+    const ids = [category.id, ...children.map((c) => c.id)];
+    return {
+      category: { ...category, children, parent: demoCategories.find((c) => c.id === category.parentId) ?? null },
+      products: demoCards((p) => ids.includes(p.categoryId)),
+    };
+  }
+  await live();
   const category = await db.category.findUnique({
     where: { slug },
     include: { children: { orderBy: { sort: "asc" } }, parent: true },
@@ -75,6 +109,13 @@ export async function getCategoryWithProducts(slug: string) {
 }
 
 export async function getDisciplines() {
+  if (isStaticDemo) {
+    return [
+      ...demoCategories.filter((c) => c.parentId === "bicicletas").sort((a, b) => a.sort - b.sort),
+      ...demoCategories.filter((c) => c.slug === "e-bike"),
+    ];
+  }
+  await live();
   const bikes = await db.category.findUnique({
     where: { slug: "bicicletas" },
     include: { children: { orderBy: { sort: "asc" } } },
@@ -84,6 +125,11 @@ export async function getDisciplines() {
 }
 
 export async function getProduct(slug: string) {
+  if (isStaticDemo) {
+    const p = demoProducts.find((d) => d.slug === slug);
+    return p ? withRelations(p) : null;
+  }
+  await live();
   return db.product.findFirst({
     where: { slug, active: true },
     include: {
@@ -95,6 +141,8 @@ export async function getProduct(slug: string) {
 }
 
 export async function getRelatedProducts(categoryId: string, excludeSlug: string) {
+  if (isStaticDemo) return demoCards((p) => p.categoryId === categoryId && p.slug !== excludeSlug).slice(0, 4);
+  await live();
   const products = await db.product.findMany({
     where: { active: true, categoryId, slug: { not: excludeSlug } },
     include: cardInclude,
@@ -104,19 +152,11 @@ export async function getRelatedProducts(categoryId: string, excludeSlug: string
   return products.map(toCard);
 }
 
-export async function searchProducts(q: string) {
-  const products = await db.product.findMany({
-    where: {
-      active: true,
-      OR: [
-        { name: { contains: q, mode: "insensitive" } },
-        { brand: { name: { contains: q, mode: "insensitive" } } },
-        { category: { name: { contains: q, mode: "insensitive" } } },
-      ],
-    },
-    include: cardInclude,
-    orderBy: { salesCount: "desc" },
-    take: 48,
-  });
-  return products.map(toCard);
+/** Rutas a generar en la vista previa estática. En el servidor real se resuelven al visitar. */
+export function staticCategorySlugs() {
+  return isStaticDemo ? demoCategories.map((c) => ({ slug: c.slug })) : [];
+}
+
+export function staticProductSlugs() {
+  return isStaticDemo ? demoProducts.map((p) => ({ slug: p.slug })) : [];
 }

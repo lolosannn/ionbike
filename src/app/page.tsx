@@ -5,8 +5,6 @@ import { store } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 
-export const dynamic = "force-dynamic";
-
 const brands = ["Zion", "SPY", "Eurobike", "Gravity"];
 
 const sections = [

@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsappIcon } from "@/components/icons";
 import { formatPrice } from "@/lib/pricing";
+import { isStaticDemo } from "@/lib/catalog";
 import "@fontsource/barlow-condensed/700.css";
 import "@fontsource/barlow-condensed/800.css";
 import "@fontsource/barlow-condensed/700-italic.css";
@@ -26,6 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body>
         <CartProvider>
+          {isStaticDemo && (
+            <div className="demo-bar">Vista previa · los pagos y pedidos están desactivados</div>
+          )}
           <div className="topbar">
             <div className="container">
               <span>Envío gratis a todo el país desde {formatPrice(store.freeShippingFrom)}</span>

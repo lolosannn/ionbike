@@ -30,6 +30,14 @@ npm run dev                   # http://localhost:3000
 
 `npm run lint` corre el chequeo de tipos.
 
+## Vista previa en GitHub Pages
+
+Cada push a la rama publica una vista previa en https://lolosannn.github.io/ionbike/ (workflow `.github/workflows/pages.yml`).
+
+Es una versión estática: lee el catálogo de ejemplo de `src/data/catalog.ts` en vez de la base de datos, y el checkout se simula (no crea pedidos ni cobra). Para generarla localmente: `PAGES_BASE_PATH=/ionbike npm run build:pages` (queda en `out/`).
+
+Los archivos `*.server.tsx` / `*.server.ts` son solo de la tienda real y `*.demo.tsx` solo de la vista previa (ver `pageExtensions` en `next.config.ts`).
+
 ## Producción (servidor propio)
 
 En un VPS con Docker:

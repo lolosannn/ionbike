@@ -82,6 +82,8 @@ button { cursor: pointer; }
 }
 .icon-btn:hover { background: var(--surface-2); color: var(--text); }
 
+.demo-bar { background: #2b2b2b; color: var(--text); text-align: center; font-size: 13px; padding: 6px 16px; }
+
 /* Barra superior */
 .topbar { background: var(--accent); color: var(--on-accent); font-size: 14px; font-weight: 500; }
 .topbar .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 32px; padding-top: 10px; padding-bottom: 10px; }

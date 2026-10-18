@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav } from "@/config/store";
 import { useCart } from "@/components/cart/CartProvider";
@@ -9,6 +9,7 @@ import { CartIcon, CloseIcon, MenuIcon, SearchIcon } from "@/components/icons";
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -40,7 +41,15 @@ export function Header() {
           </ul>
         </nav>
 
-        <form action="/buscar" role="search" className={`search${searchOpen ? " open" : ""}`}>
+        <form
+          role="search"
+          className={`search${searchOpen ? " open" : ""}`}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const q = String(new FormData(e.currentTarget).get("q") ?? "").trim();
+            router.push(`/buscar?q=${encodeURIComponent(q)}`);
+          }}
+        >
           <label htmlFor="buscar" className="sr-only">Buscar productos</label>
           <input id="buscar" name="q" type="search" placeholder="Buscar bicis, repuestos…" />
           <button type="submit" aria-label="Buscar"><SearchIcon /></button>

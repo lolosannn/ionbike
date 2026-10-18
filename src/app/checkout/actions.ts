@@ -5,8 +5,7 @@ import { PaymentMethod, ShippingMethod } from "@prisma/client";
 import { db } from "@/lib/db";
 import { cancelPendingOrder, createOrder, OutOfStockError } from "@/lib/orders";
 import { createPreference, isMercadoPagoConfigured } from "@/lib/mercadopago";
-
-export type CheckoutState = { error?: string } | null;
+import type { CheckoutState } from "./CheckoutForm";
 
 const MAX_LINES = 20;
 const MAX_QTY = 20;

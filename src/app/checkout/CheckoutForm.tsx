@@ -5,15 +5,33 @@ import { useActionState, useState } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { formatPrice } from "@/lib/pricing";
 import { store } from "@/config/store";
-import { placeOrder, type CheckoutState } from "./actions";
+export type CheckoutState = { error?: string; demo?: boolean } | null;
 
-export function CheckoutForm({ mercadoPagoEnabled }: { mercadoPagoEnabled: boolean }) {
-  const { items, subtotal, ready } = useCart();
-  const [state, action, pending] = useActionState<CheckoutState, FormData>(placeOrder, null);
+type Props = {
+  mercadoPagoEnabled: boolean;
+  // Sin acción: vista previa estática, el pedido se simula
+  action?: (prev: CheckoutState, form: FormData) => Promise<CheckoutState>;
+};
+
+export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder }: Props) {
+  const { items, subtotal, ready, clear } = useCart();
+  const [state, action, pending] = useActionState<CheckoutState, FormData>(
+    placeOrder ?? (async () => { clear(); return { demo: true }; }),
+    null,
+  );
   const [shipping, setShipping] = useState<"PICKUP" | "DELIVERY">("DELIVERY");
   const [payment, setPayment] = useState<"MERCADOPAGO" | "TRANSFER">(mercadoPagoEnabled ? "MERCADOPAGO" : "TRANSFER");
 
   if (!ready) return null;
+  if (state?.demo) {
+    return (
+      <div className="notice" style={{ marginTop: 28 }}>
+        <h2 style={{ marginTop: 0 }}>¡Listo! (vista previa)</h2>
+        <p>En la tienda real acá se crea el pedido y se te redirige a Mercado Pago o a los datos de transferencia. En esta vista previa no se generó ningún pedido ni cobro.</p>
+        <Link href="/" className="btn btn-primary">Volver al inicio</Link>
+      </div>
+    );
+  }
   if (items.length === 0) {
     return (
       <div className="empty" style={{ marginTop: 28 }}>

@@ -9,8 +9,6 @@ import { Gallery } from "@/components/product/Gallery";
 import { ProductCard } from "@/components/product/ProductCard";
 import { PinIcon, ShieldIcon, TruckIcon } from "@/components/icons";
 
-export const dynamic = "force-dynamic";
-
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
