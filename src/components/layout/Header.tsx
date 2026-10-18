@@ -1,0 +1,77 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { nav } from "@/config/store";
+import { useCart } from "@/components/cart/CartProvider";
+import { CartIcon, CloseIcon, MenuIcon, SearchIcon } from "@/components/icons";
+
+export function Header() {
+  const pathname = usePathname();
+  const { count } = useCart();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setSearchOpen(false);
+  }, [pathname]);
+
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+
+  return (
+    <header className="header">
+      <div className="container">
+        <Link href="/" className="logo" aria-label="IonBikeStore, inicio">
+          <span className="logo-mark">ION</span>
+          <span className="logo-sub">BIKESTORE</span>
+        </Link>
+
+        <nav id="menu-principal" aria-label="Principal" className={`nav${menuOpen ? " open" : ""}`}>
+          <ul>
+            {nav.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <form action="/buscar" role="search" className={`search${searchOpen ? " open" : ""}`}>
+          <label htmlFor="buscar" className="sr-only">Buscar productos</label>
+          <input id="buscar" name="q" type="search" placeholder="Buscar bicis, repuestos…" />
+          <button type="submit" aria-label="Buscar"><SearchIcon /></button>
+        </form>
+
+        <div className="header-actions">
+          <button
+            type="button"
+            className="icon-btn search-toggle"
+            aria-label="Abrir buscador"
+            aria-expanded={searchOpen}
+            onClick={() => setSearchOpen((v) => !v)}
+          >
+            <SearchIcon size={22} />
+          </button>
+          <Link href="/carrito" className="icon-btn" aria-label={`Carrito, ${count} productos`}>
+            <CartIcon />
+            <span className="cart-badge" aria-hidden="true">{count}</span>
+          </Link>
+          <button
+            type="button"
+            className="icon-btn menu-toggle"
+            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={menuOpen}
+            aria-controls="menu-principal"
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}

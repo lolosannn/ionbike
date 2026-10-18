@@ -1,0 +1,60 @@
+# IonBikeStore
+
+Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
+
+**Stack:** Next.js 15 (App Router) · PostgreSQL + Prisma · Mercado Pago Checkout Pro · Docker para el hosting propio.
+
+## Qué incluye
+
+- **Inicio**: banner de oferta, beneficios, disciplinas, más vendidos, secciones, marcas y local.
+- **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
+- **Ficha de producto** (`/producto/[slug]`): galería, selección de color y rodado con stock por variante, precios con tarjeta, transferencia y cuotas.
+- **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
+- **Pagos**: Mercado Pago (tarjetas, cuotas, efectivo) y transferencia con 25% off.
+- **Pedidos**: el stock se descuenta al confirmar; el webhook de Mercado Pago marca el pedido como pagado.
+- Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
+
+Las reglas comerciales (descuento por transferencia, envío gratis, cuotas, datos bancarios y de contacto) están en `src/config/store.ts`.
+
+## Desarrollo local
+
+Requiere Node 22 y PostgreSQL 16.
+
+```bash
+cp .env.example .env          # completar DATABASE_URL
+npm install
+npm run db:migrate            # crea las tablas
+npm run db:seed               # carga categorías y productos de ejemplo
+npm run dev                   # http://localhost:3000
+```
+
+`npm run lint` corre el chequeo de tipos.
+
+## Producción (servidor propio)
+
+En un VPS con Docker:
+
+```bash
+cp .env.example .env          # completar POSTGRES_PASSWORD, SITE_URL (https://www.ionbikestore.com), MP_*
+docker compose up -d --build
+```
+
+Levanta PostgreSQL, aplica las migraciones y deja la tienda en el puerto 3000. Delante va un proxy con HTTPS (Caddy o Nginx + Let's Encrypt) apuntando al dominio.
+
+### Mercado Pago
+
+1. Crear una aplicación en el [panel de desarrolladores](https://www.mercadopago.com.ar/developers/panel/app) y copiar el *Access Token* de producción en `MP_ACCESS_TOKEN`.
+2. En *Webhooks*, configurar `https://www.ionbikestore.com/api/webhooks/mercadopago` con el evento **Pagos** y copiar la clave secreta en `MP_WEBHOOK_SECRET`.
+3. Las cuotas sin interés se configuran en la cuenta de Mercado Pago.
+
+Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
+
+## Pendientes
+
+- [ ] Panel de administración: productos, fotos, stock y pedidos.
+- [ ] Sincronización de stock con Mercado Libre (hoy la hace una herramienta conectada a Tiendanube).
+- [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
+- [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
+- [ ] Emails de confirmación de pedido.
+- [ ] Fotos reales, logo original, datos bancarios y horarios (marcados entre corchetes).
+- [ ] Términos y condiciones, y políticas de cambios y envíos.

@@ -1,0 +1,38 @@
+# Producción en un servidor propio: `docker compose up -d --build`
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ion
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?definí POSTGRES_PASSWORD en .env}
+      POSTGRES_DB: ionbikestore
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ion -d ionbikestore"]
+      interval: 5s
+      retries: 10
+
+  # Aplica las migraciones pendientes y termina
+  migrate:
+    build: { context: ., target: builder }
+    command: npx prisma migrate deploy
+    environment:
+      DATABASE_URL: postgresql://ion:${POSTGRES_PASSWORD}@db:5432/ionbikestore
+    depends_on:
+      db: { condition: service_healthy }
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://ion:${POSTGRES_PASSWORD}@db:5432/ionbikestore
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+volumes:
+  pgdata:

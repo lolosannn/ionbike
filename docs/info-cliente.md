@@ -4,9 +4,9 @@ Datos confirmados con el cliente (reunión inicial).
 
 | Tema | Respuesta |
 |---|---|
-| Plataforma de la página actual | Tiendanube |
+| Plataforma de la página actual | Tiendanube (se deja de usar: la nueva tienda es propia, con hosting propio) |
 | Entrega de pedidos | Envíos a domicilio y retiro en el local (las dos opciones) |
-| Carga de stock | Con una herramienta "Eco…" (nombre a confirmar) que sincroniza con Mercado Libre |
+| Carga de stock | Con una herramienta "Eco…" (nombre a confirmar) que sincroniza con Mercado Libre. Al salir de Tiendanube hay que reemplazar esa sincronización. |
 | ¿Cómodo con la carga actual? | Sí |
 | Responsable de la web y publicidad | Un encargado externo (responderá el resto del cuestionario) |
 
