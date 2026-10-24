@@ -2,12 +2,12 @@ import Link from "next/link";
 import Form from "next/form";
 import { getDisciplines, getFeaturedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/pricing";
-import { store, whatsappUrl } from "@/config/store";
+import { about, store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
 import { publicImage } from "@/lib/public-files";
-import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
+import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 import { sizeTables } from "./guia-de-talles/sizes";
 
 const brands = ["Zion", "SPY", "Eurobike", "Gravity"];
@@ -20,6 +20,12 @@ const sections = [
 
 // Foto de la sección "Vení al local": public/local/cliente.jpg (o .png / .webp)
 const riderPhoto = publicImage("local", "cliente");
+
+// Adelanto de "Quiénes somos": las primeras fotos de public/nosotros/
+const aboutPhotos = about.photos
+  .map((alt, i) => ({ alt, src: publicImage("nosotros", String(i + 1)) }))
+  .filter((p) => p.src)
+  .slice(0, 3);
 
 export default async function HomePage() {
   const [disciplines, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
@@ -173,6 +179,25 @@ export default async function HomePage() {
             )}
           </div>
           <StoreMap />
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="about-teaser">
+          <div className="about-teaser-copy">
+            <span className="eyebrow">Quiénes somos</span>
+            <h2 className="display">Conocé IonBikeStore</h2>
+            <p>{about.paragraphs[0]}</p>
+            <Link href="/contacto#quienes-somos" className="btn btn-primary">
+              Conocenos <ArrowIcon />
+            </Link>
+          </div>
+          {aboutPhotos.length > 0 && (
+            <Link href="/contacto#quienes-somos" className="about-teaser-photos" aria-label="Ver fotos y video del local">
+              {aboutPhotos.map((p) => <img key={p.alt} src={p.src!} alt="" loading="lazy" />)}
+              <span className="about-teaser-play"><PlayIcon size={22} /> Mirá el video del local</span>
+            </Link>
+          )}
         </div>
       </section>
     </>
