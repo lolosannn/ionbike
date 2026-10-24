@@ -59,10 +59,16 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 
 ## Pendientes
 
-- [ ] Panel de administración: productos, fotos, stock y pedidos.
-- [ ] Sincronización de stock con Mercado Libre (hoy la hace una herramienta conectada a Tiendanube).
+- [ ] Panel de administración: productos, fotos, stock y pedidos. Agregar una variante a un producto existente tiene que ser rápido (hoy es lo que más tiempo les lleva).
+- [ ] Sincronización de stock con Mercado Libre vía Ecommap (hoy conectado a Tiendanube).
+- [ ] Guía de talles de bicicletas.
+- [ ] Productos de gama alta sin stock con botón "Contactanos por WhatsApp".
+- [ ] Chatbot de preguntas frecuentes.
+- [ ] Mapa del local.
+- [ ] Página de Taller con pedido de turnos (service general y full, tubelizado, líquido tubeless, centrado, lavado, purgado de frenos).
+- [ ] Inicio con más impacto: carrusel de promociones y destacados.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
 - [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
 - [ ] Emails de confirmación de pedido.
-- [ ] Fotos reales, logo original, datos bancarios y horarios (marcados entre corchetes).
+- [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
 - [ ] Términos y condiciones, y políticas de cambios y envíos.
