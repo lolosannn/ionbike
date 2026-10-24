@@ -369,17 +369,17 @@ const rows = MTB.map(([s, f, h]) => {
   return row;
 });
 
-/* ---------- Línea de tiempo ---------- */
+/* ---------- Línea de tiempo: duraciones y marcas sincronizadas con la locución (voz.mp3, ver guion.md) ---------- */
 const scenes = [
-  { id: "s-intro", dur: 6, run: intro },
-  { id: "s-tools", dur: 8.5, run: tools },
-  { id: "s-height", dur: 15, run: height },
-  { id: "s-inseam", dur: 15, run: inseam },
-  { id: "s-type", dur: 9.5, run: type },
-  { id: "s-table", dur: 12, run: table },
-  { id: "s-stand", dur: 11, run: stand },
-  { id: "s-between", dur: 10, run: between },
-  { id: "s-outro", dur: 9, run: outro },
+  { id: "s-intro", dur: 4.9, run: intro },
+  { id: "s-tools", dur: 9.1, run: tools },
+  { id: "s-height", dur: 15.2, run: height },
+  { id: "s-inseam", dur: 13.3, run: inseam },
+  { id: "s-type", dur: 10.1, run: type },
+  { id: "s-table", dur: 11.65, run: table },
+  { id: "s-stand", dur: 9.8, run: stand },
+  { id: "s-between", dur: 9.1, run: between },
+  { id: "s-outro", dur: 11.85, run: outro },
 ];
 let acc = 0;
 for (const s of scenes) { s.start = acc; acc += s.dur; s.el = $(s.id); }
@@ -399,8 +399,8 @@ function intro(t) {
 function tools(t) {
   enter($("tools-kicker"), p(t, 0.2, 0.6), { dx: -40, dy: 0 });
   enter($("tools-title"), p(t, 0.3, 0.7), { dy: 60 });
-  ["tools-c1", "tools-c2", "tools-c3"].forEach((id, i) => enter($(id), p(t, [2.0, 3.4, 4.5][i], 0.8, ease.back), { dy: 120 }));
-  enter($("tools-note"), p(t, 6.2, 0.7), { dy: 30 });
+  ["tools-c1", "tools-c2", "tools-c3"].forEach((id, i) => enter($(id), p(t, [2.5, 4.0, 5.0][i], 0.8, ease.back), { dy: 120 }));
+  enter($("tools-note"), p(t, 7.1, 0.7), { dy: 30 });
 }
 
 function measureScene(M, t, prefix, { targetCm, book, cue }) {
@@ -419,7 +419,7 @@ function measureScene(M, t, prefix, { targetCm, book, cue }) {
     setRect(M.book, lerp(1800, PX - 70, kb), yTarget - 26, RX - PX + 110, 26);
   } else {
     // Entre las piernas: sube desde el piso hasta la entrepierna
-    setRect(M.book, PX - 13, lerp(FLOOR - 20, yTarget, kb), 26, 120);
+    setRect(M.book, PX - 13, lerp(FLOOR - 120, yTarget, kb), 26, 120);
   }
   M.book.style.opacity = p(t, cue.book - 0.2, 0.4);
   // Guía y marca en la pared
@@ -430,24 +430,24 @@ function measureScene(M, t, prefix, { targetCm, book, cue }) {
   setLine(M.mark, RX - 40 * km, yTarget, RX + 40 * km, yTarget);
   M.mark.style.opacity = clamp(km * 3);
   // La regla se llena del piso a la marca con el contador
-  const kf = p(t, cue.fill, 2.0, ease.inOut);
+  const kf = p(t, cue.fill, 1.3, ease.inOut);
   const yf = lerp(FLOOR, yTarget, kf);
   setRect(M.fill, RX - 6, yf, 12, FLOOR - yf);
   M.label.setAttribute("y", yf + 22);
   M.label.textContent = `${Math.round(targetCm * kf)} cm`;
-  M.label.style.opacity = clamp(kf * 6) * (1 - p(t, cue.fill + 2.2, 0.4));
-  enter($(`${prefix}-badge`), p(t, cue.fill + 2.2, 0.7, ease.back), { dy: 0, scale: 0.6 });
+  M.label.style.opacity = clamp(kf * 6) * (1 - p(t, cue.fill + 1.4, 0.4));
+  enter($(`${prefix}-badge`), p(t, cue.fill + 1.4, 0.7, ease.back), { dy: 0, scale: 0.6 });
 }
-function height(t) { measureScene(H, t, "h", { targetCm: 175, book: "head", cue: { bullets: [2, 4.5, 8, 11.3], book: 8.2, mark: 10.4, fill: 11.5 } }); }
-function inseam(t) { measureScene(I, t, "i", { targetCm: 82, book: "legs", cue: { bullets: [2, 5, 9.3, 11.6], book: 5.6, mark: 10.2, fill: 11.8 } }); }
+function height(t) { measureScene(H, t, "h", { targetCm: 175, book: "head", cue: { bullets: [2.7, 5.4, 9.1, 12.6], book: 9.3, mark: 11.4, fill: 12.5 } }); }
+function inseam(t) { measureScene(I, t, "i", { targetCm: 82, book: "legs", cue: { bullets: [3.0, 5.6, 9.5, 11.7], book: 5.8, mark: 10.0, fill: 11.2 } }); }
 
 function type(t) {
   enter($("ty-chip"), p(t, 0.2, 0.6, ease.back), { dx: -60, dy: 0 });
   enter($("ty-title"), p(t, 0.35, 0.7), { dy: 60 });
   const cards = ["ty-c1", "ty-c2", "ty-c3"].map($);
-  cards.forEach((el, i) => enter(el, p(t, [2.2, 4.5, 6.5][i], 0.8, ease.back), { dy: 120 }));
+  cards.forEach((el, i) => enter(el, p(t, [3.1, 5.4, 7.9][i], 0.8, ease.back), { dy: 120 }));
   // Se "elige" Mountain Bike
-  const SEL = 8.4;
+  const SEL = 9.0;
   const sel = p(t, SEL, 0.4);
   const c1 = cards[0];
   c1.style.background = sel > 0.5 ? "#f2c40f" : "";
@@ -457,7 +457,7 @@ function type(t) {
   const pulse = Math.sin(clamp((t - SEL) / 0.5) * Math.PI) * 0.05;
   c1.style.transform = `scale(${1 + pulse})`;
   if (t > SEL) cards[1].style.opacity = cards[2].style.opacity = lerp(1, 0.45, p(t, SEL, 0.6));
-  enter($("ty-note"), p(t, 8.6, 0.7), { dy: 30 });
+  enter($("ty-note"), p(t, 8.9, 0.7), { dy: 30 });
 }
 
 function table(t) {
@@ -465,57 +465,57 @@ function table(t) {
   enter($("tb-title"), p(t, 0.35, 0.7), { dy: 60 });
   enter($("tb-label"), p(t, 0.8, 0.5), { dy: 20 });
   enter($("tb-input"), p(t, 0.9, 0.6), { dy: 30 });
-  enter($("tb-pill"), p(t, 5.0, 0.6, ease.back), { dy: 30 });
+  enter($("tb-pill"), p(t, 5.6, 0.6, ease.back), { dy: 30 });
   const text = "1,75";
-  $("tb-typed").textContent = text.slice(0, Math.floor(clamp((t - 2.6) / 1.4) * text.length + 0.001));
-  $("tb-caret").style.opacity = Math.floor(t * 2) % 2 === 0 || (t > 2.6 && t < 4) ? 1 : 0;
+  $("tb-typed").textContent = text.slice(0, Math.floor(clamp((t - 3.9) / 1.4) * text.length + 0.001));
+  $("tb-caret").style.opacity = Math.floor(t * 2) % 2 === 0 || (t > 3.9 && t < 5.3) ? 1 : 0;
   const tbl = $("tb-table");
   tbl.style.opacity = p(t, 0.6, 0.6);
   rows.forEach((r, i) => enter(r, p(t, 1.0 + i * 0.15, 0.6), { dx: 60, dy: 0 }));
   // La franja amarilla baja fila por fila hasta M
   const top0 = 70, rowH = 92;
-  const k = p(t, 6.0, 2.0, ease.inOut);
+  const k = p(t, 5.6, 1.6, ease.inOut);
   const hl = $("tb-hl");
   hl.style.top = `${top0 + rowH * lerp(0, 2, k)}px`;
-  hl.style.opacity = p(t, 5.8, 0.3);
+  hl.style.opacity = p(t, 5.4, 0.3);
   rows.forEach((r, i) => r.classList.toggle("on", Math.abs(lerp(0, 2, k) - i) < 0.5));
-  const land = p(t, 8.0, 0.4);
+  const land = p(t, 7.2, 0.4);
   hl.style.transform = `scaleX(${1 + Math.sin(land * Math.PI) * 0.03})`;
-  enter($("tb-result"), p(t, 8.2, 0.7, ease.back), { dy: 0, scale: 0.7 });
+  enter($("tb-result"), p(t, 7.2, 0.7, ease.back), { dy: 0, scale: 0.7 });
   $("tb-result").style.transformOrigin = "0 50%";
 }
 
 function stand(t) {
   enter($("st-kicker"), p(t, 0.2, 0.6), { dx: -40, dy: 0 });
   enter($("st-title"), p(t, 0.35, 0.7), { dy: 60 });
-  enter($("st-text"), p(t, 2.6, 0.8), { dy: 30 });
+  enter($("st-text"), p(t, 2.8, 0.8), { dy: 30 });
   drawBike(ST.bike, p(t, 0.4, 2.0, ease.inOut));
   const kp = p(t, 1.6, 1.2, ease.inOut);
   ST.person.style.opacity = kp;
   ST.person.style.transform = `translateY(${lerp(-60, 0, kp)}px)`;
-  const kg = p(t, 7.0, 0.6, ease.back);
+  const kg = p(t, 6.4, 0.6, ease.back);
   ST.gap.style.opacity = clamp(kg * 2);
   ST.gap.style.transform = `scale(${lerp(0.4, 1, kg)})`;
   ST.gap.style.transformOrigin = "373px 108px";
-  ST.gapLabel.style.opacity = p(t, 7.4, 0.5);
-  enter($("st-badge"), p(t, 9.4, 0.7, ease.back), { dy: 0, scale: 0.6 });
+  ST.gapLabel.style.opacity = p(t, 6.8, 0.5);
+  enter($("st-badge"), p(t, 8.2, 0.7, ease.back), { dy: 0, scale: 0.6 });
 }
 
 function between(t) {
   enter($("bt-kicker"), p(t, 0.2, 0.6), { dx: -40, dy: 0 });
   enter($("bt-title"), p(t, 0.35, 0.7), { dy: 60 });
-  enter($("bt-c1"), p(t, 1.8, 0.8, ease.back), { dx: -140, dy: 0 });
-  enter($("bt-c2"), p(t, 3.6, 0.8, ease.back), { dx: 140, dy: 0 });
-  enter($("bt-note"), p(t, 5.4, 0.7), { dy: 30 });
+  enter($("bt-c1"), p(t, 1.9, 0.8, ease.back), { dx: -140, dy: 0 });
+  enter($("bt-c2"), p(t, 3.7, 0.8, ease.back), { dx: 140, dy: 0 });
+  enter($("bt-note"), p(t, 5.6, 0.7), { dy: 30 });
 }
 
 function outro(t) {
   const k = p(t, 0, 0.01);
   $("o-bg").style.opacity = k;
   enter($("o-logo"), p(t, 0.3, 0.8, ease.back), { dy: 60 });
-  enter($("o-title"), p(t, 0.7, 0.7), { dy: 60 });
+  enter($("o-title"), p(t, 0.4, 0.7), { dy: 60 });
   enter($("o-sub"), p(t, 1.6, 0.7), { dy: 30 });
-  enter($("o-info"), p(t, 3.6, 0.7, ease.back), { dy: 40 });
+  enter($("o-info"), p(t, 4.2, 0.7, ease.back), { dy: 40 });
 }
 
 function render(t) {
