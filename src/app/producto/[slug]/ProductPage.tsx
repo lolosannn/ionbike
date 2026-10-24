@@ -8,7 +8,7 @@ import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { SpecsAccordion } from "@/components/product/SpecsAccordion";
 import { ProductCard } from "@/components/product/ProductCard";
-import { ChatIcon, PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
+import { ArrowIcon, ChatIcon, PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -81,23 +81,6 @@ export default async function ProductPage({ params }: Props) {
             </ul>
           </section>
 
-          <ul className="pdp-perks">
-            <li><ShieldIcon size={24} />Compra protegida</li>
-            <li><WrenchIcon size={24} />Taller propio</li>
-            <li><PinIcon size={24} />Retiro en el local</li>
-            <li><ChatIcon size={24} />Asesoramiento especializado</li>
-          </ul>
-
-          <div className="pdp-shipping">
-            <TruckIcon size={28} />
-            <span>
-              <strong>
-                {hasFreeShipping(product.price) ? "¡Envío gratis a todo el país!" : `Envío gratis desde ${formatPrice(store.freeShippingFrom)}`}
-              </strong>
-              <span>Despacho por Andreani · o retiralo sin cargo en {store.address}</span>
-            </span>
-          </div>
-
           {product.onRequest ? (
             <div className="on-request">
               <span className="badge badge-accent">A pedido</span>
@@ -121,6 +104,34 @@ export default async function ProductPage({ params }: Props) {
             />
           )}
 
+          <ul className="pdp-perks">
+            <li><ShieldIcon size={24} />Compra protegida</li>
+            <li><WrenchIcon size={24} />Taller propio</li>
+            <li><PinIcon size={24} />Retiro en el local</li>
+            <li><ChatIcon size={24} />Asesoramiento especializado</li>
+          </ul>
+
+          <div className="pdp-shipping">
+            <TruckIcon size={28} />
+            <span>
+              <strong>
+                {hasFreeShipping(product.price) ? "¡Envío gratis a todo el país!" : `Envío gratis desde ${formatPrice(store.freeShippingFrom)}`}
+              </strong>
+              <span>Despacho por Andreani · o retiralo sin cargo en {store.address}</span>
+            </span>
+          </div>
+
+          {isBike && (
+            <Link href="/guia-de-talles" className="pdp-size-guide">
+              <span className="pdp-size-guide-icon"><RulerIcon size={26} /></span>
+              <span>
+                <strong>¿Qué talle me va?</strong>
+                <span>Encontralo según tu altura, con tabla y video.</span>
+              </span>
+              <span className="pdp-size-guide-cta">Ver guía <ArrowIcon /></span>
+            </Link>
+          )}
+
           {!product.onRequest && (
             <a
               className="btn btn-whatsapp btn-block"
@@ -130,12 +141,6 @@ export default async function ProductPage({ params }: Props) {
             >
               <WhatsappIcon size={20} /> ¿Necesitás asesoramiento?
             </a>
-          )}
-
-          {isBike && (
-            <Link href="/guia-de-talles" className="size-guide-link">
-              <RulerIcon /> ¿Qué talle me va? Ver la guía de talles
-            </Link>
           )}
 
         </div>

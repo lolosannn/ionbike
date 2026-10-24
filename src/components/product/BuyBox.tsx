@@ -59,8 +59,23 @@ export function BuyBox({ product, variants }: Props) {
     else setAdded(true);
   };
 
+  // Primero los botones de compra (con la primera opción en stock ya elegida) y después las opciones
   return (
     <>
+      <div className="buy-row">
+        <div className="qty" role="group" aria-label="Cantidad">
+          <button type="button" aria-label="Restar uno" onClick={() => setQty((q) => Math.max(1, q - 1))}>−</button>
+          <span>{qty}</span>
+          <button type="button" aria-label="Sumar uno" onClick={() => setQty((q) => Math.min(Math.max(stock, 1), q + 1))}>+</button>
+        </div>
+        <button type="button" className="btn btn-primary btn-buy" disabled={!variant || stock < 1} onClick={() => addToCart(true)}>
+          Comprar ahora
+        </button>
+      </div>
+      <button type="button" className="btn btn-outline btn-block" disabled={!variant || stock < 1} onClick={() => addToCart(false)}>
+        {added ? "¡Agregado al carrito!" : "Agregar al carrito"}
+      </button>
+
       {colors.length > 0 && (
         <div className="option-group">
           <h2>Color: <span>{color ?? "Elegí uno"}</span></h2>
@@ -116,19 +131,6 @@ export function BuyBox({ product, variants }: Props) {
         )}
       </p>
 
-      <div className="buy-row">
-        <div className="qty" role="group" aria-label="Cantidad">
-          <button type="button" aria-label="Restar uno" onClick={() => setQty((q) => Math.max(1, q - 1))}>−</button>
-          <span>{qty}</span>
-          <button type="button" aria-label="Sumar uno" onClick={() => setQty((q) => Math.min(Math.max(stock, 1), q + 1))}>+</button>
-        </div>
-        <button type="button" className="btn btn-primary" disabled={!variant || stock < 1} onClick={() => addToCart(true)}>
-          Comprar ahora
-        </button>
-      </div>
-      <button type="button" className="btn btn-outline btn-block" disabled={!variant || stock < 1} onClick={() => addToCart(false)}>
-        {added ? "¡Agregado al carrito!" : "Agregar al carrito"}
-      </button>
     </>
   );
 }

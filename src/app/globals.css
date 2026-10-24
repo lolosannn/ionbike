@@ -618,3 +618,22 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 @keyframes spec-open { from { opacity: 0; transform: translateY(-4px); } }
 @media (max-width: 520px) { .spec-detail { padding-left: 16px; } }
 .spec-empty { color: var(--muted) !important; font-style: italic; }
+
+/* Ficha: botón de compra principal y guía de talles destacada */
+.btn-buy { min-height: 60px; font-size: 22px; }
+.buy-row .qty { height: 60px; }
+.pdp-size-guide {
+  display: flex; align-items: center; gap: 16px; padding: 16px 18px; border-radius: 16px;
+  background: var(--accent); color: var(--on-accent); text-decoration: none;
+}
+.pdp-size-guide:hover { background: var(--accent-hover); color: var(--on-accent); }
+.pdp-size-guide-icon { flex: none; width: 52px; height: 52px; border-radius: 999px; background: var(--bg); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+.pdp-size-guide > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.pdp-size-guide strong { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 26px; line-height: 1; text-transform: uppercase; }
+.pdp-size-guide-cta { flex: none; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 800; font-size: 18px; text-transform: uppercase; }
+.pdp-size-guide-cta svg { transition: transform 0.2s; }
+.pdp-size-guide:hover .pdp-size-guide-cta svg { transform: translateX(4px); }
+@media (max-width: 420px) { .pdp-size-guide-cta { display: none; } }
+.buy-row:has(.btn-buy) { flex-wrap: nowrap; }
+.buy-row .btn-buy { flex: 1 1 auto; min-width: 0; padding: 0 16px; }
+@media (max-width: 420px) { .btn-buy { font-size: 19px; } .buy-row .qty button { width: 40px; } }
