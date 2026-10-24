@@ -14,6 +14,8 @@ export type ProductData = {
   compareAt?: number;
   salesCount: number;
   featured: boolean;
+  // A pedido: sin stock, se consulta por WhatsApp
+  onRequest?: boolean;
   colors: string[];
   sizes: string[];
   stock: number;
@@ -74,6 +76,14 @@ export const products: ProductData[] = [
     colors: ["Celeste", "Negro", "Gris"], sizes: ["26"], stock: 3,
     specs: [{ label: "Rodado", value: "26" }, { label: "Uso", value: "MTB / Dirt" }],
     description: "[DESCRIPCIÓN DEL PRODUCTO]", images: [],
+  },
+  {
+    slug: "bicicleta-mtb-doble-suspension-carbono-r29-12v",
+    name: "Bicicleta MTB Doble Suspensión Carbono R29 12V",
+    brand: "Gravity", category: "mtb", price: 4_850_000_00, salesCount: 0, featured: false, onRequest: true,
+    colors: ["Negro"], sizes: ["29"], stock: 0,
+    specs: [{ label: "Rodado", value: "29" }, { label: "Cuadro", value: "Carbono" }, { label: "Suspensión", value: "Doble" }, { label: "Velocidades", value: "12" }],
+    description: "[EJEMPLO DE PRODUCTO DE GAMA ALTA A PEDIDO]", images: [],
   },
 ];
 

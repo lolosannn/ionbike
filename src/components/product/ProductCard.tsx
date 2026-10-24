@@ -27,7 +27,9 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         <div className="badges">
           {hasFreeShipping(product.price) && <span className="badge">Envío gratis</span>}
           {off && <span className="badge badge-accent">{off}% OFF</span>}
-          {!product.inStock && <span className="badge badge-muted">Sin stock</span>}
+          {product.onRequest
+            ? <span className="badge badge-muted">A pedido</span>
+            : !product.inStock && <span className="badge badge-muted">Sin stock</span>}
         </div>
       </div>
       <div className="product-body">
@@ -48,7 +50,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             con transferencia · o {store.installments} cuotas de {formatPrice(installmentPrice(product.price))}
           </span>
         </div>
-        <Link href={href} className="btn btn-primary">Ver producto</Link>
+        <Link href={href} className="btn btn-primary">{product.onRequest ? "Consultar" : "Ver producto"}</Link>
       </div>
     </article>
   );

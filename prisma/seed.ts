@@ -26,6 +26,7 @@ async function main() {
       specs: p.specs,
       images: p.images,
       featured: p.featured,
+      onRequest: p.onRequest ?? false,
       salesCount: p.salesCount,
       description: p.description,
       categoryId: category.id,

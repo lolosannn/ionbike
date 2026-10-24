@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { store } from "@/config/store";
+import { store, whatsappUrl } from "@/config/store";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main>{children}</main>
           <Footer />
-          <a href={`https://wa.me/${store.whatsapp}`} className="wa-float" aria-label="Escribinos por WhatsApp" target="_blank" rel="noreferrer">
+          <a href={whatsappUrl()} className="wa-float" aria-label="Escribinos por WhatsApp" target="_blank" rel="noreferrer">
             <WhatsappIcon />
           </a>
         </CartProvider>

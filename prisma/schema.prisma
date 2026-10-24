@@ -40,6 +40,8 @@ model Product {
   images      String[]
   active      Boolean   @default(true)
   featured    Boolean   @default(false)
+  // A pedido: se muestra sin stock y en vez de comprar se consulta por WhatsApp (gama alta)
+  onRequest   Boolean   @default(false)
   salesCount  Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

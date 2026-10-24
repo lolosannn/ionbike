@@ -376,3 +376,32 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .bank dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
 .bank dt { color: var(--muted); }
 .bank dd { margin: 0; font-weight: 700; }
+
+/* Mapa del local */
+.store-map { border: 0; display: block; width: 100%; filter: invert(0.9) hue-rotate(180deg) saturate(0.6); }
+
+/* Productos a pedido */
+.on-request { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px; border-radius: 16px; border: 1px solid var(--accent); }
+.on-request p { margin: 0; color: var(--text-2); }
+.size-guide-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+.page-head .size-guide-link { margin-top: 12px; }
+
+/* Guía de talles */
+.size-guide { display: flex; flex-wrap: wrap; gap: 40px; padding-top: 36px; align-items: flex-start; }
+.size-guide-video { flex: 1 1 520px; min-width: 0; }
+.size-guide-table { flex: 1 1 400px; min-width: 0; }
+.video-frame { display: flex; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--radius); background: var(--surface-2); }
+.size-finder { display: flex; flex-direction: column; gap: 24px; }
+.size-input { display: flex; flex-direction: column; gap: 8px; }
+.size-input label { font-weight: 700; }
+.size-input .input { max-width: 220px; font-size: 18px; }
+.size-result { margin: 0; min-height: 28px; font-size: 18px; }
+.size-result strong { color: var(--accent); font-family: var(--font-display); font-style: italic; font-size: 28px; }
+.size-table th, .size-table td { padding-left: 8px; padding-right: 8px; }
+.size-table thead th { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.size-table tbody th { color: var(--text); font-weight: 700; width: auto; }
+.size-table tr.current { background: var(--accent); }
+.size-table tr.current th, .size-table tr.current td { color: var(--on-accent); }
+.size-guide ~ .section .tile strong { font-size: 32px; }
+.tile-accent a { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; color: var(--on-accent); font-weight: 700; }
+.size-table td:last-child { white-space: nowrap; }

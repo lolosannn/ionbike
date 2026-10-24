@@ -26,6 +26,7 @@ export type ProductCardData = {
   colors: { name: string; hex: string | null }[];
   sizes: string[];
   inStock: boolean;
+  onRequest: boolean;
   salesCount: number;
   createdAt: string;
 };
@@ -49,6 +50,7 @@ function toCard(p: ProductWithRelations): ProductCardData {
     colors: [...colors].map(([name, hex]) => ({ name, hex })),
     sizes: [...sizes],
     inStock: p.variants.some((v) => v.stock > 0),
+    onRequest: p.onRequest,
     salesCount: p.salesCount,
     createdAt: p.createdAt.toISOString(),
   };

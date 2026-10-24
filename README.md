@@ -12,6 +12,9 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
 - **Pagos**: Mercado Pago (tarjetas, cuotas, efectivo) y transferencia con 25% off.
 - **Pedidos**: el stock se descuenta al confirmar; el webhook de Mercado Pago marca el pedido como pagado.
+- **Productos a pedido** (gama alta sin stock): campo `onRequest` del producto. En lugar de comprar, muestran "Contactanos por WhatsApp" con el nombre del modelo ya escrito en el mensaje.
+- **Guía de talles** (`/guia-de-talles`): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y lugar para el video explicativo.
+- **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
 
 Las reglas comerciales (descuento por transferencia, envío gratis, cuotas, datos bancarios y de contacto) están en `src/config/store.ts`.
@@ -61,10 +64,9 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 
 - [ ] Panel de administración: productos, fotos, stock y pedidos. Agregar una variante a un producto existente tiene que ser rápido (hoy es lo que más tiempo les lleva).
 - [ ] Sincronización de stock con Mercado Libre vía Ecommap (hoy conectado a Tiendanube).
-- [ ] Guía de talles de bicicletas.
-- [ ] Productos de gama alta sin stock con botón "Contactanos por WhatsApp".
 - [ ] Chatbot de preguntas frecuentes.
-- [ ] Mapa del local.
+- [ ] Video animado de la guía de talles (cuando esté, poner el ID de YouTube o la URL del .mp4 en `sizeGuideVideo`, en `store.ts`).
+- [ ] Validar la tabla de talles con las marcas que trabaja el local (`src/app/guia-de-talles/sizes.ts`).
 - [ ] Página de Taller con pedido de turnos (service general y full, tubelizado, líquido tubeless, centrado, lavado, purgado de frenos).
 - [ ] Inicio con más impacto: carrusel de promociones y destacados.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).

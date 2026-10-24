@@ -27,6 +27,7 @@ export const demoProducts: (Product & { variants: Variant[] })[] = productData.m
   images: p.images,
   active: true,
   featured: p.featured,
+  onRequest: p.onRequest ?? false,
   salesCount: p.salesCount,
   createdAt,
   updatedAt: createdAt,

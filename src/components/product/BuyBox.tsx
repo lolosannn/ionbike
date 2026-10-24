@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/cart/CartProvider";
 import { formatSize, variantLabel } from "@/lib/variants";
+import { whatsappUrl } from "@/config/store";
 
 type VariantOption = {
   id: string;
@@ -105,6 +106,14 @@ export function BuyBox({ product, variants }: Props) {
 
       <p className={`stock-note${stock > 0 && stock <= 3 ? " low" : ""}`} aria-live="polite">
         {!variant ? "Esa combinación no está disponible." : stock < 1 ? "Sin stock en esta opción." : stock <= 3 ? `¡Quedan ${stock}!` : "En stock"}
+        {(!variant || stock < 1) && (
+          <>
+            {" "}
+            <a href={whatsappUrl(`Hola! Quiero consultar por la ${product.name}${label ? ` (${label})` : ""}`)} target="_blank" rel="noreferrer">
+              Consultanos por WhatsApp
+            </a>
+          </>
+        )}
       </p>
 
       <div className="buy-row">

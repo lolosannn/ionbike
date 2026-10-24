@@ -21,6 +21,7 @@ export function Footer() {
             {nav.filter((n) => n.href !== "/").map((n) => (
               <Link key={n.href} href={n.href}>{n.label}</Link>
             ))}
+            <Link href="/guia-de-talles">Guía de talles</Link>
           </nav>
         </div>
         <div className="footer-col">

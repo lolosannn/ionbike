@@ -67,3 +67,9 @@ export const FacebookIcon = ({ size = 20 }: IconProps) => (
 export const TiktokIcon = ({ size = 20 }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" {...base}><path d="M14 4v11a3.5 3.5 0 1 1-3.5-3.5M14 4c.5 2.5 2.5 4 5 4" /></svg>
 );
+export const RulerIcon = ({ size = 20 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...base}><path d="M3 15.5L15.5 3 21 8.5 8.5 21z" /><path d="M7 12l2 2M10 9l2 2M13 6l2 2" /></svg>
+);
+export const PlayIcon = ({ size = 40 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...base}><circle cx="12" cy="12" r="10" /><path d="M10 8.5v7l5.5-3.5z" /></svg>
+);

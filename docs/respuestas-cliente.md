@@ -33,9 +33,9 @@ Respuestas del encargado de la web y la publicidad (versión detallada).
 | Inicio con más impacto y promociones | Parcial: hay banner de oferta. Falta un carrusel de promos y destacados editables. |
 | Compra directa en la web | Hecho: carrito, checkout y Mercado Pago. |
 | WhatsApp y teléfono como contacto | Hecho: botón flotante y página de contacto. |
-| Guía de talles | Pendiente. |
-| Gama alta sin stock con "Contactanos por WhatsApp" | Pendiente: productos "a pedido" que reemplacen el botón de compra por WhatsApp con mensaje prearmado. |
+| Guía de talles | Hecho: tabla + calculadora por altura en `/guia-de-talles`. Falta el video animado. |
+| Gama alta sin stock con "Contactanos por WhatsApp" | Hecho: productos "a pedido" con WhatsApp y mensaje prearmado. |
 | Chatbot de preguntas frecuentes | Pendiente. |
-| Mapa del local | Pendiente. |
+| Mapa del local | Hecho: inicio y contacto. |
 | Turnos de taller | Pendiente: página de Taller con servicios y formulario de turno. |
 | Variantes fáciles de agregar y sincronización con Ecommap | Pendiente: panel de administración donde se agrega una variante a un producto existente, e integración con Ecommap / Mercado Libre. Lo usan los chicos del local, así que tiene que ser simple. |

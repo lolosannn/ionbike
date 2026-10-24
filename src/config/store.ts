@@ -18,6 +18,9 @@ export const store = {
   // Costo de envío fijo mientras no esté la integración con Andreani (en centavos)
   shippingFlatRate: 15_000_00,
   installments: 12,
+  // Video de la guía de talles: ID de YouTube (lo que va después de "v=") o URL de un .mp4.
+  // Vacío muestra un aviso de "video en preparación".
+  sizeGuideVideo: "",
   // Datos para transferencia bancaria
   bank: {
     holder: "[TITULAR DE LA CUENTA]",
@@ -30,6 +33,11 @@ export const store = {
     "Argencard", "Maestro", "Banelco", "Link", "Pago Fácil", "Rapipago", "Provincia",
   ],
 } as const;
+
+/** Link de WhatsApp con un mensaje ya escrito (opcional). */
+export function whatsappUrl(text?: string) {
+  return `https://wa.me/${store.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+}
 
 export const nav = [
   { label: "Inicio", href: "/" },

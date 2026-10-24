@@ -3,11 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProduct, getRelatedProducts } from "@/lib/catalog";
 import { formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
-import { store } from "@/config/store";
+import { store, whatsappUrl } from "@/config/store";
 import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { ProductCard } from "@/components/product/ProductCard";
-import { PinIcon, ShieldIcon, TruckIcon } from "@/components/icons";
+import { PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,6 +25,7 @@ export default async function ProductPage({ params }: Props) {
     ? Math.round((1 - product.price / product.compareAt) * 100)
     : null;
   const parent = product.category.parent;
+  const isBike = [product.category.slug, parent?.slug].some((s) => s === "bicicletas" || s === "e-bike");
 
   return (
     <div className="container">
@@ -54,10 +55,34 @@ export default async function ProductPage({ params }: Props) {
             </span>
           </div>
 
-          <BuyBox
-            product={{ slug: product.slug, name: product.name, price: product.price, image: product.images[0] ?? null }}
-            variants={product.variants.map((v) => ({ id: v.id, color: v.color, colorHex: v.colorHex, size: v.size, stock: v.stock }))}
-          />
+          {product.onRequest ? (
+            <div className="on-request">
+              <span className="badge badge-accent">A pedido</span>
+              <p>
+                Este modelo lo traemos por pedido. Escribinos y te confirmamos colores, talles, precio final y
+                plazo de entrega.
+              </p>
+              <a
+                className="btn btn-whatsapp btn-block"
+                href={whatsappUrl(`Hola! Quiero consultar por la ${product.name}`)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <WhatsappIcon size={20} /> Contactanos por WhatsApp
+              </a>
+            </div>
+          ) : (
+            <BuyBox
+              product={{ slug: product.slug, name: product.name, price: product.price, image: product.images[0] ?? null }}
+              variants={product.variants.map((v) => ({ id: v.id, color: v.color, colorHex: v.colorHex, size: v.size, stock: v.stock }))}
+            />
+          )}
+
+          {isBike && (
+            <Link href="/guia-de-talles" className="size-guide-link">
+              <RulerIcon /> ¿Qué talle me va? Ver la guía de talles
+            </Link>
+          )}
 
           <ul className="perks">
             <li><TruckIcon size={20} />{hasFreeShipping(product.price) ? "Envío gratis a todo el país" : `Envío gratis desde ${formatPrice(store.freeShippingFrom)}`}</li>

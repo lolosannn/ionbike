@@ -1,5 +1,6 @@
-import { store } from "@/config/store";
-import { PinIcon, WhatsappIcon } from "@/components/icons";
+import { store, whatsappUrl } from "@/config/store";
+import { WhatsappIcon } from "@/components/icons";
+import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 
 export const metadata = { title: "Contacto" };
 
@@ -14,7 +15,7 @@ export default function ContactPage() {
       </div>
       <div className="visit" style={{ marginTop: 28 }}>
         <div className="visit-copy">
-          <a className="btn btn-whatsapp" href={`https://wa.me/${store.whatsapp}`} target="_blank" rel="noreferrer" style={{ alignSelf: "flex-start" }}>
+          <a className="btn btn-whatsapp" href={whatsappUrl()} target="_blank" rel="noreferrer" style={{ alignSelf: "flex-start" }}>
             <WhatsappIcon size={20} /> Escribinos por WhatsApp
           </a>
           <div>
@@ -24,9 +25,10 @@ export default function ContactPage() {
           <div>
             <div>{store.address}</div>
             <div className="muted">Horarios: {store.hours}</div>
+            <a href={directionsUrl} target="_blank" rel="noreferrer">Cómo llegar →</a>
           </div>
         </div>
-        <div className="visit-map ph ph-dark"><PinIcon size={40} /><span>Mapa del local</span></div>
+        <StoreMap />
       </div>
     </div>
   );

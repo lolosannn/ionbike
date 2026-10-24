@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/pricing";
-import { store } from "@/config/store";
+import { store, whatsappUrl } from "@/config/store";
 import { ClearCart } from "./ClearCart";
 
 export const dynamic = "force-dynamic";
@@ -26,8 +26,6 @@ export default async function OrderPage({ params, searchParams }: Props) {
   const order = await db.order.findUnique({ where: { publicToken: token }, include: { items: true } });
   if (!order) notFound();
 
-  const waText = encodeURIComponent(`Hola! Te envío el comprobante del pedido #${order.number}`);
-
   return (
     <div className="container" style={{ maxWidth: 840 }}>
       {nuevo && <ClearCart />}
@@ -49,7 +47,7 @@ export default async function OrderPage({ params, searchParams }: Props) {
             <dt>CUIT</dt><dd>{store.bank.cuit}</dd>
           </dl>
           <p className="muted">Cuando hagas la transferencia, mandanos el comprobante por WhatsApp indicando el número de pedido.</p>
-          <a className="btn btn-whatsapp" href={`https://wa.me/${store.whatsapp}?text=${waText}`} target="_blank" rel="noreferrer">
+          <a className="btn btn-whatsapp" href={whatsappUrl(`Hola! Te envío el comprobante del pedido #${order.number}`)} target="_blank" rel="noreferrer">
             Enviar comprobante por WhatsApp
           </a>
         </div>

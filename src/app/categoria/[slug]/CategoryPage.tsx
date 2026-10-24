@@ -28,6 +28,9 @@ export default async function CategoryPage({ params }: Props) {
         </nav>
         <h1 className="display">{category.name}</h1>
         {category.description && <p className="muted" style={{ maxWidth: 640 }}>{category.description}</p>}
+        {[category.slug, category.parent?.slug].some((s) => s === "bicicletas" || s === "e-bike") && (
+          <Link href="/guia-de-talles" className="size-guide-link">¿No sabés qué talle te va? Ver la guía de talles →</Link>
+        )}
       </div>
       <ProductListing
         products={products}

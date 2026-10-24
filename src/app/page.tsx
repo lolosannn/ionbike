@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getDisciplines, getFeaturedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/pricing";
-import { store } from "@/config/store";
+import { store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
+import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 
 const brands = ["Zion", "SPY", "Eurobike", "Gravity"];
@@ -129,20 +130,15 @@ export default async function HomePage() {
               <div className="muted">Horarios: {store.hours}</div>
             </div>
             <div className="hero-actions">
-              <a href={`https://wa.me/${store.whatsapp}`} className="btn btn-whatsapp" target="_blank" rel="noreferrer">
+              <a href={whatsappUrl()} className="btn btn-whatsapp" target="_blank" rel="noreferrer">
                 <WhatsappIcon size={20} /> Escribinos por WhatsApp
               </a>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.address)}`}
-                className="btn btn-outline"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={directionsUrl} className="btn btn-outline" target="_blank" rel="noreferrer">
                 Cómo llegar
               </a>
             </div>
           </div>
-          <div className="visit-map ph ph-dark"><PinIcon size={40} /><span>Mapa / foto del local</span></div>
+          <StoreMap />
         </div>
       </section>
     </>

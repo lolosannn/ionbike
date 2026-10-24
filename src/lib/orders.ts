@@ -45,7 +45,7 @@ export async function createOrder(input: OrderInput) {
 
     for (const item of input.items) {
       const variant = await tx.variant.findUnique({ where: { id: item.variantId }, include: { product: true } });
-      if (!variant || !variant.product.active) throw new OutOfStockError("un producto que ya no está disponible");
+      if (!variant || !variant.product.active || variant.product.onRequest) throw new OutOfStockError("un producto que ya no está disponible");
 
       const updated = await tx.variant.updateMany({
         where: { id: variant.id, stock: { gte: item.quantity } },
