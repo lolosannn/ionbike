@@ -15,6 +15,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Productos a pedido** (gama alta sin stock): campo `onRequest` del producto. En lugar de comprar, muestran "Contactanos por WhatsApp" con el nombre del modelo ya escrito en el mensaje.
 - **Guía de talles** (`/guia-de-talles`, en el menú principal): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y video explicativo animado (`public/talles/guia-de-talles.mp4`). El video se arma en `video/guia-de-talles/` (HTML animado + `render.mjs`, que lo exporta con Playwright y ffmpeg); el guion para la locución está en `video/guia-de-talles/guion.md`.
 - **Quiénes somos** (`/contacto#quienes-somos`): texto, destacados, video del local y 4 fotos. El texto y la descripción de cada foto se editan en `about`, en `src/config/store.ts`; las fotos van en `public/nosotros/1.jpg` … `4.jpg` y el video en `public/nosotros/local.mp4` (portada opcional `local.jpg`).
+- **Disciplinas del inicio**: Mountain Bike, Dirt Jump, Ruta, Gravel y E-Bike (orden en `disciplineOrder`, `src/lib/catalog.ts`), con foto en `public/disciplinas/<slug>.jpg`.
 - **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
 

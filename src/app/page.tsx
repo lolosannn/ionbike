@@ -16,6 +16,9 @@ const sections = [
   { name: "Indumentaria", slug: "indumentaria", desc: "Ropa y calzado para salir a rodar cómodo.", tone: "tile-accent" },
 ];
 
+// Encuadre de las fotos de disciplinas que no van centradas
+const photoFocus: Record<string, string> = { "e-bike": "center 68%" };
+
 // Foto de la sección "Vení al local": public/local/cliente.jpg (o .png / .webp)
 const riderPhoto = publicImage("local", "cliente");
 
@@ -26,7 +29,9 @@ const aboutPhotos = about.photos
   .slice(0, 3);
 
 export default async function HomePage() {
-  const [disciplines, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
+  const [categories, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
+  // Foto de cada disciplina: public/disciplinas/<slug>.jpg
+  const disciplines = categories.map((c) => ({ ...c, image: publicImage("disciplinas", c.slug) }));
 
   const benefits = [
     { icon: <TruckIcon />, title: "Envío gratis", text: `A todo el país desde ${formatPrice(store.freeShippingFrom)}` },
@@ -88,7 +93,11 @@ export default async function HomePage() {
         <div className="disciplines">
           {disciplines.map((d) => (
             <Link key={d.id} href={`/categoria/${d.slug}`} className="discipline">
-              <div className="ph ph-dark"><BikeIcon size={80} /></div>
+              <div className="discipline-media">
+                {d.image
+                  ? <img src={d.image} alt="" loading="lazy" style={{ objectPosition: photoFocus[d.slug] }} />
+                  : <div className="ph ph-dark"><BikeIcon size={80} /></div>}
+              </div>
               <div className="discipline-body">
                 <div className="discipline-title">
                   <span>{d.name}</span>

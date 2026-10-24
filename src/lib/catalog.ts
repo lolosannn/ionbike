@@ -110,20 +110,16 @@ export async function getCategoryWithProducts(slug: string) {
   return { category, products: products.map(toCard) };
 }
 
+// Disciplinas del inicio ("¿Por dónde vas a rodar?"), en este orden
+const disciplineOrder = ["mtb", "dirt-jump", "ruta", "gravel", "e-bike"];
+
 export async function getDisciplines() {
-  if (isStaticDemo) {
-    return [
-      ...demoCategories.filter((c) => c.parentId === "bicicletas").sort((a, b) => a.sort - b.sort),
-      ...demoCategories.filter((c) => c.slug === "e-bike"),
-    ];
-  }
+  const bySlugOrder = (a: { slug: string }, b: { slug: string }) =>
+    disciplineOrder.indexOf(a.slug) - disciplineOrder.indexOf(b.slug);
+  if (isStaticDemo) return demoCategories.filter((c) => disciplineOrder.includes(c.slug)).sort(bySlugOrder);
   await live();
-  const bikes = await db.category.findUnique({
-    where: { slug: "bicicletas" },
-    include: { children: { orderBy: { sort: "asc" } } },
-  });
-  const ebike = await db.category.findUnique({ where: { slug: "e-bike" } });
-  return [...(bikes?.children ?? []), ...(ebike ? [ebike] : [])];
+  const categories = await db.category.findMany({ where: { slug: { in: disciplineOrder } } });
+  return categories.sort(bySlugOrder);
 }
 
 export async function getProduct(slug: string) {
