@@ -19,7 +19,7 @@ export const store = {
   shippingFlatRate: 15_000_00,
   installments: 12,
   // Video de la guía de talles: ID de YouTube (lo que va después de "v=") o URL de un .mp4.
-  // Vacío muestra un aviso de "video en preparación".
+  // Vacío usa el video propio de public/talles/guia-de-talles.mp4 (o un aviso si no está).
   sizeGuideVideo: "",
   // Datos para transferencia bancaria
   bank: {

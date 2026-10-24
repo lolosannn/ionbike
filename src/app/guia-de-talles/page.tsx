@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { store, whatsappUrl } from "@/config/store";
 import { PlayIcon, WhatsappIcon } from "@/components/icons";
+import { publicFile } from "@/lib/public-files";
 import { SizeFinder } from "./SizeFinder";
 
 export const metadata = {
@@ -8,8 +9,12 @@ export const metadata = {
   description: "Qué talle de bicicleta te corresponde según tu altura: Mountain Bike, ruta, gravel e infantiles.",
 };
 
+// Video propio en public/talles/guia-de-talles.mp4 (con portada .jpg); se genera desde video/guia-de-talles
+const localVideo = publicFile("talles", "guia-de-talles", ["mp4"]);
+const localPoster = publicFile("talles", "guia-de-talles", ["jpg"]) ?? undefined;
+
 function SizeGuideVideo() {
-  const video = store.sizeGuideVideo as string;
+  const video = (store.sizeGuideVideo as string) || localVideo;
   if (!video) {
     return (
       <div className="video-frame ph ph-dark">
@@ -19,7 +24,17 @@ function SizeGuideVideo() {
     );
   }
   if (video.endsWith(".mp4")) {
-    return <video className="video-frame" src={video} controls playsInline preload="metadata" />;
+    return (
+      <video
+        className="video-frame"
+        src={video}
+        poster={video === localVideo ? localPoster : undefined}
+        controls
+        playsInline
+        preload="metadata"
+        aria-label="Cómo medirte y elegir el talle de tu bici"
+      />
+    );
   }
   return (
     <iframe
