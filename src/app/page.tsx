@@ -16,9 +16,6 @@ const sections = [
   { name: "Indumentaria", slug: "indumentaria", desc: "Ropa y calzado para salir a rodar cómodo.", tone: "tile-accent" },
 ];
 
-// Encuadre de las fotos de disciplinas que no van centradas
-const photoFocus: Record<string, string> = { "e-bike": "center 68%" };
-
 // Foto de la sección "Vení al local": public/local/cliente.jpg (o .png / .webp)
 const riderPhoto = publicImage("local", "cliente");
 
@@ -95,7 +92,7 @@ export default async function HomePage() {
             <Link key={d.id} href={`/categoria/${d.slug}`} className="discipline">
               <div className="discipline-media">
                 {d.image
-                  ? <img src={d.image} alt="" loading="lazy" style={{ objectPosition: photoFocus[d.slug] }} />
+                  ? <img src={d.image} alt="" loading="lazy" />
                   : <div className="ph ph-dark"><BikeIcon size={80} /></div>}
               </div>
               <div className="discipline-body">
