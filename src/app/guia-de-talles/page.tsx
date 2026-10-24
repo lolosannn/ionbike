@@ -3,6 +3,7 @@ import { store, whatsappUrl } from "@/config/store";
 import { PlayIcon, WhatsappIcon } from "@/components/icons";
 import { publicFile } from "@/lib/public-files";
 import { SizeFinder } from "./SizeFinder";
+import { SizeGuidePlayer } from "./SizeGuidePlayer";
 
 export const metadata = {
   title: "Guía de talles",
@@ -23,18 +24,9 @@ function SizeGuideVideo() {
       </div>
     );
   }
+  if (video === localVideo) return <SizeGuidePlayer src={video} poster={localPoster} />;
   if (video.endsWith(".mp4")) {
-    return (
-      <video
-        className="video-frame"
-        src={video}
-        poster={video === localVideo ? localPoster : undefined}
-        controls
-        playsInline
-        preload="metadata"
-        aria-label="Cómo medirte y elegir el talle de tu bici"
-      />
-    );
+    return <video className="video-frame" src={video} controls playsInline preload="metadata" />;
   }
   return (
     <iframe
