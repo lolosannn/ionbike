@@ -10,7 +10,7 @@ import { publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 import { sizeTables } from "./guia-de-talles/sizes";
 
-const brands = ["Zion", "SPY", "Eurobike", "Gravity"];
+const brands = ["Zion", "SPY", "Polygon", "Eurobike", "Gravity"];
 
 const sections = [
   { name: "Repuestos", slug: "repuestos", desc: "Transmisión, frenos, cubiertas y todo para que tu bici siga rodando.", tone: "tile-light" },
