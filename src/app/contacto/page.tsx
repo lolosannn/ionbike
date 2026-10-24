@@ -1,6 +1,6 @@
 import { about, store, whatsappUrl } from "@/config/store";
-import { BikeIcon, WhatsappIcon } from "@/components/icons";
-import { publicImage } from "@/lib/public-files";
+import { BikeIcon, PlayIcon, WhatsappIcon } from "@/components/icons";
+import { publicFile, publicImage } from "@/lib/public-files";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 
 export const metadata = {
@@ -8,7 +8,9 @@ export const metadata = {
   description: "Escribinos por WhatsApp o vení al local en Monte Grande. Conocé quiénes somos.",
 };
 
-const photos = about.photoSlots.map((label, i) => ({ label, src: publicImage("nosotros", String(i + 1)) }));
+const photos = about.photos.map((alt, i) => ({ alt, src: publicImage("nosotros", String(i + 1)) }));
+const video = publicFile("nosotros", "local", ["mp4", "webm"]);
+const videoPoster = publicFile("nosotros", "local", ["jpg", "webp"]) ?? undefined;
 
 export default function ContactPage() {
   return (
@@ -48,12 +50,20 @@ export default function ContactPage() {
             ))}
           </ul>
         </div>
+        <div className="about-video">
+          {video ? (
+            <video src={video} poster={videoPoster} controls muted playsInline preload="metadata" aria-label="Recorrida por el local" />
+          ) : (
+            <div className="ph ph-dark"><PlayIcon size={56} /><span>Video del local</span></div>
+          )}
+        </div>
+
         <div className="about-gallery">
-          {photos.map((ph, i) => (
-            <figure key={i} className="about-photo">
+          {photos.map((ph) => (
+            <figure key={ph.alt} className="about-photo">
               {ph.src
-                ? <img src={ph.src} alt={ph.label} loading="lazy" />
-                : <div className="ph ph-dark"><BikeIcon size={48} /><span>{ph.label}</span></div>}
+                ? <img src={ph.src} alt={ph.alt} loading="lazy" />
+                : <div className="ph ph-dark"><BikeIcon size={48} /><span>{ph.alt}</span></div>}
             </figure>
           ))}
         </div>

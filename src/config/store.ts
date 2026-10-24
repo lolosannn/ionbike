@@ -52,8 +52,14 @@ export const about = {
     { title: "Asesoramiento", text: "Te ayudamos con el talle y la bici ideal para vos." },
     { title: "Todo el país", text: "Envíos con Andreani o retiro sin cargo en el local." },
   ],
-  // Fotos: public/nosotros/1.jpg, 2.jpg, ... (o .png / .webp). La 1 es la grande.
-  photoSlots: ["El local", "El taller", "El equipo", "Salidas y clientes", "Bicis en exhibición", "Detalles del taller"],
+  // Video del local: public/nosotros/local.mp4 (con portada opcional local.jpg)
+  // Fotos: public/nosotros/1.jpg, 2.jpg, ... en este orden. El texto describe la foto.
+  photos: [
+    "Bicis, cascos y accesorios en el local",
+    "Asesoramiento personalizado en el local",
+    "Vidriera del local",
+    "Salida grupal con clientes",
+  ],
 };
 
 export const nav = [
