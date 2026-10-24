@@ -6,6 +6,7 @@ import { store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
+import { publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 import { sizeTables } from "./guia-de-talles/sizes";
 
@@ -16,6 +17,9 @@ const sections = [
   { name: "Accesorios", slug: "accesorios", desc: "Cascos, luces, candados, bolsos y más.", tone: "tile-dark" },
   { name: "Indumentaria", slug: "indumentaria", desc: "Ropa y calzado para salir a rodar cómodo.", tone: "tile-accent" },
 ];
+
+// Foto de la sección "Vení al local": public/local/cliente.jpg (o .png / .webp)
+const riderPhoto = publicImage("local", "cliente");
 
 export default async function HomePage() {
   const [disciplines, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
@@ -53,11 +57,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container brands-strip" aria-label="Marcas">
-        <span className="eyebrow brands-title">Marcas que trabajamos</span>
-        <BrandMarquee brands={brands} />
-      </section>
-
       <section className="benefits" aria-label="Beneficios">
         <div className="container">
           {benefits.map((b) => (
@@ -67,6 +66,11 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="container brands-strip" aria-label="Marcas">
+        <span className="eyebrow brands-title">Marcas que trabajamos</span>
+        <BrandMarquee brands={brands} />
       </section>
 
       <section className="section container">
@@ -160,6 +164,13 @@ export default async function HomePage() {
                 Cómo llegar
               </a>
             </div>
+          </div>
+          <div className="visit-photo">
+            {riderPhoto ? (
+              <img src={riderPhoto} alt="Cliente probando una bici en la calle, frente al local" loading="lazy" />
+            ) : (
+              <div className="ph ph-dark"><BikeIcon size={64} /><span>Foto de cliente probando la bici</span></div>
+            )}
           </div>
           <StoreMap />
         </div>
