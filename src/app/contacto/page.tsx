@@ -1,8 +1,14 @@
-import { store, whatsappUrl } from "@/config/store";
-import { WhatsappIcon } from "@/components/icons";
+import { about, store, whatsappUrl } from "@/config/store";
+import { BikeIcon, WhatsappIcon } from "@/components/icons";
+import { publicImage } from "@/lib/public-files";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 
-export const metadata = { title: "Contacto" };
+export const metadata = {
+  title: "Contacto y quiénes somos",
+  description: "Escribinos por WhatsApp o vení al local en Monte Grande. Conocé quiénes somos.",
+};
+
+const photos = about.photoSlots.map((label, i) => ({ label, src: publicImage("nosotros", String(i + 1)) }));
 
 export default function ContactPage() {
   return (
@@ -30,6 +36,28 @@ export default function ContactPage() {
         </div>
         <StoreMap />
       </div>
+
+      <section id="quienes-somos" className="section about">
+        <div className="about-copy">
+          <span className="eyebrow">Quiénes somos</span>
+          <h2 className="display">{about.title}</h2>
+          {about.paragraphs.map((p) => <p key={p}>{p}</p>)}
+          <ul className="about-highlights">
+            {about.highlights.map((h) => (
+              <li key={h.title}><strong>{h.title}</strong><span>{h.text}</span></li>
+            ))}
+          </ul>
+        </div>
+        <div className="about-gallery">
+          {photos.map((ph, i) => (
+            <figure key={i} className="about-photo">
+              {ph.src
+                ? <img src={ph.src} alt={ph.label} loading="lazy" />
+                : <div className="ph ph-dark"><BikeIcon size={48} /><span>{ph.label}</span></div>}
+            </figure>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

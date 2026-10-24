@@ -39,6 +39,23 @@ export function whatsappUrl(text?: string) {
   return `https://wa.me/${store.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }
 
+// Texto de "Quiénes somos" (página de contacto). Cada elemento es un párrafo.
+export const about = {
+  title: "Somos IonBikeStore",
+  paragraphs: [
+    "Somos una bicicletería de Monte Grande. Vendemos bicis de MTB, gravel, ruta, dirt jump y eléctricas, además de repuestos, accesorios e indumentaria.",
+    "Nos gusta asesorar: te ayudamos a elegir la bici y el talle según cómo y por dónde vas a rodar. Y con nuestro taller propio te acompañamos después de la compra, para que tu bici siga rodando como el primer día.",
+    "[HISTORIA DEL LOCAL: desde cuándo están, quiénes lo llevan adelante, qué los diferencia]",
+  ],
+  highlights: [
+    { title: "Taller propio", text: "Service, tubeless, centrado de ruedas, purgado de frenos y lavado." },
+    { title: "Asesoramiento", text: "Te ayudamos con el talle y la bici ideal para vos." },
+    { title: "Todo el país", text: "Envíos con Andreani o retiro sin cargo en el local." },
+  ],
+  // Fotos: public/nosotros/1.jpg, 2.jpg, ... (o .png / .webp). La 1 es la grande.
+  photoSlots: ["El local", "El taller", "El equipo", "Salidas y clientes", "Bicis en exhibición", "Detalles del taller"],
+};
+
 export const nav = [
   { label: "Inicio", href: "/" },
   { label: "Bicicletas", href: "/categoria/bicicletas" },

@@ -14,6 +14,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Pedidos**: el stock se descuenta al confirmar; el webhook de Mercado Pago marca el pedido como pagado.
 - **Productos a pedido** (gama alta sin stock): campo `onRequest` del producto. En lugar de comprar, muestran "Contactanos por WhatsApp" con el nombre del modelo ya escrito en el mensaje.
 - **Guía de talles** (`/guia-de-talles`, en el menú principal): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y lugar para el video explicativo.
+- **Quiénes somos** (`/contacto#quienes-somos`): texto, destacados y galería de 6 fotos. El texto se edita en `about`, en `src/config/store.ts`; las fotos van en `public/nosotros/1.jpg` … `6.jpg` (la 1 es la grande).
 - **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
 
@@ -74,5 +75,6 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Emails de confirmación de pedido.
 - [ ] Logos de las marcas: poner los archivos en `public/marcas/` como `zion.svg`, `spy.png`, etc. (si falta, se muestra el nombre).
 - [ ] Foto de cliente probando la bici para "Vení al local": `public/local/cliente.jpg` (o .png / .webp).
+- [ ] Texto e historia de "Quiénes somos" y sus fotos (`public/nosotros/`).
 - [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
 - [ ] Términos y condiciones, y políticas de cambios y envíos.
