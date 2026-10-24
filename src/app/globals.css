@@ -440,9 +440,9 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .size-band .eyebrow { color: var(--on-accent); }
 .size-band h2 { font-size: clamp(38px, 5vw, 56px); margin-top: 4px; }
 .size-band p { margin: 8px 0 0; font-size: 17px; }
-.size-band-form { display: flex; flex-wrap: wrap; gap: 10px; flex: 1 1 420px; }
-.size-band-form .input { flex: 1 1 160px; width: auto; height: 52px; background: #fff; color: #0b0b0b; border-color: transparent; }
-.size-band-form .btn { flex: 1 1 160px; }
+.size-band-cta { min-height: 72px; padding: 0 44px; font-size: 26px; gap: 14px; }
+.size-band-cta svg { width: 26px; height: 26px; }
+@media (max-width: 600px) { .size-band-cta { width: 100%; } }
 @media (max-width: 600px) { .size-band { padding: 28px 24px; } }
 
 /* Marcas debajo del hero */
