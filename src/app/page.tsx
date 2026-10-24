@@ -91,11 +91,18 @@ export default async function HomePage() {
               <span className="eyebrow">Los que más salen</span>
               <h2 className="display">Más vendidos</h2>
             </div>
-            <Link href="/categoria/bicicletas">Ver todo →</Link>
+            <Link href="/categoria/bicicletas" className="btn btn-primary see-all-btn">Ver todo <ArrowIcon /></Link>
           </div>
           <div className="product-grid">
             {featured.map((p) => <ProductCard key={p.slug} product={p} />)}
           </div>
+          <Link href="/categoria/bicicletas" className="see-all-band">
+            <span>
+              <strong>Esto es solo una parte</strong>
+              <span>Mirá todas las bicis, con filtros por disciplina, rodado, marca y precio.</span>
+            </span>
+            <span className="btn btn-dark">Ver todas las bicis <ArrowIcon /></span>
+          </Link>
         </section>
       )}
 
