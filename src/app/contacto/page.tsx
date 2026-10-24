@@ -1,5 +1,6 @@
 import { about, store, whatsappUrl } from "@/config/store";
-import { BikeIcon, PlayIcon, StarIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
+import Link from "next/link";
+import { ArrowIcon, BikeIcon, ClockIcon, MailIcon, PhoneIcon, PinIcon, PlayIcon, RulerIcon, ShieldIcon, StarIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 import { publicFile, publicImage } from "@/lib/public-files";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
@@ -15,6 +16,13 @@ const highlightIcons: Record<string, React.ReactNode> = {
   envios: <TruckIcon size={28} />,
 };
 
+const contactCards = [
+  { icon: <PhoneIcon />, label: "Teléfono", value: store.phone, action: "Llamanos", href: `tel:${store.phone.replace(/[^+\d]/g, "")}` },
+  { icon: <MailIcon size={24} />, label: "Email", value: store.email, action: "Escribinos", href: `mailto:${store.email}` },
+  { icon: <PinIcon />, label: "Dirección", value: store.address, action: "Cómo llegar", href: directionsUrl, external: true },
+  { icon: <ClockIcon size={24} />, label: "Horarios", value: store.hours, action: "Consultá por feriados", href: whatsappUrl("Hola! ¿Abren en el feriado?"), external: true },
+];
+
 const photos = about.photos.map((alt, i) => ({ alt, src: publicImage("nosotros", String(i + 1)) }));
 const video = publicFile("nosotros", "local", ["mp4", "webm"]);
 const videoPoster = publicFile("nosotros", "local", ["jpg", "webp"]) ?? undefined;
@@ -22,28 +30,47 @@ const videoPoster = publicFile("nosotros", "local", ["jpg", "webp"]) ?? undefine
 export default function ContactPage() {
   return (
     <div className="container">
-      <div className="page-head">
+      <div className="page-head contact-head">
+        <span className="eyebrow">Estamos para ayudarte</span>
         <h1 className="display">Contacto</h1>
-        <p className="muted" style={{ maxWidth: 560 }}>
-          ¿Dudas con el talle, el envío o el pago? Escribinos y te respondemos a la brevedad.
-        </p>
+        <p>¿Dudas con el talle, el envío, el pago o el taller? Escribinos y te asesoramos para que elijas bien.</p>
       </div>
-      <div className="visit" style={{ marginTop: 28 }}>
-        <div className="visit-copy">
-          <a className="btn btn-whatsapp" href={whatsappUrl()} target="_blank" rel="noreferrer" style={{ alignSelf: "flex-start" }}>
-            <WhatsappIcon size={20} /> Escribinos por WhatsApp
+
+      <a className="contact-wa" href={whatsappUrl("Hola! Tengo una consulta")} target="_blank" rel="noreferrer">
+        <span className="contact-wa-icon"><WhatsappIcon size={40} /></span>
+        <span className="contact-wa-text">
+          <strong>Escribinos por WhatsApp</strong>
+          <span>Es la forma más rápida: consultas, stock, talles y turnos del taller.</span>
+        </span>
+        <span className="contact-wa-cta">{store.phone} <ArrowIcon /></span>
+      </a>
+
+      <div className="contact-cards">
+        {contactCards.map((c) => (
+          <a key={c.label} className="contact-card" href={c.href} {...(c.external ? { target: "_blank", rel: "noreferrer" } : {})}>
+            <span className="contact-card-icon">{c.icon}</span>
+            <span className="contact-card-label">{c.label}</span>
+            <strong>{c.value}</strong>
+            <span className="contact-card-action">{c.action} <ArrowIcon size={16} /></span>
           </a>
-          <div>
-            <div><a href={`tel:${store.phone.replace(/[^+\d]/g, "")}`}>{store.phone}</a></div>
-            <div><a href={`mailto:${store.email}`}>{store.email}</a></div>
-          </div>
-          <div>
-            <div>{store.address}</div>
-            <div className="muted">Horarios: {store.hours}</div>
-            <a href={directionsUrl} target="_blank" rel="noreferrer">Cómo llegar →</a>
-          </div>
-        </div>
+        ))}
+      </div>
+
+      <div className="contact-map">
         <StoreMap />
+        <div className="contact-map-card">
+          <PinIcon size={22} />
+          <span>
+            <strong>{store.address}</strong>
+            <span>Retirá tu compra sin cargo o vení a probar la bici.</span>
+          </span>
+        </div>
+      </div>
+
+      <div className="contact-quick">
+        <Link href="/taller" className="contact-quick-link"><WrenchIcon size={22} /> Sacá turno en el taller <ArrowIcon size={16} /></Link>
+        <Link href="/guia-de-talles" className="contact-quick-link"><RulerIcon size={22} /> ¿Qué talle me va? <ArrowIcon size={16} /></Link>
+        <Link href="/arrepentimiento" className="contact-quick-link"><ShieldIcon size={22} /> Botón de arrepentimiento <ArrowIcon size={16} /></Link>
       </div>
 
       <section id="quienes-somos" className="section about">

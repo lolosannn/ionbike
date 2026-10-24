@@ -682,3 +682,52 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .booking-done h2 { font-size: clamp(40px, 6vw, 56px); }
 .booking-done p { margin: 0; }
 .booking-done-when { font-family: var(--font-display); font-weight: 800; font-size: 26px; text-transform: uppercase; color: var(--accent); }
+
+/* Contacto */
+.contact-head p { margin: 14px 0 0; max-width: 620px; font-size: 19px; color: var(--text-2); }
+.contact-wa {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 36px; padding: 28px 32px; border-radius: var(--radius);
+  background: linear-gradient(120deg, #1da851, #128c3e); color: #fff; text-decoration: none; transition: transform 0.2s, filter 0.2s;
+}
+.contact-wa:hover { color: #fff; filter: brightness(1.06); transform: translateY(-2px); }
+.contact-wa-icon { flex: none; width: 72px; height: 72px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); display: flex; align-items: center; justify-content: center; }
+.contact-wa-text { flex: 1 1 280px; display: flex; flex-direction: column; gap: 4px; font-size: 16px; }
+.contact-wa-text strong { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: clamp(30px, 4vw, 42px); line-height: 1; text-transform: uppercase; }
+.contact-wa-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px; background: #fff; color: #128c3e; font-weight: 700; font-size: 17px; white-space: nowrap; }
+.contact-wa:hover .contact-wa-cta svg { transform: translateX(4px); }
+.contact-wa-cta svg { transition: transform 0.2s; }
+.contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 14px; margin-top: 14px; }
+.contact-card {
+  display: flex; flex-direction: column; gap: 8px; padding: 24px; border-radius: var(--radius); background: var(--surface);
+  border: 1px solid var(--border); color: var(--text); text-decoration: none; transition: border-color 0.2s, transform 0.2s;
+}
+.contact-card:hover { border-color: var(--accent); color: var(--text); transform: translateY(-2px); }
+.contact-card-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.contact-card-label { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.contact-card strong { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.15; overflow-wrap: anywhere; }
+.contact-card-action { margin-top: auto; padding-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: var(--accent); }
+.contact-map { position: relative; margin-top: 14px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+.contact-map .store-map { height: 380px; min-height: 0; }
+.contact-map-card {
+  position: absolute; left: 20px; bottom: 20px; max-width: calc(100% - 40px); display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-radius: 16px; background: rgba(11, 11, 11, 0.88); border: 1px solid var(--border-strong); backdrop-filter: blur(6px);
+}
+.contact-map-card svg { flex: none; color: var(--accent); }
+.contact-map-card > span { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--text-2); }
+.contact-map-card strong { font-family: var(--font-display); font-weight: 800; font-size: 20px; text-transform: uppercase; color: var(--text); }
+.contact-quick { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.contact-quick-link {
+  flex: 1 1 240px; display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-radius: 16px;
+  border: 1px solid var(--border-strong); color: var(--text); text-decoration: none; font-weight: 700;
+}
+.contact-quick-link svg:first-child { color: var(--accent); }
+.contact-quick-link svg:last-child { margin-left: auto; color: var(--muted); transition: transform 0.2s; }
+.contact-quick-link:hover { border-color: var(--accent); color: var(--text); }
+.contact-quick-link:hover svg:last-child { transform: translateX(4px); color: var(--accent); }
+@media (max-width: 600px) { .contact-wa { padding: 24px; } .contact-wa-cta { width: 100%; justify-content: center; } }
+@media (max-width: 600px) {
+  .contact-card { display: grid; grid-template-columns: auto 1fr; column-gap: 16px; row-gap: 2px; padding: 18px; align-items: center; }
+  .contact-card-icon { grid-row: span 3; margin-bottom: 0; }
+  .contact-card strong { font-size: 21px; }
+  .contact-card-action { padding-top: 4px; }
+}
