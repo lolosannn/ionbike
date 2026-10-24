@@ -118,7 +118,8 @@ export function runBikeLoader(root: HTMLElement, opts: LoaderOptions) {
     if (finishing && dash >= 1) {
       stopped = true;
       root.classList.add("is-done");
-      setTimeout(() => root.remove(), 400);
+      // Se oculta en vez de borrarse: React todavía tiene que encontrar este nodo al hidratar
+      setTimeout(() => { root.style.display = "none"; }, 400);
       return;
     }
     frame = requestAnimationFrame(tick);
@@ -132,7 +133,7 @@ export function runBikeLoader(root: HTMLElement, opts: LoaderOptions) {
       if (!root.classList.contains("is-visible")) {
         stopped = true;
         clearTimeout(show);
-        root.remove();
+        root.style.display = "none";
       } else if (!finishing) {
         finishing = performance.now();
       }

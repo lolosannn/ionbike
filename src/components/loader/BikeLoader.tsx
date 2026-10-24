@@ -7,8 +7,9 @@ import { bikeLoaderHtml, runBikeLoader } from "./bike-loader";
 export function SplashLoader() {
   return (
     <>
-      <div id="bike-splash" className="bike-loader bike-splash" aria-hidden="true" dangerouslySetInnerHTML={{ __html: bikeLoaderHtml }} />
+      <div id="bike-splash" className="bike-loader bike-splash" aria-hidden="true" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: bikeLoaderHtml }} />
       <script
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{
           __html: `(${runBikeLoader.toString()})(document.getElementById("bike-splash"),{splash:true});`,
         }}

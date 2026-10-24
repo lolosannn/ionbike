@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { ProductCardData } from "@/lib/catalog";
 import { hasFreeShipping } from "@/lib/pricing";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -13,6 +14,16 @@ type Props = {
   // Subcategorías para las pastillas (vacío si la categoría no tiene hijas)
   subcategories: { slug: string; name: string }[];
 };
+
+/** Disciplina elegida desde el inicio: /categoria/bicicletas?disciplina=mtb */
+function DisciplineFromUrl({ slugs, onChange }: { slugs: string; onChange: (slug: string) => void }) {
+  const disciplina = useSearchParams().get("disciplina");
+  // Solo cuando cambia la dirección (no en cada render, para no pisar lo que elige el cliente)
+  useEffect(() => {
+    if (disciplina && slugs.split(",").includes(disciplina)) onChange(disciplina);
+  }, [disciplina, slugs, onChange]);
+  return null;
+}
 
 function toggle(list: string[], value: string) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -28,6 +39,15 @@ export function ProductListing({ products, subcategories }: Props) {
   const [freeOnly, setFreeOnly] = useState(false);
   const [sort, setSort] = useState<Sort>("sales");
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Mantiene la disciplina en la dirección, para volver atrás o compartir el link
+  const chooseSub = (slug: string | null) => {
+    setSub(slug);
+    const url = new URL(window.location.href);
+    if (slug) url.searchParams.set("disciplina", slug);
+    else url.searchParams.delete("disciplina");
+    window.history.replaceState(window.history.state, "", url);
+  };
 
   const options = useMemo(() => {
     const sizeSet = new Set<string>();
@@ -72,11 +92,15 @@ export function ProductListing({ products, subcategories }: Props) {
 
   return (
     <>
+      {/* Suspense: en la vista previa estática, solo esta parte espera a leer la dirección */}
+      <Suspense fallback={null}>
+        <DisciplineFromUrl slugs={subcategories.map((c) => c.slug).join(",")} onChange={setSub} />
+      </Suspense>
       {subcategories.length > 0 && (
         <div className="pills" role="group" aria-label="Disciplina">
-          <button type="button" className="pill" aria-pressed={sub === null} onClick={() => setSub(null)}>Todas</button>
+          <button type="button" className="pill" aria-pressed={sub === null} onClick={() => chooseSub(null)}>Todas</button>
           {subcategories.map((c) => (
-            <button key={c.slug} type="button" className="pill" aria-pressed={sub === c.slug} onClick={() => setSub(c.slug)}>
+            <button key={c.slug} type="button" className="pill" aria-pressed={sub === c.slug} onClick={() => chooseSub(c.slug)}>
               {c.name}
             </button>
           ))}
@@ -158,7 +182,7 @@ export function ProductListing({ products, subcategories }: Props) {
 
         <div className="listing-main">
           <div className="listing-bar">
-            <span className="muted" aria-live="polite">{filtered.length} productos</span>
+            <span className="muted" aria-live="polite">{filtered.length} {filtered.length === 1 ? "producto" : "productos"}</span>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <label htmlFor="orden" className="muted" style={{ fontSize: 14 }}>Ordenar por</label>
               <select id="orden" className="input" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>

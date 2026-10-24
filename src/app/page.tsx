@@ -28,7 +28,12 @@ const aboutPhotos = about.photos
 export default async function HomePage() {
   const [categories, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
   // Foto de cada disciplina: public/disciplinas/<slug>.jpg
-  const disciplines = categories.map((c) => ({ ...c, image: publicImage("disciplinas", c.slug) }));
+  // Las subcategorías llevan al listado de la categoría madre con esa disciplina ya filtrada
+  const disciplines = categories.map((c) => ({
+    ...c,
+    image: publicImage("disciplinas", c.slug),
+    href: c.parent ? `/categoria/${c.parent.slug}?disciplina=${c.slug}` : `/categoria/${c.slug}`,
+  }));
 
   const benefits = [
     { icon: <TruckIcon />, title: "Envío gratis", text: `A todo el país desde ${formatPrice(store.freeShippingFrom)}` },
@@ -104,7 +109,7 @@ export default async function HomePage() {
         </div>
         <div className="disciplines">
           {disciplines.map((d) => (
-            <Link key={d.id} href={`/categoria/${d.slug}`} className="discipline">
+            <Link key={d.id} href={d.href} className="discipline">
               <div className="discipline-media">
                 {d.image
                   ? <img src={d.image} alt="" loading="lazy" />

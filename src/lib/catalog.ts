@@ -116,9 +116,14 @@ const disciplineOrder = ["mtb", "dirt-jump", "ruta", "gravel", "e-bike"];
 export async function getDisciplines() {
   const bySlugOrder = (a: { slug: string }, b: { slug: string }) =>
     disciplineOrder.indexOf(a.slug) - disciplineOrder.indexOf(b.slug);
-  if (isStaticDemo) return demoCategories.filter((c) => disciplineOrder.includes(c.slug)).sort(bySlugOrder);
+  if (isStaticDemo) {
+    return demoCategories
+      .filter((c) => disciplineOrder.includes(c.slug))
+      .map((c) => ({ ...c, parent: demoCategories.find((p) => p.id === c.parentId) ?? null }))
+      .sort(bySlugOrder);
+  }
   await live();
-  const categories = await db.category.findMany({ where: { slug: { in: disciplineOrder } } });
+  const categories = await db.category.findMany({ where: { slug: { in: disciplineOrder } }, include: { parent: true } });
   return categories.sort(bySlugOrder);
 }
 
