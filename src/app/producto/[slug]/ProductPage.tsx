@@ -139,24 +139,15 @@ export default async function ProductPage({ params }: Props) {
           )}
 
         </div>
-      </div>
 
-      {(product.description || specs.length > 0) && (
-        <section className="section" style={{ display: "flex", flexWrap: "wrap", gap: 48 }}>
-          {product.description && (
-            <div style={{ flex: "1 1 420px" }}>
-              <h2 className="display" style={{ fontSize: 40, marginBottom: 16 }}>Descripción</h2>
-              <p className="pdp-desc">{product.description}</p>
-            </div>
-          )}
-          {specs.length > 0 && (
-            <div style={{ flex: "1 1 420px", minWidth: 0 }}>
-              <h2 className="display" style={{ fontSize: 40, marginBottom: 16 }}>Especificaciones</h2>
-              <SpecsAccordion specs={specs} />
-            </div>
-          )}
-        </section>
-      )}
+        {(isBike || specs.length > 0) && (
+          <section className="pdp-specs" aria-labelledby="especificaciones">
+            <h2 id="especificaciones" className="display">Especificaciones</h2>
+            {/* En las bicis se muestran todas las partes, aunque falte cargar el dato */}
+            <SpecsAccordion specs={specs} allParts={isBike} />
+          </section>
+        )}
+      </div>
 
       {related.length > 0 && (
         <section className="section">

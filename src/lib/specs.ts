@@ -30,17 +30,19 @@ const normalize = (s: string) => s.trim().toLowerCase();
 /**
  * Agrupa las specs por parte, en el orden de bikeParts. Si una parte tiene varias specs
  * (por ejemplo "Rodado" y "Ruedas"), se muestran juntas. Lo que no reconoce va a "Otros".
+ * Con allParts, las partes sin dato aparecen igual, vacías.
  */
-export function groupSpecs(specs: Spec[]) {
+export function groupSpecs(specs: Spec[], { allParts = false } = {}) {
   const groups = new Map<BikePartKey, Spec[]>();
   for (const spec of specs) {
     const part = bikeParts.find((p) => (p.aliases as readonly string[]).includes(normalize(spec.label)));
     const key: BikePartKey = part?.key ?? "otros";
     groups.set(key, [...(groups.get(key) ?? []), spec]);
   }
+  // allParts: muestra todas las partes, aunque no tengan dato cargado (quedan vacías)
   const ordered = bikeParts
-    .filter((p) => groups.has(p.key))
-    .map((p) => ({ key: p.key as BikePartKey, label: p.label as string, specs: groups.get(p.key)! }));
+    .filter((p) => allParts || groups.has(p.key))
+    .map((p) => ({ key: p.key as BikePartKey, label: p.label as string, specs: groups.get(p.key) ?? [] }));
   if (groups.has("otros")) ordered.push({ key: "otros", label: "Otros datos", specs: groups.get("otros")! });
   return ordered;
 }
