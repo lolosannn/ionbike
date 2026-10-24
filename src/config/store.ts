@@ -51,9 +51,10 @@ export const about = {
     "[HISTORIA DEL LOCAL: desde cuándo están, quiénes lo llevan adelante, qué los diferencia]",
   ],
   highlights: [
-    { title: "Taller propio", text: "Service, tubeless, centrado de ruedas, purgado de frenos y lavado." },
-    { title: "Asesoramiento", text: "Te ayudamos con el talle y la bici ideal para vos." },
-    { title: "Todo el país", text: "Envíos con Andreani o retiro sin cargo en el local." },
+    // icon: "taller" (llave), "asesoramiento" (estrella) o "envios" (camión)
+    { icon: "taller", title: "Taller propio", text: "Service, tubeless, centrado de ruedas, purgado de frenos y lavado." },
+    { icon: "asesoramiento", title: "Asesoramiento", text: "Te ayudamos con el talle y la bici ideal para vos." },
+    { icon: "envios", title: "Todo el país", text: "Envíos con Andreani o retiro sin cargo en el local." },
   ],
   // Video del local: public/nosotros/local.mp4 (con portada opcional local.jpg)
   // Fotos: public/nosotros/1.jpg, 2.jpg, ... en este orden. El texto describe la foto.

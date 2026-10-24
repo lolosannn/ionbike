@@ -1,5 +1,5 @@
 import { about, store, whatsappUrl } from "@/config/store";
-import { BikeIcon, PlayIcon, WhatsappIcon } from "@/components/icons";
+import { BikeIcon, PlayIcon, StarIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 import { publicFile, publicImage } from "@/lib/public-files";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
@@ -7,6 +7,12 @@ import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 export const metadata = {
   title: "Contacto y quiénes somos",
   description: "Escribinos por WhatsApp o vení al local en Monte Grande. Conocé quiénes somos.",
+};
+
+const highlightIcons: Record<string, React.ReactNode> = {
+  taller: <WrenchIcon size={26} />,
+  asesoramiento: <StarIcon size={26} />,
+  envios: <TruckIcon size={28} />,
 };
 
 const photos = about.photos.map((alt, i) => ({ alt, src: publicImage("nosotros", String(i + 1)) }));
@@ -47,7 +53,10 @@ export default function ContactPage() {
           {about.paragraphs.map((p) => <p key={p}>{p}</p>)}
           <ul className="about-highlights">
             {about.highlights.map((h) => (
-              <li key={h.title}><strong>{h.title}</strong><span>{h.text}</span></li>
+              <li key={h.title}>
+                <span className="about-highlight-icon">{highlightIcons[h.icon]}</span>
+                <span><strong>{h.title}</strong><span>{h.text}</span></span>
+              </li>
             ))}
           </ul>
         </div>

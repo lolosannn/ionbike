@@ -19,11 +19,10 @@ const sections = [
 // Foto de la sección "Vení al local": public/local/cliente.jpg (o .png / .webp)
 const riderPhoto = publicImage("local", "cliente");
 
-// Adelanto de "Quiénes somos": las primeras fotos de public/nosotros/
-const aboutPhotos = about.photos
-  .map((alt, i) => ({ alt, src: publicImage("nosotros", String(i + 1)) }))
-  .filter((p) => p.src)
-  .slice(0, 3);
+// Adelanto de "Quiénes somos": local, asesoramiento y la salida grupal (fotos 1, 2 y 4)
+const aboutPhotos = [1, 2, 4]
+  .map((n) => ({ alt: about.photos[n - 1], src: publicImage("nosotros", String(n)) }))
+  .filter((p) => p.src);
 
 export default async function HomePage() {
   const [categories, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);

@@ -64,7 +64,7 @@ export default function SizeGuidePage() {
 
       <section className="section">
         <div className="tiles">
-          <div className="tile tile-dark">
+          <div className="tile tile-light">
             <strong>Medí tu altura</strong>
             <p>Descalzo, de espaldas a la pared. Es el dato principal para elegir el talle.</p>
           </div>
