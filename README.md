@@ -6,7 +6,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 
 ## Qué incluye
 
-- **Inicio**: banner de oferta, beneficios, cinta animada de marcas, más vendidos, disciplinas, bloque "¿Cuál es tu talle?" que lleva a la guía, secciones, local (foto de cliente + mapa) y adelanto de "Quiénes somos" que lleva a contacto.
+- **Inicio**: carrusel de banners (pasa solo, con flechas y puntos; se configura en `banners`, en `store.ts`, con las imágenes en `public/banners/`), beneficios, cinta animada de marcas, más vendidos, disciplinas, bloque "¿Cuál es tu talle?" que lleva a la guía, secciones, local (foto de cliente + mapa) y adelanto de "Quiénes somos" que lleva a contacto.
 - **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
 - **Ficha de producto** (`/producto/[slug]`): galería, precio en efectivo/transferencia y de lista, tabla de **financiación** (planes en `financing`, en `store.ts`: cuotas y recargo), beneficios, envío, selección de color y rodado con stock por variante, botón de asesoramiento por WhatsApp y **especificaciones desplegables** por parte de la bici, con ícono y en orden de importancia (`src/lib/specs.ts`: partes, orden y nombres alternativos).
 - **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.

@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { getDisciplines, getFeaturedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/pricing";
-import { about, store, whatsappUrl } from "@/config/store";
+import { about, banners, store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
-import { publicImage } from "@/lib/public-files";
+import { HeroCarousel } from "@/components/layout/HeroCarousel";
+import { publicFile, publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 
 const brands = ["Zion", "SPY", "Polygon", "Eurobike", "Gravity"];
@@ -23,6 +24,15 @@ const riderPhoto = publicImage("local", "cliente");
 const aboutPhotos = [1, 2, 4]
   .map((n) => ({ alt: about.photos[n - 1], src: publicImage("nosotros", String(n)) }))
   .filter((p) => p.src);
+
+// Banners del carrusel (los que no tienen archivo en public/banners/ se saltean)
+const slides = banners.flatMap((b) => {
+  const [name, ext] = [b.file.replace(/\.[^.]+$/, ""), b.file.split(".").pop()!];
+  const src = publicFile("banners", name, [ext]);
+  if (!src) return [];
+  const mobile = b.mobile ? publicFile("banners", b.mobile.replace(/\.[^.]+$/, ""), [b.mobile.split(".").pop()!]) : null;
+  return [{ src, mobileSrc: mobile, alt: b.alt, href: b.href }];
+});
 
 export default async function HomePage() {
   const [categories, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
@@ -43,29 +53,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="hero">
-        <div className="hero-slab" aria-hidden="true" />
-        <div className="container">
-          <div className="hero-copy">
-            <span className="hero-kicker">OFERTA ESPECIAL</span>
-            <h1 className="display">2 bicis.<br /><span>1 oportunidad.</span></h1>
-            <p>
-              Eurobike Dallas y Gravity Benz con <strong>20% de descuento</strong>. Envío gratis a todo el país o retiro en el local.
-            </p>
-            <div className="hero-actions">
-              <Link href="/categoria/bicicletas" className="btn btn-primary">Ver ofertas <ArrowIcon /></Link>
-              <Link href="/categoria/bicicletas" className="btn btn-outline">Todas las bicis</Link>
-            </div>
-          </div>
-          <div className="hero-media">
-            <div className="ph ph-dark">
-              <BikeIcon size={96} />
-              <span>Foto del banner</span>
-            </div>
-            <div className="hero-badge"><strong>20%</strong><span>OFF</span></div>
-          </div>
-        </div>
-      </section>
+      <HeroCarousel slides={slides} />
 
       <section className="benefits" aria-label="Beneficios">
         <div className="container">

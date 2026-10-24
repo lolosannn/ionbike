@@ -74,6 +74,16 @@ export const about = {
   ],
 };
 
+// Carrusel del inicio, en este orden. file: imagen en public/banners/ (unos 1775 x 558 px).
+// Opcionales: mobile (imagen para celular, más alta, en la misma carpeta) y href (adónde lleva al tocarla).
+export const banners: { file: string; alt: string; mobile?: string; href?: string }[] = [
+  {
+    file: "oferta-dallas-benz.webp",
+    alt: "Oferta especial: Eurobike Dallas y Gravity Benz con 20% de descuento",
+    href: "/categoria/bicicletas",
+  },
+];
+
 export const nav = [
   { label: "Inicio", href: "/" },
   { label: "Bicicletas", href: "/categoria/bicicletas" },
