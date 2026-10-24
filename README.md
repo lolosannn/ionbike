@@ -6,7 +6,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 
 ## Qué incluye
 
-- **Inicio**: banner de oferta, beneficios, cinta animada de marcas, disciplinas, buscador de talle (lleva a la guía con el resultado), más vendidos, secciones y local (foto de cliente + mapa).
+- **Inicio**: banner de oferta, beneficios, cinta animada de marcas, disciplinas, buscador de talle (lleva a la guía con el resultado), más vendidos, secciones, local (foto de cliente + mapa) y adelanto de "Quiénes somos" que lleva a contacto.
 - **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
 - **Ficha de producto** (`/producto/[slug]`): galería, selección de color y rodado con stock por variante, precios con tarjeta, transferencia y cuotas.
 - **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
@@ -74,7 +74,7 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
 - [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
 - [ ] Emails de confirmación de pedido.
-- [ ] Logos de las marcas: poner los archivos en `public/marcas/` como `zion.svg`, `spy.png`, etc. (si falta, se muestra el nombre).
+- [ ] Logos de Eurobike y Gravity (Zion, SPY y Polygon ya están): poner los archivos en `public/marcas/` como `zion.svg`, `spy.png`, etc. (si falta, se muestra el nombre).
 - [ ] Foto de cliente probando la bici para "Vení al local": `public/local/cliente.jpg` (o .png / .webp).
 - [ ] Historia del local para "Quiénes somos" y video del local.
 - [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
