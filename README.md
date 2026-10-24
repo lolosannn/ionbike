@@ -76,7 +76,7 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Página de Taller con pedido de turnos (service general y full, tubelizado, líquido tubeless, centrado, lavado, purgado de frenos).
 - [ ] Inicio con más impacto: carrusel de promociones y destacados.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
-- [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
+- [ ] Importar el catálogo real desde Tiendanube (exportación CSV) y borrar el de muestra (`src/data/catalog.ts`) con sus ilustraciones (`public/demo/`).
 - [ ] Emails de confirmación de pedido.
 - [ ] Historia del local para "Quiénes somos" y video del local.
 - [ ] Link de reseñas de Google del local (`googleReviewsUrl` en `store.ts`), horarios y redes sociales.

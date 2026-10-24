@@ -1,6 +1,8 @@
 // Catálogo de ejemplo: lo usan el seed de la base de datos y la vista previa estática.
 // Los precios son los publicados en la web actual; colores, stock y especificaciones
 // son de muestra hasta importar el catálogo real.
+// Las imágenes son ilustraciones de muestra (public/demo/bicis/), una por color: se borran
+// junto con este catálogo cuando se cargue el stock oficial.
 
 export type CategoryData = { slug: string; name: string; sort: number; description: string; parent?: string };
 
@@ -105,5 +107,9 @@ export const products: ProductData[] = [
     description: "[EJEMPLO DE PRODUCTO DE GAMA ALTA A PEDIDO]", images: [],
   },
 ];
+
+/** Ilustraciones de muestra: una por color (public/demo/bicis/<slug>-<color>.svg). */
+export const demoImages = (p: Pick<ProductData, "slug" | "colors">) =>
+  p.colors.map((c) => `/demo/bicis/${p.slug}-${c.toLowerCase()}.svg`);
 
 export const skuFor = (slug: string, color: string, size: string) => `${slug}-${color}-${size}`.toLowerCase();

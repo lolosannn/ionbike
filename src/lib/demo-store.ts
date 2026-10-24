@@ -1,7 +1,10 @@
 // Catálogo en memoria con la misma forma que devuelve Prisma.
 // Se usa en la vista previa estática (GitHub Pages), donde no hay base de datos.
 import type { Brand, Category, Product, Variant } from "@prisma/client";
-import { brands as brandNames, categories as categoryData, palette, products as productData, skuFor } from "@/data/catalog";
+import { brands as brandNames, categories as categoryData, demoImages, palette, products as productData, skuFor } from "@/data/catalog";
+
+// En GitHub Pages el sitio vive en /ionbike
+const basePath = process.env.PAGES_BASE_PATH ?? "";
 
 const createdAt = new Date("2026-01-01T00:00:00Z");
 
@@ -24,7 +27,7 @@ export const demoProducts: (Product & { variants: Variant[] })[] = productData.m
   price: p.price,
   compareAt: p.compareAt ?? null,
   specs: p.specs,
-  images: p.images,
+  images: (p.images.length ? p.images : demoImages(p)).map((src) => basePath + src),
   active: true,
   featured: p.featured,
   onRequest: p.onRequest ?? false,

@@ -1,6 +1,6 @@
 // Carga el catálogo de ejemplo de src/data/catalog.ts en la base de datos.
 import { PrismaClient } from "@prisma/client";
-import { brands, categories, palette, products, skuFor } from "../src/data/catalog";
+import { brands, categories, demoImages, palette, products, skuFor } from "../src/data/catalog";
 
 const db = new PrismaClient();
 
@@ -24,7 +24,7 @@ async function main() {
       price: p.price,
       compareAt: p.compareAt ?? null,
       specs: p.specs,
-      images: p.images,
+      images: p.images.length ? p.images : demoImages(p),
       featured: p.featured,
       onRequest: p.onRequest ?? false,
       salesCount: p.salesCount,
