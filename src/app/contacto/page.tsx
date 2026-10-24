@@ -1,6 +1,7 @@
 import { about, store, whatsappUrl } from "@/config/store";
 import { BikeIcon, PlayIcon, WhatsappIcon } from "@/components/icons";
 import { publicFile, publicImage } from "@/lib/public-files";
+import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 
 export const metadata = {
@@ -52,7 +53,7 @@ export default function ContactPage() {
         </div>
         <div className="about-video">
           {video ? (
-            <video src={video} poster={videoPoster} controls muted playsInline preload="metadata" aria-label="Recorrida por el local" />
+            <AutoplayVideo src={video} poster={videoPoster} controls aria-label="Recorrida por el local" />
           ) : (
             <div className="ph ph-dark"><PlayIcon size={56} /><span>Video del local</span></div>
           )}
