@@ -73,7 +73,6 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
 - [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
 - [ ] Emails de confirmación de pedido.
-- [ ] Logos de Eurobike y Gravity (Zion, SPY y Polygon ya están): poner los archivos en `public/marcas/` como `zion.svg`, `spy.png`, etc. (si falta, se muestra el nombre).
 - [ ] Foto de cliente probando la bici para "Vení al local": `public/local/cliente.jpg` (o .png / .webp).
 - [ ] Historia del local para "Quiénes somos" y video del local.
 - [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
