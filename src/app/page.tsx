@@ -5,6 +5,7 @@ import { formatPrice } from "@/lib/pricing";
 import { store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
+import { BrandMarquee } from "@/components/layout/BrandMarquee";
 import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 import { sizeTables } from "./guia-de-talles/sizes";
 
@@ -64,28 +65,6 @@ export default async function HomePage() {
       </section>
 
       <section className="section container">
-        <div className="size-band">
-          <div className="size-band-copy">
-            <span className="size-band-icon"><RulerIcon size={28} /></span>
-            <div>
-              <span className="eyebrow">Guía de talles</span>
-              <h2 className="display">¿Qué talle es el tuyo?</h2>
-              <p>Poné tu altura y te decimos qué cuadro te va. Con tabla y video explicativo.</p>
-            </div>
-          </div>
-          <Form action="/guia-de-talles" className="size-band-form">
-            <label className="sr-only" htmlFor="tipo-home">Tipo de bici</label>
-            <select id="tipo-home" name="tipo" className="input" defaultValue="mtb">
-              {sizeTables.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-            </select>
-            <label className="sr-only" htmlFor="altura-home">Tu altura</label>
-            <input id="altura-home" name="altura" className="input" inputMode="decimal" placeholder="Tu altura, ej: 1,75" />
-            <button type="submit" className="btn btn-dark">Ver mi talle <ArrowIcon /></button>
-          </Form>
-        </div>
-      </section>
-
-      <section className="section container">
         <div className="section-head">
           <div>
             <span className="eyebrow">Elegí tu disciplina</span>
@@ -106,6 +85,28 @@ export default async function HomePage() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="size-band">
+          <div className="size-band-copy">
+            <span className="size-band-icon"><RulerIcon size={28} /></span>
+            <div>
+              <span className="eyebrow">Guía de talles</span>
+              <h2 className="display">¿Qué talle es el tuyo?</h2>
+              <p>Poné tu altura y te decimos qué cuadro te va. Con tabla y video explicativo.</p>
+            </div>
+          </div>
+          <Form action="/guia-de-talles" className="size-band-form">
+            <label className="sr-only" htmlFor="tipo-home">Tipo de bici</label>
+            <select id="tipo-home" name="tipo" className="input" defaultValue="mtb">
+              {sizeTables.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+            </select>
+            <label className="sr-only" htmlFor="altura-home">Tu altura</label>
+            <input id="altura-home" name="altura" className="input" inputMode="decimal" placeholder="Tu altura, ej: 1,75" />
+            <button type="submit" className="btn btn-dark">Ver mi talle <ArrowIcon /></button>
+          </Form>
         </div>
       </section>
 
@@ -138,9 +139,7 @@ export default async function HomePage() {
 
       <section className="section container" aria-label="Marcas">
         <span className="eyebrow brands-title">Marcas que trabajamos</span>
-        <div className="brands">
-          {brands.map((b) => <span key={b} className="brand-chip">{b}</span>)}
-        </div>
+        <BrandMarquee brands={brands} />
       </section>
 
       <section className="section container">

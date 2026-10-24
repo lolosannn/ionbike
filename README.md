@@ -6,7 +6,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 
 ## Qué incluye
 
-- **Inicio**: banner de oferta, beneficios, buscador de talle (lleva a la guía con el resultado), disciplinas, más vendidos, secciones, marcas y local.
+- **Inicio**: banner de oferta, beneficios, disciplinas, buscador de talle (lleva a la guía con el resultado), más vendidos, secciones, cinta animada de marcas y local.
 - **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
 - **Ficha de producto** (`/producto/[slug]`): galería, selección de color y rodado con stock por variante, precios con tarjeta, transferencia y cuotas.
 - **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
@@ -72,5 +72,6 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
 - [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
 - [ ] Emails de confirmación de pedido.
+- [ ] Logos de las marcas: poner los archivos en `public/marcas/` como `zion.svg`, `spy.png`, etc. (si falta, se muestra el nombre).
 - [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
 - [ ] Términos y condiciones, y políticas de cambios y envíos.
