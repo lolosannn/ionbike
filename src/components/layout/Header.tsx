@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav } from "@/config/store";
+import logo from "@/assets/logo-ion.png";
 import { useCart } from "@/components/cart/CartProvider";
 import { CartIcon, CloseIcon, MenuIcon, SearchIcon } from "@/components/icons";
 
@@ -25,8 +26,7 @@ export function Header() {
     <header className="header">
       <div className="container">
         <Link href="/" className="logo" aria-label="IonBikeStore, inicio">
-          <span className="logo-mark">ION</span>
-          <span className="logo-sub">BIKESTORE</span>
+          <img src={logo.src} width={logo.width} height={logo.height} alt="" />
         </Link>
 
         <nav id="menu-principal" aria-label="Principal" className={`nav${menuOpen ? " open" : ""}`}>
