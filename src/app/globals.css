@@ -376,8 +376,33 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .pdp-thumbs img { width: 100%; height: 100%; object-fit: cover; }
 .pdp-info { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
 .pdp-info h1 { font-size: clamp(40px, 5vw, 56px); }
-.pdp-price { display: flex; flex-direction: column; gap: 4px; padding: 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); }
+.pdp-price { display: flex; flex-wrap: wrap; gap: 16px 24px; padding: 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--accent); }
+.pdp-price-main { flex: 1 1 200px; display: flex; flex-direction: column; gap: 4px; }
+.pdp-price-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
 .pdp-price .price-transfer { font-size: 44px; }
+.pdp-price-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+.pdp-price-side { flex: 1 1 180px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 6px; text-align: right; border-left: 1px solid var(--border); padding-left: 24px; }
+.pdp-price-side strong { color: var(--text); font-size: 15px; }
+@media (max-width: 520px) { .pdp-price-side { align-items: flex-start; text-align: left; border-left: 0; padding-left: 0; border-top: 1px solid var(--border); padding-top: 14px; } }
+.financing { border-radius: 16px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; }
+.financing-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.financing h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.financing-brands { display: flex; flex-wrap: wrap; gap: 4px; }
+.financing-brands span { font-size: 10px; font-weight: 700; padding: 3px 6px; border-radius: 4px; background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
+.financing ul { list-style: none; margin: 0; padding: 0; }
+.financing li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; padding: 12px 20px; font-size: 16px; }
+.financing li + li { border-top: 1px solid var(--border); }
+.financing li b:first-child { color: var(--accent); font-size: 18px; }
+.financing-free { margin-left: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); vertical-align: 2px; }
+.financing-total { font-size: 13px; color: var(--muted); }
+.pdp-perks { list-style: none; margin: 0; padding: 14px 8px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); }
+.pdp-perks li { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font-size: 12px; color: var(--text-2); }
+.pdp-perks svg { color: var(--accent); }
+@media (max-width: 420px) { .pdp-perks { grid-template-columns: repeat(2, 1fr); row-gap: 16px; } }
+.pdp-shipping { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 16px; border: 1px dashed var(--border-strong); }
+.pdp-shipping svg { flex: none; color: var(--accent); }
+.pdp-shipping > span { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--muted); }
+.pdp-shipping strong { font-size: 15px; color: var(--text); text-transform: uppercase; }
 .option-group { display: flex; flex-direction: column; gap: 10px; }
 .option-group h2 { margin: 0; font-size: 15px; font-weight: 700; }
 .option-group h2 span { color: var(--muted); font-weight: 400; }

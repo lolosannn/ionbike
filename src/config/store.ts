@@ -21,6 +21,14 @@ export const store = {
   // Costo de envío fijo mientras no esté la integración con Andreani (en centavos)
   shippingFlatRate: 15_000_00,
   installments: 12,
+  // Planes de cuotas de la ficha de producto. recargoPct es el recargo total sobre el
+  // precio de lista (0 = sin interés). Para sumar planes con interés, por ejemplo:
+  // { cuotas: 18, recargoPct: 20 }, { cuotas: 24, recargoPct: 35 }
+  financing: [
+    { cuotas: 3, recargoPct: 0 },
+    { cuotas: 6, recargoPct: 0 },
+    { cuotas: 12, recargoPct: 0 },
+  ],
   // Video de la guía de talles: ID de YouTube (lo que va después de "v=") o URL de un .mp4.
   // Vacío usa el video propio de public/talles/guia-de-talles.mp4 (o un aviso si no está).
   sizeGuideVideo: "",

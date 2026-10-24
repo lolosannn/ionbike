@@ -20,6 +20,14 @@ export function installmentPrice(cents: number): number {
   return Math.round(cents / store.installments);
 }
 
+/** Planes de cuotas para un precio de lista: valor de cada cuota y total a pagar. */
+export function financingPlans(cents: number) {
+  return store.financing.map(({ cuotas, recargoPct }) => {
+    const total = Math.round(cents * (1 + recargoPct / 100));
+    return { cuotas, interestFree: recargoPct === 0, cuota: Math.round(total / cuotas), total };
+  });
+}
+
 export function hasFreeShipping(cents: number): boolean {
   return cents >= store.freeShippingFrom;
 }

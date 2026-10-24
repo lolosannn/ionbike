@@ -2,12 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProduct, getRelatedProducts } from "@/lib/catalog";
-import { formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
+import { financingPlans, formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
 import { store, whatsappUrl } from "@/config/store";
 import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { ProductCard } from "@/components/product/ProductCard";
-import { PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
+import { ChatIcon, PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -43,15 +43,57 @@ export default async function ProductPage({ params }: Props) {
           <h1 className="display">{product.name}</h1>
 
           <div className="pdp-price">
-            <span className="price-list">
-              {off && product.compareAt && <s>{formatPrice(product.compareAt)}</s>}
-              {formatPrice(product.price)} con tarjeta
-              {off && <span className="badge badge-accent" style={{ marginLeft: 8 }}>{off}% OFF</span>}
-            </span>
-            <span className="price-transfer">{formatPrice(transferPrice(product.price))}</span>
-            <span className="price-note">
-              con transferencia ({store.transferDiscountPct}% off) · o {store.installments} cuotas sin interés de{" "}
-              {formatPrice(installmentPrice(product.price))}
+            <div className="pdp-price-main">
+              <span className="pdp-price-label">Efectivo / transferencia</span>
+              <span className="price-transfer">{formatPrice(transferPrice(product.price))}</span>
+              <span className="pdp-price-tag">{store.transferDiscountPct}% off aplicado</span>
+            </div>
+            <div className="pdp-price-side">
+              <span className="price-list">
+                {off && product.compareAt && <s>{formatPrice(product.compareAt)}</s>}
+                Precio de lista {formatPrice(product.price)}
+              </span>
+              {off && <span className="badge badge-accent">{off}% OFF</span>}
+              <strong>
+                {store.installments} cuotas sin interés de {formatPrice(installmentPrice(product.price))}
+              </strong>
+            </div>
+          </div>
+
+          <section className="financing" aria-labelledby="financiacion">
+            <div className="financing-head">
+              <h2 id="financiacion">Financiación</h2>
+              <div className="financing-brands">
+                {store.paymentBrands.slice(0, 6).map((b) => <span key={b}>{b}</span>)}
+              </div>
+            </div>
+            <ul>
+              {financingPlans(product.price).map((p) => (
+                <li key={p.cuotas}>
+                  <span>
+                    <b>{p.cuotas}</b> cuotas de <b>{formatPrice(p.cuota)}</b>
+                    {p.interestFree && <span className="financing-free">Sin interés</span>}
+                  </span>
+                  <span className="financing-total">Total: {formatPrice(p.total)}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <ul className="pdp-perks">
+            <li><ShieldIcon size={24} />Compra protegida</li>
+            <li><WrenchIcon size={24} />Taller propio</li>
+            <li><PinIcon size={24} />Retiro en el local</li>
+            <li><ChatIcon size={24} />Asesoramiento especializado</li>
+          </ul>
+
+          <div className="pdp-shipping">
+            <TruckIcon size={28} />
+            <span>
+              <strong>
+                {hasFreeShipping(product.price) ? "¡Envío gratis a todo el país!" : `Envío gratis desde ${formatPrice(store.freeShippingFrom)}`}
+              </strong>
+              <span>Despacho por Andreani · o retiralo sin cargo en {store.address}</span>
             </span>
           </div>
 
@@ -78,17 +120,23 @@ export default async function ProductPage({ params }: Props) {
             />
           )}
 
+          {!product.onRequest && (
+            <a
+              className="btn btn-whatsapp btn-block"
+              href={whatsappUrl(`Hola! Necesito asesoramiento con la ${product.name}`)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <WhatsappIcon size={20} /> ¿Necesitás asesoramiento?
+            </a>
+          )}
+
           {isBike && (
             <Link href="/guia-de-talles" className="size-guide-link">
               <RulerIcon /> ¿Qué talle me va? Ver la guía de talles
             </Link>
           )}
 
-          <ul className="perks">
-            <li><TruckIcon size={20} />{hasFreeShipping(product.price) ? "Envío gratis a todo el país" : `Envío gratis desde ${formatPrice(store.freeShippingFrom)}`}</li>
-            <li><PinIcon size={20} />Retiro sin cargo en {store.address}</li>
-            <li><ShieldIcon />Compra protegida</li>
-          </ul>
         </div>
       </div>
 
