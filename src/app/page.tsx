@@ -53,6 +53,11 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="container brands-strip" aria-label="Marcas">
+        <span className="eyebrow brands-title">Marcas que trabajamos</span>
+        <BrandMarquee brands={brands} />
+      </section>
+
       <section className="benefits" aria-label="Beneficios">
         <div className="container">
           {benefits.map((b) => (
@@ -135,11 +140,6 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="section container" aria-label="Marcas">
-        <span className="eyebrow brands-title">Marcas que trabajamos</span>
-        <BrandMarquee brands={brands} />
       </section>
 
       <section className="section container">

@@ -6,7 +6,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 
 ## Qué incluye
 
-- **Inicio**: banner de oferta, beneficios, disciplinas, buscador de talle (lleva a la guía con el resultado), más vendidos, secciones, cinta animada de marcas y local.
+- **Inicio**: banner de oferta, cinta animada de marcas, beneficios, disciplinas, buscador de talle (lleva a la guía con el resultado), más vendidos, secciones y local.
 - **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
 - **Ficha de producto** (`/producto/[slug]`): galería, selección de color y rodado con stock por variante, precios con tarjeta, transferencia y cuotas.
 - **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
