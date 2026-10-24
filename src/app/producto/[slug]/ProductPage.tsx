@@ -6,6 +6,7 @@ import { financingPlans, formatPrice, hasFreeShipping, installmentPrice, transfe
 import { store, whatsappUrl } from "@/config/store";
 import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
+import { SpecsAccordion } from "@/components/product/SpecsAccordion";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ChatIcon, PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 
@@ -149,15 +150,9 @@ export default async function ProductPage({ params }: Props) {
             </div>
           )}
           {specs.length > 0 && (
-            <div style={{ flex: "1 1 420px" }}>
+            <div style={{ flex: "1 1 420px", minWidth: 0 }}>
               <h2 className="display" style={{ fontSize: 40, marginBottom: 16 }}>Especificaciones</h2>
-              <table className="specs">
-                <tbody>
-                  {specs.map((s) => (
-                    <tr key={s.label}><th scope="row">{s.label}</th><td>{s.value}</td></tr>
-                  ))}
-                </tbody>
-              </table>
+              <SpecsAccordion specs={specs} />
             </div>
           )}
         </section>

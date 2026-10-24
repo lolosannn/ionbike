@@ -593,3 +593,20 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .see-all-band .btn { min-height: 60px; padding: 0 36px; font-size: 21px; }
 .see-all-band .btn svg { transition: transform 0.2s; }
 @media (max-width: 600px) { .see-all-band { padding: 22px; } .see-all-band .btn { width: 100%; } }
+
+/* Especificaciones desplegables */
+.spec-list { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--surface); }
+.spec-item + .spec-item { border-top: 1px solid var(--border); }
+.spec-item summary { display: flex; align-items: center; gap: 14px; padding: 12px 16px; cursor: pointer; list-style: none; }
+.spec-item summary::-webkit-details-marker { display: none; }
+.spec-item summary:hover { background: var(--surface-2); }
+.spec-icon { flex: none; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--accent); border: 1px solid var(--border); }
+.spec-item[open] .spec-icon { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.spec-name { flex: 1; font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
+.spec-chevron { flex: none; color: var(--muted); transition: transform 0.2s; }
+.spec-item[open] .spec-chevron { transform: rotate(90deg); color: var(--accent); }
+.spec-detail { margin: 0; padding: 4px 16px 18px 72px; display: flex; flex-direction: column; gap: 10px; animation: spec-open 0.25s ease; }
+.spec-detail dt { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.spec-detail dd { margin: 0; font-size: 15px; color: var(--text-2); white-space: pre-line; line-height: 1.6; }
+@keyframes spec-open { from { opacity: 0; transform: translateY(-4px); } }
+@media (max-width: 520px) { .spec-detail { padding-left: 16px; } }
