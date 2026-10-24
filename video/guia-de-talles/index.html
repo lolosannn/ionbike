@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Guía de talles · video</title>
+<!--
+  Video explicativo de la guía de talles hecho en HTML: cada cuadro se dibuja con render(t).
+  Abrilo en el navegador para verlo en vivo (o con ?t=12 para congelar un segundo) y
+  renderizalo a MP4 con: node video/guia-de-talles/render.mjs
+-->
+<style>
+  @font-face { font-family: "Barlow Condensed"; font-style: italic; font-weight: 900; src: url(../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-900-italic.woff2) format("woff2"); }
+  @font-face { font-family: "Barlow Condensed"; font-style: italic; font-weight: 800; src: url(../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-800-italic.woff2) format("woff2"); }
+  @font-face { font-family: "Barlow Condensed"; font-style: normal; font-weight: 700; src: url(../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-700-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Barlow Condensed"; font-style: normal; font-weight: 800; src: url(../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-800-normal.woff2) format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 400; src: url(../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2) format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 500; src: url(../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 700; src: url(../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2) format("woff2"); }
+
+  :root {
+    --bg: #0b0b0b; --surface: #161616; --surface-2: #1c1c1c; --border: #262626;
+    --text: #f4f4f2; --text-2: #c9c9c5; --muted: #a3a3a0; --accent: #f2c40f; --skin: #e9e8e3;
+    --display: "Barlow Condensed", sans-serif; --body: "DM Sans", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #000; }
+  #stage {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: var(--bg); color: var(--text); font-family: var(--body);
+    transform-origin: 0 0;
+  }
+  .abs { position: absolute; }
+  .scene { position: absolute; inset: 0; display: none; }
+  .display { font-family: var(--display); font-style: italic; font-weight: 900; text-transform: uppercase; line-height: .9; margin: 0; }
+  .eyebrow { font-family: var(--display); font-weight: 700; letter-spacing: 6px; font-size: 28px; color: var(--accent); text-transform: uppercase; }
+  .y { color: var(--accent); }
+  .chip {
+    display: inline-flex; align-items: center; gap: 14px; height: 56px; padding: 0 26px; border-radius: 999px;
+    background: var(--accent); color: var(--bg); font-family: var(--display); font-weight: 800; font-size: 28px; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .chip b { font-style: italic; font-weight: 900; font-size: 34px; }
+  .bullets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+  .bullets li { display: flex; gap: 20px; align-items: flex-start; font-size: 32px; line-height: 1.25; color: var(--text-2); }
+  .bullets li i {
+    flex: none; width: 46px; height: 46px; border-radius: 999px; border: 2px solid var(--accent); color: var(--accent);
+    font-family: var(--display); font-style: normal; font-weight: 800; font-size: 26px; display: flex; align-items: center; justify-content: center; margin-top: -2px;
+  }
+  .bullets li strong { color: var(--text); font-weight: 700; }
+  .card { position: absolute; border-radius: 28px; background: var(--surface-2); padding: 44px; display: flex; flex-direction: column; gap: 18px; }
+  .card.accent { background: var(--accent); color: var(--bg); }
+  .card .num { font-family: var(--display); font-style: italic; font-weight: 900; font-size: 40px; color: var(--accent); }
+  .card h3 { margin: 0; font-family: var(--display); font-style: italic; font-weight: 900; font-size: 58px; line-height: .95; text-transform: uppercase; }
+  .card p { margin: 0; font-size: 28px; line-height: 1.3; color: var(--text-2); }
+  .card.accent p { color: #2a2a2a; }
+  .badge {
+    position: absolute; padding: 18px 30px; border-radius: 20px; background: var(--accent); color: var(--bg);
+    font-family: var(--display); font-weight: 800; font-size: 30px; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge b { display: block; font-style: italic; font-weight: 900; font-size: 76px; letter-spacing: 0; line-height: .95; }
+  .note { font-size: 26px; color: var(--muted); }
+  svg { overflow: visible; }
+  .draw { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Tabla, como en la web */
+  .table { position: absolute; width: 860px; font-size: 34px; }
+  .table .row { position: relative; display: grid; grid-template-columns: 170px 1fr 330px; height: 92px; align-items: center; padding: 0 30px; border-bottom: 2px solid var(--border); }
+  .table .head { color: var(--muted); font-size: 24px; letter-spacing: 1px; text-transform: uppercase; font-weight: 500; height: 70px; }
+  .table .row .size { font-family: var(--display); font-style: italic; font-weight: 900; font-size: 50px; }
+  .table .row span { position: relative; z-index: 1; }
+  .table .row.on span { color: var(--bg) !important; }
+  .hl { position: absolute; left: 0; width: 860px; height: 92px; background: var(--accent); border-radius: 14px; }
+  .input {
+    position: absolute; width: 560px; height: 110px; border-radius: 18px; background: var(--surface-2); border: 2px solid #333;
+    display: flex; align-items: center; padding: 0 34px; font-size: 54px; font-weight: 500;
+  }
+  .caret { display: inline-block; width: 4px; height: 58px; background: var(--accent); margin-left: 6px; }
+  .pill {
+    position: absolute; height: 76px; padding: 0 36px; border-radius: 999px; border: 2px solid #3a3a3a;
+    display: flex; align-items: center; font-family: var(--display); font-weight: 800; font-size: 32px; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* HUD */
+  #logo { left: 72px; top: 52px; display: flex; flex-direction: column; line-height: 1; z-index: 5; }
+  #logo .mark { font-family: var(--display); font-style: italic; font-weight: 900; font-size: 64px; letter-spacing: 3px; color: var(--accent); }
+  #logo .sub { font-size: 13px; letter-spacing: 9px; margin-top: 2px; }
+  #tag { right: 72px; top: 64px; font-family: var(--display); font-weight: 700; letter-spacing: 6px; font-size: 22px; color: var(--muted); z-index: 5; }
+  #bar { left: 0; bottom: 0; height: 8px; background: var(--accent); z-index: 5; }
+  #wipe { left: 0; top: -60px; height: 1200px; width: 2600px; background: var(--accent); transform-origin: center; z-index: 10; }
+  #wipe2 { left: 0; top: -60px; height: 1200px; width: 160px; background: #fff; z-index: 10; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 0 · Intro -->
+  <section class="scene" id="s-intro">
+    <div class="abs" id="intro-slab" style="top:-60px;height:1200px;width:980px;background:var(--accent)"></div>
+    <svg class="abs" id="intro-bike" style="left:1150px;top:300px" width="680" height="430" viewBox="0 0 600 380"></svg>
+    <div class="abs eyebrow" id="intro-kicker" style="left:120px;top:300px">Guía de talles · IonBikeStore</div>
+    <h1 class="abs display" id="intro-t1" style="left:114px;top:360px;font-size:170px">¿Qué <span class="y">talle</span></h1>
+    <h1 class="abs display" id="intro-t2" style="left:114px;top:510px;font-size:170px">de bici</h1>
+    <h1 class="abs display" id="intro-t3" style="left:114px;top:660px;font-size:170px">necesitás?</h1>
+    <div class="abs" id="intro-sub" style="left:120px;top:850px;font-size:36px;color:var(--text-2)">Medite en 2 minutos y elegí sin dudas.</div>
+  </section>
+
+  <!-- 1 · Qué necesitás -->
+  <section class="scene" id="s-tools">
+    <div class="abs eyebrow" id="tools-kicker" style="left:120px;top:190px">Antes de empezar</div>
+    <h2 class="abs display" id="tools-title" style="left:116px;top:240px;font-size:120px">Qué <span class="y">necesitás</span></h2>
+    <div class="card" id="tools-c1" style="left:120px;top:440px;width:540px;height:440px">
+      <svg width="120" height="120" viewBox="0 0 120 120" class="draw" stroke="#f2c40f" stroke-width="7">
+        <rect x="10" y="22" width="76" height="76" rx="18"/><circle cx="48" cy="60" r="16"/><path d="M86 82h26v16H86M96 82v8M104 82v8"/>
+      </svg>
+      <div class="num">01</div><h3>Cinta métrica</h3><p>O un metro de carpintero.</p>
+    </div>
+    <div class="card" id="tools-c2" style="left:690px;top:440px;width:540px;height:440px">
+      <svg width="120" height="120" viewBox="0 0 120 120" class="draw" stroke="#f2c40f" stroke-width="7">
+        <path d="M18 20h70a12 12 0 0 1 12 12v70H30a12 12 0 0 1-12-12z"/><path d="M18 90a12 12 0 0 1 12-12h70M40 40h40M40 56h28"/>
+      </svg>
+      <div class="num">02</div><h3>Un libro</h3><p>Duro y de tapa recta, para marcar bien.</p>
+    </div>
+    <div class="card" id="tools-c3" style="left:1260px;top:440px;width:540px;height:440px">
+      <svg width="120" height="120" viewBox="0 0 120 120" class="draw" stroke="#f2c40f" stroke-width="7">
+        <path d="M14 106V14h56v92M14 40h56M14 66h56M42 14v26M28 40v26M56 40v26M42 66v40"/><path d="M84 96l22-60 8 3-22 60-9 5z"/>
+      </svg>
+      <div class="num">03</div><h3>Pared y lápiz</h3><p>Una pared lisa y algo para marcar.</p>
+    </div>
+    <div class="abs note" id="tools-note" style="left:120px;top:930px">Medite <strong style="color:var(--text)">descalzo</strong> y con ropa liviana.</div>
+  </section>
+
+  <!-- 2 · Altura -->
+  <section class="scene" id="s-height">
+    <div class="abs" id="h-left" style="left:120px;top:200px;width:820px">
+      <div class="chip" id="h-chip"><b>1</b> Paso 1 de 4</div>
+      <h2 class="display" id="h-title" style="font-size:118px;margin-top:34px">Medí tu <span class="y">altura</span></h2>
+      <ul class="bullets" style="margin-top:50px">
+        <li id="h-b1"><i>1</i><span><strong>Descalzo</strong>, de espaldas a la pared.</span></li>
+        <li id="h-b2"><i>2</i><span>Talones, espalda y cabeza <strong>contra la pared</strong>.</span></li>
+        <li id="h-b3"><i>3</i><span>Apoyá un <strong>libro</strong> sobre la cabeza y marcá.</span></li>
+        <li id="h-b4"><i>4</i><span>Medí del <strong>piso hasta la marca</strong>.</span></li>
+      </ul>
+    </div>
+    <svg class="abs" id="h-svg" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div class="badge" id="h-badge" style="left:1540px;top:600px">Tu altura<b>1,75 m</b></div>
+  </section>
+
+  <!-- 3 · Entrepierna -->
+  <section class="scene" id="s-inseam">
+    <div class="abs" id="i-left" style="left:120px;top:200px;width:820px">
+      <div class="chip" id="i-chip"><b>2</b> Paso 2 de 4</div>
+      <h2 class="display" id="i-title" style="font-size:118px;margin-top:34px">Medí tu <span class="y">entrepierna</span></h2>
+      <ul class="bullets" style="margin-top:50px">
+        <li id="i-b1"><i>1</i><span>Parado, con los pies <strong>separados unos 15 cm</strong>.</span></li>
+        <li id="i-b2"><i>2</i><span>Subí el libro entre las piernas, <strong>firme, como un asiento</strong>.</span></li>
+        <li id="i-b3"><i>3</i><span>Marcá en la pared el <strong>borde de arriba</strong>.</span></li>
+        <li id="i-b4"><i>4</i><span>Medí del <strong>piso hasta la marca</strong>.</span></li>
+      </ul>
+    </div>
+    <svg class="abs" id="i-svg" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+    <div class="badge" id="i-badge" style="left:1540px;top:700px">Entrepierna<b>82 cm</b></div>
+  </section>
+
+  <!-- 4 · Tipo de bici -->
+  <section class="scene" id="s-type">
+    <div class="abs chip" id="ty-chip" style="left:120px;top:190px"><b>3</b> Paso 3 de 4</div>
+    <h2 class="abs display" id="ty-title" style="left:116px;top:280px;font-size:118px">Elegí el <span class="y">tipo de bici</span></h2>
+    <div class="card" id="ty-c1" style="left:120px;top:470px;width:540px;height:420px">
+      <svg class="bike-icon" width="200" height="124" viewBox="0 0 600 380"></svg>
+      <h3>Mountain Bike</h3><p>El talle va en <strong>pulgadas</strong>: 15", 17", 19"…</p>
+    </div>
+    <div class="card" id="ty-c2" style="left:690px;top:470px;width:540px;height:420px">
+      <svg class="bike-icon" width="200" height="124" viewBox="0 0 600 380"></svg>
+      <h3>Ruta y Gravel</h3><p>El talle va en <strong>centímetros</strong>: 52, 54, 56…</p>
+    </div>
+    <div class="card" id="ty-c3" style="left:1260px;top:470px;width:540px;height:420px">
+      <svg class="bike-icon" width="200" height="124" viewBox="0 0 600 380" style="transform:scale(.8);transform-origin:0 100%"></svg>
+      <h3>Infantiles</h3><p>Se elige por <strong>rodado</strong> según la altura y la edad.</p>
+    </div>
+    <div class="abs note" id="ty-note" style="left:120px;top:940px">Cada tipo tiene su propia tabla de talles.</div>
+  </section>
+
+  <!-- 5 · Tabla -->
+  <section class="scene" id="s-table">
+    <div class="abs chip" id="tb-chip" style="left:120px;top:190px"><b>4</b> Paso 4 de 4</div>
+    <h2 class="abs display" id="tb-title" style="left:116px;top:280px;font-size:118px">Buscá tu <span class="y">talle</span></h2>
+    <div class="abs" id="tb-label" style="left:120px;top:470px;font-size:30px;font-weight:700">¿Cuánto medís?</div>
+    <div class="input" id="tb-input" style="left:120px;top:520px"><span id="tb-typed"></span><span class="caret" id="tb-caret"></span></div>
+    <div class="pill" id="tb-pill" style="left:120px;top:670px;background:var(--accent);border-color:var(--accent);color:var(--bg)">Mountain Bike</div>
+    <div class="abs" id="tb-result" style="left:120px;top:800px;font-size:40px;white-space:nowrap">Tu talle es <span class="display y" style="font-size:96px;vertical-align:-10px">M</span> <span style="color:var(--text-2)">· 17" – 18"</span></div>
+    <div class="table" id="tb-table" style="left:940px;top:300px">
+      <div class="row head"><span>Talle</span><span>Cuadro</span><span>Altura</span></div>
+      <div class="hl" id="tb-hl"></div>
+    </div>
+  </section>
+
+  <!-- 6 · Standover -->
+  <section class="scene" id="s-stand">
+    <div class="abs" id="st-left" style="left:120px;top:220px;width:760px">
+      <div class="eyebrow" id="st-kicker">El toque final</div>
+      <h2 class="display" id="st-title" style="font-size:118px;margin-top:20px">Parate<br>sobre <span class="y">la bici</span></h2>
+      <p id="st-text" style="font-size:34px;line-height:1.3;color:var(--text-2);margin:44px 0 0">Con los pies apoyados en el piso, entre el caño superior y tu entrepierna tiene que quedar un espacio de <strong style="color:var(--text)">5 a 10 cm</strong>.</p>
+    </div>
+    <svg class="abs" id="st-svg" style="left:900px;top:200px" width="900" height="760" viewBox="-60 -200 720 590"></svg>
+    <div class="badge" id="st-badge" style="left:1210px;top:930px;font-size:34px">✓ Talle correcto</div>
+  </section>
+
+  <!-- 7 · Entre dos talles -->
+  <section class="scene" id="s-between">
+    <div class="abs eyebrow" id="bt-kicker" style="left:120px;top:190px">Un consejo</div>
+    <h2 class="abs display" id="bt-title" style="left:116px;top:240px;font-size:118px">¿Estás entre <span class="y">dos talles?</span></h2>
+    <div class="card" id="bt-c1" style="left:120px;top:440px;width:825px;height:400px">
+      <svg class="bike-icon" width="180" height="114" viewBox="0 0 600 380" style="transform:scale(.85);transform-origin:0 100%"></svg>
+      <h3>El más chico</h3><p>Es más <strong style="color:var(--text)">ágil</strong> y fácil de maniobrar.</p>
+    </div>
+    <div class="card accent" id="bt-c2" style="left:975px;top:440px;width:825px;height:400px">
+      <svg class="bike-icon dark" width="180" height="114" viewBox="0 0 600 380"></svg>
+      <h3>El más grande</h3><p>Es más <strong style="color:var(--bg)">estable</strong> a velocidad y en tiradas largas.</p>
+    </div>
+    <div class="abs note" id="bt-note" style="left:120px;top:900px">Cada marca tiene su medida: consultanos por el modelo que te gusta.</div>
+  </section>
+
+  <!-- 8 · Cierre -->
+  <section class="scene" id="s-outro">
+    <div class="abs" id="o-bg" style="inset:0;background:var(--accent)"></div>
+    <div class="abs" id="o-logo" style="left:120px;top:150px;display:flex;flex-direction:column;line-height:1;color:var(--bg)">
+      <span style="font-family:var(--display);font-style:italic;font-weight:900;font-size:200px;letter-spacing:6px">ION</span>
+      <span style="font-size:30px;letter-spacing:22px;margin-top:4px;font-weight:700">BIKESTORE</span>
+    </div>
+    <h2 class="abs display" id="o-title" style="left:116px;top:520px;font-size:130px;color:var(--bg)">¿Dudas con el talle?</h2>
+    <div class="abs" id="o-sub" style="left:120px;top:670px;font-size:40px;color:#1b1b1b">Escribinos por WhatsApp o vení a probarla al local.</div>
+    <div class="abs" id="o-info" style="left:120px;top:790px;display:flex;gap:24px">
+      <div class="chip" style="background:var(--bg);color:var(--text);height:80px;font-size:32px;padding:0 34px">Av. Fair 328, Monte Grande</div>
+      <div class="chip" style="background:#1da851;color:#fff;height:80px;font-size:32px;padding:0 34px">WhatsApp +54 11 2829-1177</div>
+    </div>
+  </section>
+
+  <!-- HUD y transiciones -->
+  <div class="abs" id="logo"><span class="mark">ION</span><span class="sub">BIKESTORE</span></div>
+  <div class="abs" id="tag">GUÍA DE TALLES</div>
+  <div class="abs" id="bar"></div>
+  <div class="abs" id="wipe2"></div>
+  <div class="abs" id="wipe"></div>
+</div>
+
+<script>
+const FPS = 30;
+const $ = (id) => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = {
+  out: (x) => 1 - Math.pow(1 - x, 3),
+  inOut: (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2),
+  back: (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); },
+};
+/** Progreso 0..1 entre a y a+d (en segundos de la escena). */
+const p = (t, a, d, fn = ease.out) => fn(clamp((t - a) / d));
+
+function svg(tag, attrs, parent) {
+  const el = document.createElementNS(NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(el);
+  return el;
+}
+/** Entrada: aparece subiendo (o desde el costado) y se va al final de la escena. */
+function enter(el, k, { dx = 0, dy = 40, scale = 0 } = {}) {
+  el.style.opacity = k;
+  el.style.transform = `translate(${dx * (1 - k)}px, ${dy * (1 - k)}px)` + (scale ? ` scale(${lerp(scale, 1, k)})` : "");
+}
+
+/* ---------- Bici de perfil (MTB). Coordenadas del viewBox 0 0 600 380 ---------- */
+const BIKE = [
+  "M130 260m-110 0a110 110 0 1 0 220 0a110 110 0 1 0-220 0",       // rueda trasera
+  "M470 260m-110 0a110 110 0 1 0 220 0a110 110 0 1 0-220 0",       // rueda delantera
+  "M270 270L245 140L430 128L445 175L270 270",                        // cuadro: caño de asiento, superior, dirección, diagonal
+  "M270 270L130 260L245 140",                                        // vainas y tirantes
+  "M445 175L470 260",                                                // horquilla
+  "M245 140L236 92M205 88h62",                                       // portasilla y asiento
+  "M430 128L440 96M414 92h56",                                       // stem y manubrio
+  "M270 270m-20 0a20 20 0 1 0 40 0a20 20 0 1 0-40 0",               // palancas
+];
+function buildBike(root, { color = "#f2c40f", width = 12 } = {}) {
+  const g = svg("g", { class: "draw", stroke: color, "stroke-width": width }, root);
+  return BIKE.map((d) => svg("path", { d, pathLength: 1, "stroke-dasharray": "1 1" }, g));
+}
+function drawBike(paths, k) {
+  paths.forEach((el, i) => {
+    const kk = clamp((k - i / (paths.length + 2)) * (paths.length + 2) / 3);
+    el.setAttribute("stroke-dashoffset", 1 - ease.out(kk));
+  });
+}
+
+/* ---------- Persona de frente: 1000 unidades de alto, pies en y=1000 ---------- */
+function buildPerson(root) {
+  const g = svg("g", { fill: "#e9e8e3" }, root);
+  svg("circle", { cx: 0, cy: 70, r: 62 }, g);
+  svg("rect", { x: -26, y: 120, width: 52, height: 50 }, g);
+  svg("rect", { x: -118, y: 158, width: 236, height: 372, rx: 56 }, g);
+  svg("rect", { x: -168, y: 172, width: 44, height: 330, rx: 22 }, g);
+  svg("rect", { x: 124, y: 172, width: 44, height: 330, rx: 22 }, g);
+  svg("rect", { x: -108, y: 470, width: 96, height: 520, rx: 36 }, g);
+  svg("rect", { x: 12, y: 470, width: 96, height: 520, rx: 36 }, g);
+  svg("ellipse", { cx: -70, cy: 992, rx: 58, ry: 16 }, g);
+  svg("ellipse", { cx: 70, cy: 992, rx: 58, ry: 16 }, g);
+  return g;
+}
+
+/* ---------- Escena de medición (altura y entrepierna comparten el decorado) ---------- */
+const FLOOR = 930, PH = 660, PX = 1240, RX = 1460; // piso, alto de la persona, centro, regla
+function buildMeasure(root, target) {
+  const wall = svg("g", {}, root);
+  svg("rect", { x: 1000, y: 140, width: 820, height: FLOOR - 140, rx: 0, fill: "#141414" }, wall);
+  for (let y = 210; y < FLOOR; y += 70) svg("line", { x1: 1000, x2: 1820, y1: y, y2: y, stroke: "#1c1c1c", "stroke-width": 2 }, wall);
+  svg("rect", { x: 960, y: FLOOR, width: 900, height: 6, fill: "#3a3a3a" }, root);
+  const person = buildPerson(svg("g", {}, root));
+  person.parentNode.setAttribute("transform", `translate(${PX} ${FLOOR - PH}) scale(${PH / 1000})`);
+  // Regla sobre la pared
+  const ruler = svg("g", {}, root);
+  svg("rect", { x: RX - 14, y: FLOOR - 720, width: 28, height: 720, rx: 6, fill: "#222" }, ruler);
+  for (let cm = 0; cm <= 190; cm += 10) {
+    const y = FLOOR - (cm / 175) * PH;
+    svg("line", { x1: RX - 14, x2: RX + (cm % 50 === 0 ? 10 : -2), y1: y, y2: y, stroke: "#555", "stroke-width": 3 }, ruler);
+  }
+  const fill = svg("rect", { x: RX - 6, width: 12, rx: 6, fill: "#f2c40f" }, root);
+  const mark = svg("line", { x1: RX - 40, x2: RX + 40, stroke: "#f2c40f", "stroke-width": 8, "stroke-linecap": "round" }, root);
+  const guide = svg("line", { stroke: "#f2c40f", "stroke-width": 4, "stroke-dasharray": "14 12" }, root);
+  const label = svg("text", { x: RX + 50, "font-family": "Barlow Condensed", "font-style": "italic", "font-weight": 900, "font-size": 64, fill: "#f2c40f" }, root);
+  const book = svg("rect", { fill: "#f2c40f", rx: 6 }, root);
+  return { root, person, fill, mark, guide, label, book, wall };
+}
+function setRect(el, x, y, w, h) { el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("width", Math.max(0, w)); el.setAttribute("height", Math.max(0, h)); }
+function setLine(el, x1, y1, x2, y2) { el.setAttribute("x1", x1); el.setAttribute("y1", y1); el.setAttribute("x2", x2); el.setAttribute("y2", y2); }
+
+const H = buildMeasure($("h-svg"));
+const I = buildMeasure($("i-svg"));
+const introBike = buildBike($("intro-bike"), { color: "#0b0b0b", width: 13 });
+document.querySelectorAll(".bike-icon").forEach((el) => buildBike(el, { color: el.classList.contains("dark") ? "#0b0b0b" : "#f2c40f", width: 16 }).forEach((p) => p.setAttribute("stroke-dashoffset", 0)));
+
+/* ---------- Standover: persona de perfil sobre la bici ---------- */
+const ST = (() => {
+  const root = $("st-svg");
+  svg("rect", { x: -60, y: 370, width: 700, height: 5, fill: "#3a3a3a" }, root);
+  const person = svg("g", { fill: "#e9e8e3" }, root);
+  // Piernas (de perfil, una delante de la otra), entrepierna en y=84
+  svg("rect", { x: 280, y: 60, width: 74, height: 300, rx: 30 }, person);
+  svg("ellipse", { cx: 340, cy: 364, rx: 52, ry: 12 }, person);
+  svg("path", { d: "M268 90 C262 10 270 -70 300 -112 L356 -104 C372 -50 366 30 356 90 Z" }, person);  // torso
+  svg("circle", { cx: 330, cy: -160, r: 44 }, person);
+  svg("path", { d: "M332 -86 L440 92", stroke: "#e9e8e3", "stroke-width": 34, "stroke-linecap": "round", fill: "none" }, person); // brazo
+  const bike = buildBike(root, { color: "#f2c40f", width: 12 });
+  // Espacio entre la entrepierna (y=84) y el caño superior (~y=130 en x=380)
+  const gap = svg("g", { stroke: "#f2c40f", "stroke-width": 5, fill: "none", "stroke-linecap": "round" }, root);
+  svg("path", { d: "M362 90h22M373 90v36M362 126h22" }, gap);
+  const gapLabel = svg("g", {}, root);
+  svg("path", { d: "M384 108L500 -10", stroke: "#f2c40f", "stroke-width": 3, "stroke-dasharray": "8 7" }, gapLabel);
+  svg("rect", { x: 480, y: -62, width: 150, height: 56, rx: 28, fill: "#f2c40f" }, gapLabel);
+  const gapText = svg("text", { x: 555, y: -20, "text-anchor": "middle", "font-family": "Barlow Condensed", "font-style": "italic", "font-weight": 900, "font-size": 40, fill: "#0b0b0b" }, gapLabel);
+  gapText.textContent = "5–10 cm";
+  return { person, bike, gap, gapLabel };
+})();
+
+/* ---------- Tabla de talles MTB, la misma de la web ---------- */
+const MTB = [["XS", '13" – 14"', "1,50 a 1,60 m"], ["S", '15" – 16"', "1,60 a 1,70 m"], ["M", '17" – 18"', "1,70 a 1,80 m"], ["L", '19" – 20"', "1,80 a 1,90 m"], ["XL", '21" – 22"', "1,90 a 2,00 m"]];
+const rows = MTB.map(([s, f, h]) => {
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `<span class="size">${s}</span><span>${f}</span><span style="color:var(--text-2)">${h}</span>`;
+  $("tb-table").appendChild(row);
+  return row;
+});
+
+/* ---------- Línea de tiempo: duraciones y marcas sincronizadas con la locución (voz.mp3, ver guion.md) ---------- */
+const scenes = [
+  { id: "s-intro", dur: 4.9, run: intro },
+  { id: "s-tools", dur: 9.1, run: tools },
+  { id: "s-height", dur: 15.2, run: height },
+  { id: "s-inseam", dur: 13.3, run: inseam },
+  { id: "s-type", dur: 10.1, run: type },
+  { id: "s-table", dur: 11.65, run: table },
+  { id: "s-stand", dur: 9.8, run: stand },
+  { id: "s-between", dur: 9.1, run: between },
+  { id: "s-outro", dur: 11.85, run: outro },
+];
+let acc = 0;
+for (const s of scenes) { s.start = acc; acc += s.dur; s.el = $(s.id); }
+const TOTAL = acc;
+
+function intro(t) {
+  $("intro-slab").style.transform = `translateX(${lerp(1960, 1080, p(t, 0.1, 1.1, ease.inOut))}px) skewX(-14deg)`;
+  drawBike(introBike, p(t, 0.9, 2.2, ease.inOut));
+  $("intro-bike").style.transform = `translateX(${lerp(40, 0, p(t, 0.9, 2.5))}px)`;
+  enter($("intro-kicker"), p(t, 0.5, 0.7), { dx: -40, dy: 0 });
+  enter($("intro-t1"), p(t, 0.7, 0.7), { dy: 80 });
+  enter($("intro-t2"), p(t, 0.85, 0.7), { dy: 80 });
+  enter($("intro-t3"), p(t, 1.0, 0.7), { dy: 80 });
+  enter($("intro-sub"), p(t, 1.6, 0.8), { dy: 30 });
+}
+
+function tools(t) {
+  enter($("tools-kicker"), p(t, 0.2, 0.6), { dx: -40, dy: 0 });
+  enter($("tools-title"), p(t, 0.3, 0.7), { dy: 60 });
+  ["tools-c1", "tools-c2", "tools-c3"].forEach((id, i) => enter($(id), p(t, [2.5, 4.0, 5.0][i], 0.8, ease.back), { dy: 120 }));
+  enter($("tools-note"), p(t, 7.1, 0.7), { dy: 30 });
+}
+
+function measureScene(M, t, prefix, { targetCm, book, cue }) {
+  enter($(`${prefix}-chip`), p(t, 0.2, 0.6, ease.back), { dx: -60, dy: 0 });
+  enter($(`${prefix}-title`), p(t, 0.35, 0.7), { dy: 60 });
+  [1, 2, 3, 4].forEach((n) => {
+    const k = p(t, cue.bullets[n - 1], 0.6);
+    enter($(`${prefix}-b${n}`), k, { dx: -40, dy: 0 });
+  });
+  M.root.style.opacity = p(t, 0.3, 0.8);
+  M.person.setAttribute("transform", `translate(0 ${lerp(50, 0, p(t, 0.4, 1))})`);
+  const yTarget = FLOOR - (targetCm / 175) * PH;
+  // Libro
+  const kb = p(t, cue.book, 1.4, ease.inOut);
+  if (book === "head") {
+    setRect(M.book, lerp(1800, PX - 70, kb), yTarget - 26, RX - PX + 110, 26);
+  } else {
+    // Entre las piernas: sube desde el piso hasta la entrepierna
+    setRect(M.book, PX - 13, lerp(FLOOR - 120, yTarget, kb), 26, 120);
+  }
+  M.book.style.opacity = p(t, cue.book - 0.2, 0.4);
+  // Guía y marca en la pared
+  const kg = p(t, cue.mark - 0.5, 0.6);
+  setLine(M.guide, PX + 20, yTarget, lerp(PX + 20, RX, kg), yTarget);
+  M.guide.style.opacity = book === "head" ? 0 : kg;
+  const km = p(t, cue.mark, 0.5, ease.back);
+  setLine(M.mark, RX - 40 * km, yTarget, RX + 40 * km, yTarget);
+  M.mark.style.opacity = clamp(km * 3);
+  // La regla se llena del piso a la marca con el contador
+  const kf = p(t, cue.fill, 1.3, ease.inOut);
+  const yf = lerp(FLOOR, yTarget, kf);
+  setRect(M.fill, RX - 6, yf, 12, FLOOR - yf);
+  M.label.setAttribute("y", yf + 22);
+  M.label.textContent = `${Math.round(targetCm * kf)} cm`;
+  M.label.style.opacity = clamp(kf * 6) * (1 - p(t, cue.fill + 1.4, 0.4));
+  enter($(`${prefix}-badge`), p(t, cue.fill + 1.4, 0.7, ease.back), { dy: 0, scale: 0.6 });
+}
+function height(t) { measureScene(H, t, "h", { targetCm: 175, book: "head", cue: { bullets: [2.7, 5.4, 9.1, 12.6], book: 9.3, mark: 11.4, fill: 12.5 } }); }
+function inseam(t) { measureScene(I, t, "i", { targetCm: 82, book: "legs", cue: { bullets: [3.0, 5.6, 9.5, 11.7], book: 5.8, mark: 10.0, fill: 11.2 } }); }
+
+function type(t) {
+  enter($("ty-chip"), p(t, 0.2, 0.6, ease.back), { dx: -60, dy: 0 });
+  enter($("ty-title"), p(t, 0.35, 0.7), { dy: 60 });
+  const cards = ["ty-c1", "ty-c2", "ty-c3"].map($);
+  cards.forEach((el, i) => enter(el, p(t, [3.1, 5.4, 7.9][i], 0.8, ease.back), { dy: 120 }));
+  // Se "elige" Mountain Bike
+  const SEL = 9.0;
+  const sel = p(t, SEL, 0.4);
+  const c1 = cards[0];
+  c1.style.background = sel > 0.5 ? "#f2c40f" : "";
+  c1.style.color = sel > 0.5 ? "#0b0b0b" : "";
+  c1.querySelector("p").style.color = sel > 0.5 ? "#2a2a2a" : "";
+  c1.querySelectorAll("path").forEach((el) => el.setAttribute("stroke", sel > 0.5 ? "#0b0b0b" : "#f2c40f"));
+  const pulse = Math.sin(clamp((t - SEL) / 0.5) * Math.PI) * 0.05;
+  c1.style.transform = `scale(${1 + pulse})`;
+  if (t > SEL) cards[1].style.opacity = cards[2].style.opacity = lerp(1, 0.45, p(t, SEL, 0.6));
+  enter($("ty-note"), p(t, 8.9, 0.7), { dy: 30 });
+}
+
+function table(t) {
+  enter($("tb-chip"), p(t, 0.2, 0.6, ease.back), { dx: -60, dy: 0 });
+  enter($("tb-title"), p(t, 0.35, 0.7), { dy: 60 });
+  enter($("tb-label"), p(t, 0.8, 0.5), { dy: 20 });
+  enter($("tb-input"), p(t, 0.9, 0.6), { dy: 30 });
+  enter($("tb-pill"), p(t, 5.6, 0.6, ease.back), { dy: 30 });
+  const text = "1,75";
+  $("tb-typed").textContent = text.slice(0, Math.floor(clamp((t - 3.9) / 1.4) * text.length + 0.001));
+  $("tb-caret").style.opacity = Math.floor(t * 2) % 2 === 0 || (t > 3.9 && t < 5.3) ? 1 : 0;
+  const tbl = $("tb-table");
+  tbl.style.opacity = p(t, 0.6, 0.6);
+  rows.forEach((r, i) => enter(r, p(t, 1.0 + i * 0.15, 0.6), { dx: 60, dy: 0 }));
+  // La franja amarilla baja fila por fila hasta M
+  const top0 = 70, rowH = 92;
+  const k = p(t, 5.6, 1.6, ease.inOut);
+  const hl = $("tb-hl");
+  hl.style.top = `${top0 + rowH * lerp(0, 2, k)}px`;
+  hl.style.opacity = p(t, 5.4, 0.3);
+  rows.forEach((r, i) => r.classList.toggle("on", Math.abs(lerp(0, 2, k) - i) < 0.5));
+  const land = p(t, 7.2, 0.4);
+  hl.style.transform = `scaleX(${1 + Math.sin(land * Math.PI) * 0.03})`;
+  enter($("tb-result"), p(t, 7.2, 0.7, ease.back), { dy: 0, scale: 0.7 });
+  $("tb-result").style.transformOrigin = "0 50%";
+}
+
+function stand(t) {
+  enter($("st-kicker"), p(t, 0.2, 0.6), { dx: -40, dy: 0 });
+  enter($("st-title"), p(t, 0.35, 0.7), { dy: 60 });
+  enter($("st-text"), p(t, 2.8, 0.8), { dy: 30 });
+  drawBike(ST.bike, p(t, 0.4, 2.0, ease.inOut));
+  const kp = p(t, 1.6, 1.2, ease.inOut);
+  ST.person.style.opacity = kp;
+  ST.person.style.transform = `translateY(${lerp(-60, 0, kp)}px)`;
+  const kg = p(t, 6.4, 0.6, ease.back);
+  ST.gap.style.opacity = clamp(kg * 2);
+  ST.gap.style.transform = `scale(${lerp(0.4, 1, kg)})`;
+  ST.gap.style.transformOrigin = "373px 108px";
+  ST.gapLabel.style.opacity = p(t, 6.8, 0.5);
+  enter($("st-badge"), p(t, 8.2, 0.7, ease.back), { dy: 0, scale: 0.6 });
+}
+
+function between(t) {
+  enter($("bt-kicker"), p(t, 0.2, 0.6), { dx: -40, dy: 0 });
+  enter($("bt-title"), p(t, 0.35, 0.7), { dy: 60 });
+  enter($("bt-c1"), p(t, 1.9, 0.8, ease.back), { dx: -140, dy: 0 });
+  enter($("bt-c2"), p(t, 3.7, 0.8, ease.back), { dx: 140, dy: 0 });
+  enter($("bt-note"), p(t, 5.6, 0.7), { dy: 30 });
+}
+
+function outro(t) {
+  const k = p(t, 0, 0.01);
+  $("o-bg").style.opacity = k;
+  enter($("o-logo"), p(t, 0.3, 0.8, ease.back), { dy: 60 });
+  enter($("o-title"), p(t, 0.4, 0.7), { dy: 60 });
+  enter($("o-sub"), p(t, 1.6, 0.7), { dy: 30 });
+  enter($("o-info"), p(t, 4.2, 0.7, ease.back), { dy: 40 });
+}
+
+function render(t) {
+  for (const s of scenes) {
+    const on = t >= s.start && (t < s.start + s.dur || s === scenes[scenes.length - 1]);
+    s.el.style.display = on ? "block" : "none";
+    if (on) s.run(t - s.start);
+  }
+  // Barrida amarilla entre escenas: cubre la pantalla justo en el cambio
+  let wx = 3000, w2 = 3000;
+  for (const s of scenes.slice(1)) {
+    const q = (t - s.start + 0.45) / 0.9;
+    if (q >= 0 && q <= 1) {
+      const e = ease.inOut(q);
+      wx = lerp(-2900, 2200, e);
+      w2 = wx - 220;
+    }
+  }
+  $("wipe").style.transform = `translateX(${wx}px) skewX(-14deg)`;
+  $("wipe2").style.transform = `translateX(${w2}px) skewX(-14deg)`;
+  $("bar").style.width = `${(t / TOTAL) * 1920}px`;
+  // El logo de arriba se oculta en la intro y el cierre (ahí ya está la marca)
+  const hud = t > scenes[1].start - 0.1 && t < scenes[scenes.length - 1].start;
+  $("logo").style.opacity = $("tag").style.opacity = hud ? 1 : 0;
+}
+
+window.TOTAL = TOTAL;
+window.FPS = FPS;
+window.render = render;
+
+// Vista previa en vivo en el navegador (el render a video llama a render(t) cuadro por cuadro)
+const params = new URLSearchParams(location.search);
+if (!params.has("capture")) {
+  const fit = () => { $("stage").style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`; };
+  fit(); addEventListener("resize", fit);
+  if (params.has("t")) render(Number(params.get("t")));
+  else {
+    const t0 = performance.now();
+    const loop = () => { render(((performance.now() - t0) / 1000) % TOTAL); requestAnimationFrame(loop); };
+    document.fonts.ready.then(loop);
+  }
+}
+</script>
+</body>
+</html>

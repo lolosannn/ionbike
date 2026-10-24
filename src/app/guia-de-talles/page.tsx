@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { store, whatsappUrl } from "@/config/store";
 import { PlayIcon, WhatsappIcon } from "@/components/icons";
+import { publicFile } from "@/lib/public-files";
 import { SizeFinder } from "./SizeFinder";
+import { SizeGuidePlayer } from "./SizeGuidePlayer";
 
 export const metadata = {
   title: "Guía de talles",
   description: "Qué talle de bicicleta te corresponde según tu altura: Mountain Bike, ruta, gravel e infantiles.",
 };
 
+// Video propio en public/talles/guia-de-talles.mp4 (con portada .jpg); se genera desde video/guia-de-talles
+const localVideo = publicFile("talles", "guia-de-talles", ["mp4"]);
+const localPoster = publicFile("talles", "guia-de-talles", ["jpg"]) ?? undefined;
+
 function SizeGuideVideo() {
-  const video = store.sizeGuideVideo as string;
+  const video = (store.sizeGuideVideo as string) || localVideo;
   if (!video) {
     return (
       <div className="video-frame ph ph-dark">
@@ -18,6 +24,7 @@ function SizeGuideVideo() {
       </div>
     );
   }
+  if (video === localVideo) return <SizeGuidePlayer src={video} poster={localPoster} />;
   if (video.endsWith(".mp4")) {
     return <video className="video-frame" src={video} controls playsInline preload="metadata" />;
   }

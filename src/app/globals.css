@@ -402,8 +402,16 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 
 /* Guía de talles */
 .size-guide { display: flex; flex-wrap: wrap; gap: 40px; padding-top: 36px; align-items: flex-start; }
-.size-guide-video { flex: 1 1 520px; min-width: 0; }
-.size-guide-table { flex: 1 1 400px; min-width: 0; }
+.size-guide-video { flex: 3 1 560px; min-width: 0; }
+.size-guide-table { flex: 2 1 400px; min-width: 0; }
+.video-chapters { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.video-chapters .eyebrow { font-size: 13px; letter-spacing: 3px; }
+.video-chapters-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.video-chapters .pill { min-height: 38px; padding: 0 16px; font-size: 15px; }
+@media (max-width: 600px) {
+  .video-chapters-list { flex-wrap: nowrap; overflow-x: auto; margin-right: -24px; padding-right: 24px; scrollbar-width: none; }
+  .video-chapters .pill { flex: none; }
+}
 .video-frame { display: flex; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--radius); background: var(--surface-2); }
 .size-finder { display: flex; flex-direction: column; gap: 24px; }
 .size-input { display: flex; flex-direction: column; gap: 8px; }
