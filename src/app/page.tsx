@@ -79,6 +79,21 @@ export default async function HomePage() {
         <BrandMarquee brands={brands} />
       </section>
 
+      {featured.length > 0 && (
+        <section className="section container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">Los que más salen</span>
+              <h2 className="display">Más vendidos</h2>
+            </div>
+            <Link href="/categoria/bicicletas">Ver todo →</Link>
+          </div>
+          <div className="product-grid">
+            {featured.map((p) => <ProductCard key={p.slug} product={p} />)}
+          </div>
+        </section>
+      )}
+
       <section className="section container">
         <div className="section-head">
           <div>
@@ -120,21 +135,6 @@ export default async function HomePage() {
           <Link href="/guia-de-talles" className="btn btn-dark size-band-cta">Ver mi talle <ArrowIcon /></Link>
         </div>
       </section>
-
-      {featured.length > 0 && (
-        <section className="section container">
-          <div className="section-head">
-            <div>
-              <span className="eyebrow">Los que más salen</span>
-              <h2 className="display">Más vendidos</h2>
-            </div>
-            <Link href="/categoria/bicicletas">Ver todo →</Link>
-          </div>
-          <div className="product-grid">
-            {featured.map((p) => <ProductCard key={p.slug} product={p} />)}
-          </div>
-        </section>
-      )}
 
       <section className="section container">
         <div className="tiles">
