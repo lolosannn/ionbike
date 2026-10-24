@@ -6,14 +6,14 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 
 ## Qué incluye
 
-- **Inicio**: banner de oferta, beneficios, disciplinas, más vendidos, secciones, marcas y local.
+- **Inicio**: banner de oferta, beneficios, buscador de talle (lleva a la guía con el resultado), disciplinas, más vendidos, secciones, marcas y local.
 - **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
 - **Ficha de producto** (`/producto/[slug]`): galería, selección de color y rodado con stock por variante, precios con tarjeta, transferencia y cuotas.
 - **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
 - **Pagos**: Mercado Pago (tarjetas, cuotas, efectivo) y transferencia con 25% off.
 - **Pedidos**: el stock se descuenta al confirmar; el webhook de Mercado Pago marca el pedido como pagado.
 - **Productos a pedido** (gama alta sin stock): campo `onRequest` del producto. En lugar de comprar, muestran "Contactanos por WhatsApp" con el nombre del modelo ya escrito en el mensaje.
-- **Guía de talles** (`/guia-de-talles`): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y lugar para el video explicativo.
+- **Guía de talles** (`/guia-de-talles`, en el menú principal): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y lugar para el video explicativo.
 - **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
 

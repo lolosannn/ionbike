@@ -90,12 +90,12 @@ button { cursor: pointer; }
 
 /* Header */
 .header { border-bottom: 1px solid #222; background: var(--bg); position: sticky; top: 0; z-index: 20; }
-.header .container { display: flex; align-items: center; gap: 16px 28px; padding-top: 14px; padding-bottom: 14px; }
+.header .container { display: flex; align-items: center; gap: 16px 24px; padding-top: 14px; padding-bottom: 14px; }
 .logo { text-decoration: none; display: flex; flex-direction: column; line-height: 1; }
 .logo-mark { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 44px; letter-spacing: 2px; color: var(--accent); }
 .logo-sub { font-size: 9px; letter-spacing: 6px; color: var(--text); margin-top: 2px; }
 .nav { flex: 1; }
-.nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
 .nav a {
   font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: 1px;
   text-transform: uppercase; color: var(--text); text-decoration: none; white-space: nowrap;
@@ -103,7 +103,7 @@ button { cursor: pointer; }
 .nav a:hover, .nav a[aria-current="page"] { color: var(--accent); }
 .header-actions { display: flex; align-items: center; gap: 4px; }
 .search { display: flex; align-items: center; background: #181818; border: 1px solid #2a2a2a; border-radius: 999px; padding: 0 4px 0 16px; height: 44px; }
-.search input { background: transparent; border: 0; outline: none; font-size: 14px; width: 170px; }
+.search input { background: transparent; border: 0; outline: none; font-size: 14px; width: 130px; }
 .search button { width: 36px; height: 36px; border: 0; border-radius: 999px; background: transparent; display: flex; align-items: center; justify-content: center; }
 .cart-badge {
   position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px;
@@ -405,3 +405,20 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .size-guide ~ .section .tile strong { font-size: 32px; }
 .tile-accent a { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; color: var(--on-accent); font-weight: 700; }
 .size-table td:last-child { white-space: nowrap; }
+
+/* Guía de talles en el inicio */
+.btn-dark { background: var(--bg); color: var(--text); }
+.btn-dark:hover { background: #222; color: var(--text); }
+.size-band {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 40px;
+  padding: 36px 40px; border-radius: 24px; background: var(--accent); color: var(--on-accent);
+}
+.size-band-copy { display: flex; gap: 20px; align-items: flex-start; flex: 1 1 380px; }
+.size-band-icon { flex: none; display: inline-flex; padding: 14px; border-radius: 999px; background: var(--bg); color: var(--accent); }
+.size-band .eyebrow { color: var(--on-accent); }
+.size-band h2 { font-size: clamp(38px, 5vw, 56px); margin-top: 4px; }
+.size-band p { margin: 8px 0 0; font-size: 17px; }
+.size-band-form { display: flex; flex-wrap: wrap; gap: 10px; flex: 1 1 420px; }
+.size-band-form .input { flex: 1 1 160px; width: auto; height: 52px; background: #fff; color: #0b0b0b; border-color: transparent; }
+.size-band-form .btn { flex: 1 1 160px; }
+@media (max-width: 600px) { .size-band { padding: 28px 24px; } }

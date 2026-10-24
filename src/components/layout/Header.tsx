@@ -51,7 +51,7 @@ export function Header() {
           }}
         >
           <label htmlFor="buscar" className="sr-only">Buscar productos</label>
-          <input id="buscar" name="q" type="search" placeholder="Buscar bicis, repuestos…" />
+          <input id="buscar" name="q" type="search" placeholder="Buscar productos" />
           <button type="submit" aria-label="Buscar"><SearchIcon /></button>
         </form>
 

@@ -1,10 +1,12 @@
 import Link from "next/link";
+import Form from "next/form";
 import { getDisciplines, getFeaturedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/pricing";
 import { store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
-import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
+import { ArrowIcon, BikeIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
+import { sizeTables } from "./guia-de-talles/sizes";
 
 const brands = ["Zion", "SPY", "Eurobike", "Gravity"];
 
@@ -58,6 +60,28 @@ export default async function HomePage() {
               <span><strong>{b.title}</strong><span>{b.text}</span></span>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="size-band">
+          <div className="size-band-copy">
+            <span className="size-band-icon"><RulerIcon size={28} /></span>
+            <div>
+              <span className="eyebrow">Guía de talles</span>
+              <h2 className="display">¿Qué talle es el tuyo?</h2>
+              <p>Poné tu altura y te decimos qué cuadro te va. Con tabla y video explicativo.</p>
+            </div>
+          </div>
+          <Form action="/guia-de-talles" className="size-band-form">
+            <label className="sr-only" htmlFor="tipo-home">Tipo de bici</label>
+            <select id="tipo-home" name="tipo" className="input" defaultValue="mtb">
+              {sizeTables.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+            </select>
+            <label className="sr-only" htmlFor="altura-home">Tu altura</label>
+            <input id="altura-home" name="altura" className="input" inputMode="decimal" placeholder="Tu altura, ej: 1,75" />
+            <button type="submit" className="btn btn-dark">Ver mi talle <ArrowIcon /></button>
+          </Form>
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { rowFor, sizeTables, type TableId } from "./sizes";
 
 const fmt = (cm: number) => `${(cm / 100).toFixed(2).replace(".", ",")} m`;
@@ -8,6 +8,15 @@ const fmt = (cm: number) => `${(cm / 100).toFixed(2).replace(".", ",")} m`;
 export function SizeFinder() {
   const [tableId, setTableId] = useState<TableId>("mtb");
   const [height, setHeight] = useState("");
+
+  // Viene del buscador del inicio: /guia-de-talles?tipo=mtb&altura=1,75
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tipo = params.get("tipo");
+    if (sizeTables.some((t) => t.id === tipo)) setTableId(tipo as TableId);
+    const altura = params.get("altura");
+    if (altura) setHeight(altura);
+  }, []);
 
   const table = sizeTables.find((t) => t.id === tableId)!;
   const cm = Number(height.replace(",", "."));

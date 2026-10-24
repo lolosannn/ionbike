@@ -46,5 +46,6 @@ export const nav = [
   { label: "Repuestos", href: "/categoria/repuestos" },
   { label: "Accesorios", href: "/categoria/accesorios" },
   { label: "Indumentaria", href: "/categoria/indumentaria" },
+  { label: "Guía de talles", href: "/guia-de-talles" },
   { label: "Contacto", href: "/contacto" },
 ];
