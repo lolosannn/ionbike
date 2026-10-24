@@ -17,6 +17,7 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Quiénes somos** (`/contacto#quienes-somos`): texto, destacados, video del local y 4 fotos. El texto y la descripción de cada foto se editan en `about`, en `src/config/store.ts`; las fotos van en `public/nosotros/1.jpg` … `4.jpg` y el video en `public/nosotros/local.mp4` (portada opcional `local.jpg`).
 - **Disciplinas del inicio**: Mountain Bike, Dirt Jump, Ruta, Gravel y E-Bike (orden en `disciplineOrder`, `src/lib/catalog.ts`), con foto en `public/disciplinas/<slug>.jpg`.
 - **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
+- **Taller** (`/taller`): los 7 servicios y agenda de turnos para dejar la bici. El cliente elige servicios, día y horario libre y deja sus datos; el turno se guarda (modelo `Appointment`) respetando el cupo por horario, y al final puede avisar al local por WhatsApp. Servicios, precios, horarios y cupos en `src/config/workshop.ts`.
 - **Animación de carga**: ciclista que acelera mientras carga y sale disparado al terminar (`src/components/loader/`). Solo aparece si la carga tarda más de 0,35 s; para verla igual, abrir cualquier página con `?carga`.
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
 
@@ -65,7 +66,8 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 
 ## Pendientes
 
-- [ ] Panel de administración: productos, fotos, stock y pedidos. Agregar una variante a un producto existente tiene que ser rápido (hoy es lo que más tiempo les lleva).
+- [ ] Panel de administración: productos, fotos, stock, pedidos y turnos del taller (hoy los turnos se ven en la base de datos y llegan por WhatsApp si el cliente avisa).
+- [ ] Precios, duraciones y horarios reales del taller (`src/config/workshop.ts`). Agregar una variante a un producto existente tiene que ser rápido (hoy es lo que más tiempo les lleva).
 - [ ] Sincronización de stock con Mercado Libre vía Ecommap (hoy conectado a Tiendanube).
 - [ ] Chatbot de preguntas frecuentes.
 - [x] Video animado de la guía de talles.

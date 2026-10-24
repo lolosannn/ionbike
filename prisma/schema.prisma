@@ -69,6 +69,31 @@ model Variant {
   @@index([productId])
 }
 
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  DONE
+  CANCELLED
+}
+
+// Turno del taller (para dejar la bici en el local)
+model Appointment {
+  id        String            @id @default(cuid())
+  // "AAAA-MM-DD" y "HH:MM", en hora argentina
+  date      String
+  time      String
+  services  String[]
+  name      String
+  phone     String
+  email     String?
+  bike      String?
+  notes     String?
+  status    AppointmentStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+
+  @@index([date])
+}
+
 enum OrderStatus {
   PENDING
   PAID

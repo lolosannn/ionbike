@@ -87,7 +87,7 @@ export const banners: { file: string; alt: string; mobile?: string; href?: strin
 export const nav = [
   { label: "Inicio", href: "/" },
   { label: "Bicicletas", href: "/categoria/bicicletas" },
-  { label: "E-Bike", href: "/categoria/e-bike" },
+  { label: "Taller", href: "/taller" },
   { label: "Repuestos", href: "/categoria/repuestos" },
   { label: "Accesorios", href: "/categoria/accesorios" },
   { label: "Indumentaria", href: "/categoria/indumentaria" },
