@@ -77,5 +77,6 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Emails de confirmación de pedido.
 - [ ] Foto de cliente probando la bici para "Vení al local": `public/local/cliente.jpg` (o .png / .webp).
 - [ ] Historia del local para "Quiénes somos" y video del local.
+- [ ] Link de reseñas de Google del local (`googleReviewsUrl` en `store.ts`), horarios y redes sociales.
 - [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
 - [ ] Términos y condiciones, y políticas de cambios y envíos.

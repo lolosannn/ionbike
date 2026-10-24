@@ -6,6 +6,9 @@ export const store = {
   email: "ionbikestore@gmail.com",
   address: "Av. Fair 328, Monte Grande",
   hours: "[HORARIOS DEL LOCAL]",
+  // Link para dejar reseña en Google. Reemplazar por el de la ficha del local
+  // (Google Business > "Pedir reseñas"); mientras tanto abre la búsqueda en Maps.
+  googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=IonBikeStore%20Av.%20Fair%20328%20Monte%20Grande",
   social: {
     instagram: "#",
     facebook: "#",
