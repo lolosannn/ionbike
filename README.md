@@ -76,7 +76,6 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
 - [ ] Importar el catálogo real desde Tiendanube (exportación CSV).
 - [ ] Emails de confirmación de pedido.
-- [ ] Foto de cliente probando la bici para "Vení al local": `public/local/cliente.jpg` (o .png / .webp).
 - [ ] Historia del local para "Quiénes somos" y video del local.
 - [ ] Link de reseñas de Google del local (`googleReviewsUrl` en `store.ts`), horarios y redes sociales.
 - [ ] Planes de cuotas reales con sus recargos (`financing` en `store.ts`; hoy 3, 6 y 12 sin interés).
