@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getPayment, verifyWebhookSignature } from "@/lib/mercadopago";
-import { markOrderPaid } from "@/lib/orders";
+import { markOrderPaid, syncQrPayment } from "@/lib/orders";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const type = req.nextUrl.searchParams.get("type") ?? body.type;
   const dataId = String(req.nextUrl.searchParams.get("data.id") ?? body?.data?.id ?? "");
 
-  if (type !== "payment" || !dataId) return NextResponse.json({ ok: true });
+  // "payment": Checkout Pro (tarjeta, Pago Fácil / Rapipago, Mercado Pago) · "order": pago con QR
+  if ((type !== "payment" && type !== "order") || !dataId) return NextResponse.json({ ok: true });
 
   const valid = verifyWebhookSignature({
     signature: req.headers.get("x-signature"),
@@ -17,7 +18,12 @@ export async function POST(req: NextRequest) {
   });
   if (!valid) return NextResponse.json({ error: "firma inválida" }, { status: 401 });
 
-  // Nunca confiamos en el cuerpo: consultamos el pago directamente a Mercado Pago
+  // Nunca confiamos en el cuerpo: consultamos directamente a Mercado Pago
+  if (type === "order") {
+    await syncQrPayment(dataId);
+    return NextResponse.json({ ok: true });
+  }
+
   const payment = await getPayment(dataId);
   const orderId = payment.external_reference;
   if (!orderId) return NextResponse.json({ ok: true });

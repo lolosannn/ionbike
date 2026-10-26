@@ -898,3 +898,14 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 .pay-options h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 24px; text-transform: uppercase; }
 .pay-options .pay-highlight { color: var(--accent); font-size: 18px; }
 .pay-note { margin: 0; font-size: 13px; }
+
+/* Pago con QR */
+.qr-pay { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
+.qr-code { flex: none; width: 240px; max-width: 100%; padding: 8px; border-radius: 16px; background: #fff; }
+.qr-code svg { display: block; width: 100%; height: auto; }
+.qr-code.is-expired { opacity: 0.2; }
+.qr-pay-info { flex: 1 1 260px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.qr-pay-info ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.choice-group { display: flex; flex-direction: column; gap: 8px; }
+.choice-options { display: flex; flex-direction: column; gap: 8px; padding-left: 30px; }
+.choice-sub { padding: 12px 14px; }

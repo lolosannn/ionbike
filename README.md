@@ -11,7 +11,13 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Ficha de producto** (`/producto/[slug]`): galería, precio en efectivo/transferencia y de lista, tabla de **financiación** (planes en `financing`, en `store.ts`: cuotas y recargo), beneficios, envío, selección de color y rodado con stock por variante, botón de asesoramiento por WhatsApp y **especificaciones desplegables** por parte de la bici, con ícono y en orden de importancia (`src/lib/specs.ts`: partes, orden y nombres alternativos).
 - **Carrito** guardado en el navegador, con barra de avance al envío gratis, **cotizador de envío** (código postal + provincia) y cuánto sale el carrito con cada forma de pago. **Checkout** con envío a domicilio o retiro en el local.
 - **Envíos con Andreani**: gratis a todo el país desde $300.000. Debajo de ese monto, con las credenciales `ANDREANI_*` en `.env` se cotiza en vivo con la API de Andreani (`src/lib/andreani.ts`); sin ellas, o si la API no responde, se usa la tabla por zona de `shipping` en `store.ts` (CABA y GBA, centro, norte/Cuyo/Comahue y Patagonia sur; caja chica para repuestos, accesorios y ropa, y una caja grande por bici). El servidor siempre recalcula el envío al crear el pedido.
-- **Pagos**: Mercado Pago (crédito hasta 12 cuotas, débito, dinero en cuenta, Pago Fácil y Rapipago), transferencia con 25% off y efectivo al retirar en el local con 25% off. El descuento no se aplica al envío.
+- **Pagos**, en cuatro opciones:
+  - **Tarjeta de crédito o débito** (hasta 12 cuotas sin interés), cobrada con Mercado Pago.
+  - **Transferencia bancaria** con 25% off: con un **QR** que se genera en el momento y se escanea desde MODO, Mercado Pago o la app de cualquier banco (QR dinámico de Mercado Pago, interoperable), o al alias / CBU.
+  - **Efectivo** con 25% off: en el local, o en Pago Fácil / Rapipago con cupón de Mercado Pago (el descuento en el cupón se apaga con `ticketDiscount` en `store.ts`).
+  - **Mercado Pago**: dinero en cuenta, Mercado Crédito o tarjetas guardadas.
+
+  El descuento no se aplica al envío. Cada opción que pasa por Mercado Pago abre el checkout solo con sus medios.
 - **Pedidos**: el stock se descuenta al confirmar; el webhook de Mercado Pago marca el pedido como pagado.
 - **Productos a pedido** (gama alta sin stock): campo `onRequest` del producto. En lugar de comprar, muestran "Contactanos por WhatsApp" con el nombre del modelo ya escrito en el mensaje.
 - **Guía de talles** (`/guia-de-talles`, en el menú principal): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y video explicativo animado (`public/talles/guia-de-talles.mp4`). El video se arma en `video/guia-de-talles/` (HTML animado + `render.mjs`, que lo exporta con Playwright y ffmpeg); el guion para la locución está en `video/guia-de-talles/guion.md`.
@@ -61,8 +67,9 @@ Levanta PostgreSQL, aplica las migraciones y deja la tienda en el puerto 3000. D
 1. Crear una aplicación en el [panel de desarrolladores](https://www.mercadopago.com.ar/developers/panel/app) y copiar el *Access Token* de producción en `MP_ACCESS_TOKEN`.
 2. En *Webhooks*, configurar `https://www.ionbikestore.com/api/webhooks/mercadopago` con el evento **Pagos** y copiar la clave secreta en `MP_WEBHOOK_SECRET`.
 3. Las cuotas sin interés se configuran en la cuenta de Mercado Pago.
+4. Para el pago con QR: crear un local y una caja en la cuenta (API de *Locales y cajas* o el panel de Mercado Pago) y poner el `external_id` de la caja en `MP_QR_POS_ID`. El webhook del paso 2 tiene que incluir también el evento **Order (Mercado Pago)**; igual, la página del pedido consulta el pago cada 5 segundos mientras muestra el QR.
 
-Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
+Sin `MP_ACCESS_TOKEN` el checkout ofrece solo transferencia al alias y efectivo en el local.
 
 ## Pendientes
 

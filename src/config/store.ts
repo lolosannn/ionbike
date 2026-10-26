@@ -18,8 +18,11 @@ export const store = {
     facebook: "#",
     tiktok: "#",
   },
-  // Descuento por pago con transferencia (porcentaje)
+  // Descuento por pago con transferencia o efectivo (porcentaje). No se aplica al envío.
   transferDiscountPct: 25,
+  // true: el efectivo en Pago Fácil o Rapipago también tiene el descuento (como el efectivo
+  // en el local). Ojo que ese cobro pasa por Mercado Pago y tiene su comisión.
+  ticketDiscount: true,
   // Envío gratis a partir de este monto (en centavos)
   freeShippingFrom: 300_000_00,
   // Envíos con Andreani. Si están cargadas las credenciales (ANDREANI_* en .env) la tienda
@@ -60,7 +63,7 @@ export const store = {
   },
   paymentBrands: [
     "Visa", "Mastercard", "Amex", "Diners", "Cabal", "Naranja X", "Nativa",
-    "Argencard", "Maestro", "Banelco", "Link", "Pago Fácil", "Rapipago", "Provincia",
+    "Argencard", "Maestro", "MODO", "Banelco", "Link", "Pago Fácil", "Rapipago", "Provincia",
   ],
 } as const;
 

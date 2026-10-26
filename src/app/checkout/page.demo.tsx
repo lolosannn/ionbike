@@ -9,7 +9,7 @@ export default function CheckoutPage() {
       <div className="page-head">
         <h1 className="display">Finalizar compra</h1>
       </div>
-      <CheckoutForm mercadoPagoEnabled />
+      <CheckoutForm mercadoPagoEnabled qrEnabled />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { useCart } from "@/components/cart/CartProvider";
-import { formatPrice, hasFreeShipping } from "@/lib/pricing";
+import { formatPrice, hasCashDiscount, hasFreeShipping } from "@/lib/pricing";
 import { provinces } from "@/lib/shipping";
 import { store } from "@/config/store";
 import { useShippingQuote, type QuoteAction } from "@/components/cart/useShippingQuote";
@@ -12,21 +12,73 @@ export type CheckoutState = { error?: string; demo?: boolean } | null;
 
 type Props = {
   mercadoPagoEnabled: boolean;
+  // Pago con QR (MODO, app del banco): Mercado Pago con una caja configurada
+  qrEnabled: boolean;
   // Sin acción: vista previa estática, el pedido se simula
   action?: (prev: CheckoutState, form: FormData) => Promise<CheckoutState>;
   quoteAction?: QuoteAction;
 };
 
-type Payment = "MERCADOPAGO" | "TRANSFER" | "CASH";
+type Payment = "CARD" | "TRANSFER" | "QR" | "CASH" | "TICKET" | "MERCADOPAGO";
+type Group = "card" | "transfer" | "cash" | "mp";
 
-export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteAction }: Props) {
+const groupOf: Record<Payment, Group> = {
+  CARD: "card", TRANSFER: "transfer", QR: "transfer", CASH: "cash", TICKET: "cash", MERCADOPAGO: "mp",
+};
+
+const submitText: Record<Payment, string> = {
+  CARD: "Pagar con tarjeta",
+  TRANSFER: "Confirmar pedido",
+  QR: "Generar QR de pago",
+  CASH: "Reservar pedido",
+  TICKET: "Generar cupón de pago",
+  MERCADOPAGO: "Pagar con Mercado Pago",
+};
+
+function PaymentChoice(props: {
+  group: Group;
+  current: Group;
+  onSelect: () => void;
+  title: string;
+  text: string;
+  children?: React.ReactNode;
+}) {
+  const selected = props.group === props.current;
+  return (
+    <div className="choice-group">
+      <label className="choice">
+        <input type="radio" name="paymentGroup" checked={selected} onChange={props.onSelect} />
+        <span>
+          <strong>{props.title}</strong>
+          <small>{props.text}</small>
+        </span>
+      </label>
+      {selected && props.children && <div className="choice-options">{props.children}</div>}
+    </div>
+  );
+}
+
+function SubChoice(props: { value: Payment; payment: Payment; onSelect: (p: Payment) => void; title: string; text: string }) {
+  return (
+    <label className="choice choice-sub">
+      <input type="radio" name="paymentOption" checked={props.payment === props.value} onChange={() => props.onSelect(props.value)} />
+      <span>
+        <strong>{props.title}</strong>
+        <small>{props.text}</small>
+      </span>
+    </label>
+  );
+}
+
+export function CheckoutForm({ mercadoPagoEnabled, qrEnabled, action: placeOrder, quoteAction }: Props) {
   const { items, subtotal, ready, clear, destination, setDestination } = useCart();
   const [state, action, pending] = useActionState<CheckoutState, FormData>(
     placeOrder ?? (async () => { clear(); return { demo: true }; }),
     null,
   );
   const [shipping, setShipping] = useState<"PICKUP" | "DELIVERY">("DELIVERY");
-  const [payment, setPayment] = useState<Payment>(mercadoPagoEnabled ? "MERCADOPAGO" : "TRANSFER");
+  const [payment, setPayment] = useState<Payment>(mercadoPagoEnabled ? "CARD" : "TRANSFER");
+  const group = groupOf[payment];
   const { quote, loading } = useShippingQuote(destination, quoteAction);
   const zip = destination?.zip ?? "";
   const province = destination?.province ?? "";
@@ -36,7 +88,7 @@ export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteActi
     return (
       <div className="notice" style={{ marginTop: 28 }}>
         <h2 style={{ marginTop: 0 }}>¡Listo! (vista previa)</h2>
-        <p>En la tienda real acá se crea el pedido y se te redirige a Mercado Pago o a los datos de transferencia. En esta vista previa no se generó ningún pedido ni cobro.</p>
+        <p>En la tienda real acá se crea el pedido y se te lleva a pagar con el medio que elegiste: Mercado Pago, el QR, el cupón de Pago Fácil o Rapipago, o los datos para transferir. En esta vista previa no se generó ningún pedido ni cobro.</p>
         <Link href="/" className="btn btn-primary">Volver al inicio</Link>
       </div>
     );
@@ -51,7 +103,7 @@ export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteActi
   }
 
   // Cálculo orientativo: el servidor recalcula todo con los precios reales
-  const discount = payment !== "MERCADOPAGO" ? Math.round((subtotal * store.transferDiscountPct) / 100) : 0;
+  const discount = hasCashDiscount(payment) ? Math.round((subtotal * store.transferDiscountPct) / 100) : 0;
   const free = hasFreeShipping(subtotal);
   const shippingCost = shipping === "PICKUP" || free ? 0 : quote?.cost ?? null;
   const total = subtotal - discount + (shippingCost ?? 0);
@@ -63,11 +115,7 @@ export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteActi
         ? `${formatPrice(quote.cost)} · ${quote.days}`
         : "Ingresá tu código postal para cotizar";
 
-  const chooseShipping = (method: "PICKUP" | "DELIVERY") => {
-    setShipping(method);
-    // El efectivo es solo retirando en el local
-    if (method === "DELIVERY" && payment === "CASH") setPayment("TRANSFER");
-  };
+  const chooseShipping = (method: "PICKUP" | "DELIVERY") => setShipping(method);
 
   return (
     <form action={action} className="cart-layout">
@@ -130,30 +178,47 @@ export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteActi
         <fieldset>
           <legend>Pago</legend>
           {mercadoPagoEnabled && (
-            <label className="choice">
-              <input type="radio" name="paymentMethod" value="MERCADOPAGO" checked={payment === "MERCADOPAGO"} onChange={() => setPayment("MERCADOPAGO")} />
-              <span>
-                <strong>Mercado Pago</strong>
-                <small>Crédito hasta {store.installments} cuotas sin interés, débito, dinero en cuenta y efectivo en Pago Fácil o Rapipago. Precio de lista.</small>
-              </span>
-            </label>
+            <PaymentChoice group="card" current={group} onSelect={() => setPayment("CARD")}
+              title="Tarjeta de crédito o débito"
+              text={`Crédito en hasta ${store.installments} cuotas sin interés, o débito. Se paga con Mercado Pago, no necesitás tener cuenta.`}
+            />
           )}
-          <label className="choice">
-            <input type="radio" name="paymentMethod" value="TRANSFER" checked={payment === "TRANSFER"} onChange={() => setPayment("TRANSFER")} />
-            <span>
-              <strong>Transferencia · {store.transferDiscountPct}% off</strong>
-              <small>Te mostramos el alias y el CBU / CVU al confirmar el pedido. El descuento no se aplica al envío.</small>
-            </span>
-          </label>
-          {shipping === "PICKUP" && (
-            <label className="choice">
-              <input type="radio" name="paymentMethod" value="CASH" checked={payment === "CASH"} onChange={() => setPayment("CASH")} />
-              <span>
-                <strong>Efectivo al retirar · {store.transferDiscountPct}% off</strong>
-                <small>Te reservamos el pedido y lo pagás en el local.</small>
-              </span>
-            </label>
+          <PaymentChoice group="transfer" current={group} onSelect={() => setPayment(qrEnabled ? "QR" : "TRANSFER")}
+            title={`Transferencia bancaria · ${store.transferDiscountPct}% off`}
+            text="Desde MODO, la app de tu banco o el home banking."
+          >
+            {qrEnabled && (
+              <SubChoice value="QR" payment={payment} onSelect={setPayment}
+                title="Con QR" text="Lo generamos al confirmar y lo escaneás desde MODO, Mercado Pago o la app de tu banco."
+              />
+            )}
+            <SubChoice value="TRANSFER" payment={payment} onSelect={setPayment}
+              title="Al alias o CBU / CVU" text="Te mostramos los datos al confirmar y nos mandás el comprobante por WhatsApp."
+            />
+          </PaymentChoice>
+          <PaymentChoice group="cash" current={group} onSelect={() => setPayment("CASH")}
+            title={`Efectivo · ${store.transferDiscountPct}% off`}
+            text={mercadoPagoEnabled ? "En el local o en Pago Fácil / Rapipago." : "En el local."}
+          >
+            <SubChoice value="CASH" payment={payment} onSelect={setPayment}
+              title="En el local"
+              text={`${store.address} · ${store.hours}.${shipping === "DELIVERY" ? " Cuando pagás, lo despachamos." : ""}`}
+            />
+            {mercadoPagoEnabled && (
+              <SubChoice value="TICKET" payment={payment} onSelect={setPayment}
+                title="En Pago Fácil o Rapipago"
+                text={`Te damos un cupón para pagar en cualquier sucursal.${store.ticketDiscount ? "" : " Precio de lista."}`}
+              />
+            )}
+          </PaymentChoice>
+          {mercadoPagoEnabled && (
+            <PaymentChoice group="mp" current={group} onSelect={() => setPayment("MERCADOPAGO")}
+              title="Mercado Pago"
+              text="Dinero en cuenta, Mercado Crédito o tus tarjetas guardadas. Precio de lista."
+            />
           )}
+          <input type="hidden" name="paymentMethod" value={payment} />
+          <p className="muted" style={{ margin: 0, fontSize: 14 }}>El descuento se aplica sobre los productos, no sobre el envío.</p>
         </fieldset>
 
         <label className="field">Notas del pedido (opcional)<textarea className="input" name="notes" rows={3} /></label>
@@ -168,7 +233,7 @@ export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteActi
           </div>
         ))}
         <div className="summary-row"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-        {discount > 0 && <div className="summary-row"><span>Descuento {payment === "CASH" ? "efectivo" : "transferencia"} ({store.transferDiscountPct}%)</span><span>−{formatPrice(discount)}</span></div>}
+        {discount > 0 && <div className="summary-row"><span>Descuento {groupOf[payment] === "cash" ? "efectivo" : "transferencia"} ({store.transferDiscountPct}%)</span><span>−{formatPrice(discount)}</span></div>}
         <div className="summary-row">
           <span>Envío{shipping === "DELIVERY" && quote && !free ? ` (${quote.zone})` : ""}</span>
           <span>{shippingCost === null ? <span className="muted">A cotizar</span> : shippingCost ? formatPrice(shippingCost) : "Gratis"}</span>
@@ -176,7 +241,7 @@ export function CheckoutForm({ mercadoPagoEnabled, action: placeOrder, quoteActi
         <div className="summary-row total"><span>Total</span><span>{formatPrice(total)}</span></div>
         {state?.error && <p className="alert" role="alert">{state.error}</p>}
         <button type="submit" className="btn btn-primary btn-block" disabled={pending}>
-          {pending ? "Procesando…" : payment === "MERCADOPAGO" ? "Pagar con Mercado Pago" : payment === "CASH" ? "Reservar pedido" : "Confirmar pedido"}
+          {pending ? "Procesando…" : submitText[payment]}
         </button>
       </aside>
     </form>

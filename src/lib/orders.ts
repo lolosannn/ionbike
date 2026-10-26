@@ -3,7 +3,9 @@ import { PaymentMethod, Prisma, ShippingMethod } from "@prisma/client";
 import { db } from "@/lib/db";
 import { store } from "@/config/store";
 import { variantLabel } from "@/lib/variants";
+import { hasCashDiscount } from "@/lib/pricing";
 import { andreaniQuote, isAndreaniConfigured } from "@/lib/andreani";
+import { createQrOrder, getQrOrder } from "@/lib/mercadopago";
 import { estimateShipping, isBulkyCategory, isValidDestination, normalizeZip, type Destination, type ShippingQuote } from "@/lib/shipping";
 
 export class OutOfStockError extends Error {
@@ -53,9 +55,9 @@ export async function quoteShipping(items: { variantId: string; quantity: number
   }
 }
 
-// Transferencia y efectivo al retirar tienen el mismo descuento (no se aplica al envío)
+// Transferencia y efectivo tienen el mismo descuento (no se aplica al envío)
 export function transferDiscountFor(method: PaymentMethod, subtotal: number) {
-  return method === "TRANSFER" || method === "CASH" ? Math.round((subtotal * store.transferDiscountPct) / 100) : 0;
+  return hasCashDiscount(method) ? Math.round((subtotal * store.transferDiscountPct) / 100) : 0;
 }
 
 /**
@@ -145,4 +147,29 @@ export async function markOrderPaid(orderId: string, mpPaymentId?: string) {
       await tx.product.update({ where: { id: item.variant.productId }, data: { salesCount: { increment: item.quantity } } });
     }
   });
+}
+
+/** Genera (o renueva, si venció) el QR de Mercado Pago de un pedido pendiente. */
+export async function attachQr(orderId: string) {
+  const order = await db.order.findUnique({ where: { id: orderId } });
+  if (!order || order.status !== "PENDING" || order.paymentMethod !== "QR") return;
+  if (order.mpQrData && order.mpQrExpiresAt && order.mpQrExpiresAt > new Date()) return;
+  const qr = await createQrOrder({ orderId: order.id, orderNumber: order.number, total: order.total });
+  await db.order.update({
+    where: { id: order.id },
+    data: { mpQrOrderId: qr.id, mpQrData: qr.qrData, mpQrExpiresAt: qr.expiresAt },
+  });
+}
+
+/** Consulta el QR en Mercado Pago y marca el pedido como pagado si ya se acreditó. */
+export async function syncQrPayment(mpQrOrderId: string) {
+  const qr = await getQrOrder(mpQrOrderId);
+  const order = await db.order.findFirst({ where: { id: qr.externalReference, mpQrOrderId } });
+  if (!order || order.status !== "PENDING") return;
+  if (qr.status !== "processed") return;
+  if (qr.paid < order.total) {
+    console.error(`QR ${mpQrOrderId} por ${qr.paid} menor al total del pedido ${order.number} (${order.total})`);
+    return;
+  }
+  await markOrderPaid(order.id, qr.paymentId);
 }

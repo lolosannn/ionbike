@@ -16,6 +16,11 @@ export function transferPrice(cents: number): number {
   return Math.round(cents * (1 - store.transferDiscountPct / 100));
 }
 
+/** Medios de pago con el descuento de transferencia / efectivo. */
+export function hasCashDiscount(method: string): boolean {
+  return method === "TRANSFER" || method === "QR" || method === "CASH" || (method === "TICKET" && store.ticketDiscount);
+}
+
 export function installmentPrice(cents: number): number {
   return Math.round(cents / store.installments);
 }

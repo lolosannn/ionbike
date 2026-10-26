@@ -1,4 +1,4 @@
-import { isMercadoPagoConfigured } from "@/lib/mercadopago";
+import { isMercadoPagoConfigured, isQrConfigured } from "@/lib/mercadopago";
 import { CheckoutForm } from "./CheckoutForm";
 import { placeOrder, quoteShippingAction } from "./actions";
 
@@ -11,7 +11,7 @@ export default function CheckoutPage() {
       <div className="page-head">
         <h1 className="display">Finalizar compra</h1>
       </div>
-      <CheckoutForm mercadoPagoEnabled={isMercadoPagoConfigured()} action={placeOrder} quoteAction={quoteShippingAction} />
+      <CheckoutForm mercadoPagoEnabled={isMercadoPagoConfigured()} qrEnabled={isQrConfigured()} action={placeOrder} quoteAction={quoteShippingAction} />
     </div>
   );
 }

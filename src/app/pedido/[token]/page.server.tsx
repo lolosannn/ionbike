@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/pricing";
 import { store, whatsappUrl } from "@/config/store";
+import QRCode from "qrcode";
 import { ClearCart } from "./ClearCart";
+import { QrPayment } from "./QrPayment";
+import { checkQrPayment, renewQr } from "../../checkout/actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Tu pedido", robots: { index: false } };
@@ -53,14 +56,37 @@ export default async function OrderPage({ params, searchParams }: Props) {
         </div>
       )}
 
-      {order.paymentMethod === "CASH" && order.status === "PENDING" && (
+      {order.paymentMethod === "QR" && order.status === "PENDING" && order.mpQrData && order.mpQrExpiresAt && (
         <div className="notice" style={{ marginTop: 24 }}>
-          <h2 style={{ marginTop: 0 }}>Pagás {formatPrice(order.total)} en efectivo al retirar</h2>
-          <p className="muted">Te avisamos por WhatsApp cuando esté listo para retirar en {store.address} ({store.hours}).</p>
+          <h2 style={{ marginTop: 0 }}>Escaneá el QR y pagá {formatPrice(order.total)}</h2>
+          <QrPayment
+            svg={await QRCode.toString(order.mpQrData, { type: "svg", margin: 2, errorCorrectionLevel: "M" })}
+            expiresAt={order.mpQrExpiresAt.toISOString()}
+            check={checkQrPayment.bind(null, token)}
+            renew={renewQr.bind(null, token)}
+          />
         </div>
       )}
 
-      {order.paymentMethod === "MERCADOPAGO" && order.status === "PENDING" && (
+      {order.paymentMethod === "CASH" && order.status === "PENDING" && (
+        <div className="notice" style={{ marginTop: 24 }}>
+          <h2 style={{ marginTop: 0 }}>Pagás {formatPrice(order.total)} en efectivo en el local</h2>
+          <p className="muted" style={{ marginBottom: 0 }}>
+            Te esperamos en {store.address} ({store.hours}).{" "}
+            {order.shippingMethod === "DELIVERY"
+              ? "Cuando pagues, lo despachamos por Andreani."
+              : "Te avisamos por WhatsApp cuando esté listo para retirar."}
+          </p>
+        </div>
+      )}
+
+      {order.paymentMethod === "TICKET" && order.status === "PENDING" && (
+        <div className="notice" style={{ marginTop: 24 }}>
+          Estamos esperando que pagues el cupón en Pago Fácil o Rapipago. La acreditación puede demorar hasta 2 días hábiles; cuando llegue, esta página se actualiza.
+        </div>
+      )}
+
+      {(order.paymentMethod === "MERCADOPAGO" || order.paymentMethod === "CARD") && order.status === "PENDING" && (
         <div className="notice" style={{ marginTop: 24 }}>
           Estamos esperando la confirmación de Mercado Pago. Si ya pagaste, esta página se actualiza sola en unos minutos.
         </div>

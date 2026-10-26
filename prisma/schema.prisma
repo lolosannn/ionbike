@@ -102,11 +102,22 @@ enum OrderStatus {
   CANCELLED
 }
 
+// CARD, TICKET y MERCADOPAGO se cobran con Mercado Pago (Checkout Pro), cada uno
+// limitado a sus medios; QR es un QR dinámico de Mercado Pago (interoperable: se paga
+// con MODO o la app de cualquier banco). TRANSFER y CASH se cobran por fuera.
 enum PaymentMethod {
+  // Dinero en cuenta, Mercado Crédito o tarjetas guardadas en Mercado Pago
   MERCADOPAGO
+  // Transferencia al alias o CBU / CVU (home banking, app del banco o MODO)
   TRANSFER
-  // Efectivo al retirar en el local (solo con retiro)
+  // QR que se escanea desde MODO, Mercado Pago o la app del banco
+  QR
+  // Efectivo en el local
   CASH
+  // Tarjeta de crédito o débito
+  CARD
+  // Efectivo en Pago Fácil o Rapipago
+  TICKET
 }
 
 enum ShippingMethod {
@@ -137,6 +148,10 @@ model Order {
   total          Int
   mpPreferenceId String?
   mpPaymentId    String?
+  // QR dinámico de Mercado Pago (pago con QR)
+  mpQrOrderId    String?
+  mpQrData       String?
+  mpQrExpiresAt  DateTime?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   items          OrderItem[]

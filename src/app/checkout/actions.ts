@@ -3,9 +3,9 @@
 import { redirect } from "next/navigation";
 import { PaymentMethod, ShippingMethod } from "@prisma/client";
 import { db } from "@/lib/db";
-import { cancelPendingOrder, createOrder, OutOfStockError, quoteShipping } from "@/lib/orders";
+import { attachQr, cancelPendingOrder, syncQrPayment, createOrder, OutOfStockError, quoteShipping } from "@/lib/orders";
 import { isValidDestination, type ShippingQuote } from "@/lib/shipping";
-import { createPreference, isMercadoPagoConfigured } from "@/lib/mercadopago";
+import { createPreference, isMercadoPagoConfigured, isQrConfigured } from "@/lib/mercadopago";
 import type { CheckoutState } from "./CheckoutForm";
 
 const MAX_LINES = 20;
@@ -66,11 +66,12 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
   if (shippingMethod === "DELIVERY" && !isValidDestination(data)) {
     return { error: "Revisá el código postal y la provincia." };
   }
-  if (paymentMethod === "CASH" && shippingMethod !== "PICKUP") {
-    return { error: "El pago en efectivo es solo retirando en el local." };
+  const viaMercadoPago = paymentMethod === "MERCADOPAGO" || paymentMethod === "CARD" || paymentMethod === "TICKET";
+  if (viaMercadoPago && !isMercadoPagoConfigured()) {
+    return { error: "Ese medio de pago todavía no está habilitado. Elegí transferencia o efectivo en el local." };
   }
-  if (paymentMethod === "MERCADOPAGO" && !isMercadoPagoConfigured()) {
-    return { error: "El pago con Mercado Pago todavía no está habilitado. Elegí transferencia." };
+  if (paymentMethod === "QR" && !isQrConfigured()) {
+    return { error: "El pago con QR todavía no está habilitado. Elegí transferencia al alias." };
   }
 
   let order;
@@ -81,14 +82,25 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
     throw e;
   }
 
-  if (paymentMethod !== "MERCADOPAGO") redirect(`/pedido/${order.publicToken}?nuevo=1`);
+  if (paymentMethod === "QR") {
+    try {
+      await attachQr(order.id);
+    } catch (e) {
+      console.error("Error creando el QR de Mercado Pago", e);
+      await cancelPendingOrder(order.id);
+      return { error: "No pudimos generar el QR. Probá de nuevo o elegí transferencia al alias." };
+    }
+  }
+  if (!viaMercadoPago) redirect(`/pedido/${order.publicToken}?nuevo=1`);
 
   let initPoint: string;
   try {
     const pref = await createPreference({
       orderId: order.id,
+      orderNumber: order.number,
       publicToken: order.publicToken,
       email: order.email,
+      method: paymentMethod,
       items: order.items.map((i) => ({
         id: i.variantId,
         title: [i.productName, i.variantLabel].filter(Boolean).join(" - "),
@@ -96,6 +108,8 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
         unitPrice: i.unitPrice,
       })),
       shippingCost: order.shippingCost,
+      discount: order.discount,
+      total: order.total,
     });
     await db.order.update({ where: { id: order.id }, data: { mpPreferenceId: pref.id } });
     initPoint = pref.initPoint;
@@ -105,4 +119,22 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
     return { error: "No pudimos conectar con Mercado Pago. Probá de nuevo en unos minutos." };
   }
   redirect(initPoint);
+}
+
+/** Genera un QR nuevo para un pedido pendiente (el anterior vence a los 30 minutos). */
+export async function renewQr(token: string) {
+  const order = await db.order.findUnique({ where: { publicToken: String(token) } });
+  if (!order) return;
+  await attachQr(order.id).catch((e) => console.error("Error renovando el QR", e));
+}
+
+/** Consulta si ya se pagó el QR del pedido. Devuelve true cuando está pagado. */
+export async function checkQrPayment(token: string) {
+  const order = await db.order.findUnique({ where: { publicToken: String(token) } });
+  if (!order) return false;
+  if (order.status === "PENDING" && order.mpQrOrderId) {
+    await syncQrPayment(order.mpQrOrderId).catch((e) => console.error("Error consultando el QR", e));
+    return (await db.order.findUnique({ where: { id: order.id } }))?.status === "PAID";
+  }
+  return order.status === "PAID";
 }
