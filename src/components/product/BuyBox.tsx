@@ -15,7 +15,7 @@ type VariantOption = {
 };
 
 type Props = {
-  product: { slug: string; name: string; price: number; image: string | null };
+  product: { slug: string; name: string; price: number; image: string | null; bulky: boolean };
   variants: VariantOption[];
 };
 
@@ -54,6 +54,7 @@ export function BuyBox({ product, variants }: Props) {
       price: product.price,
       quantity: qty,
       maxStock: stock,
+      bulky: product.bulky,
     });
     if (goToCart) router.push("/carrito");
     else setAdded(true);

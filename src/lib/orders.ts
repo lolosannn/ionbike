@@ -3,6 +3,8 @@ import { PaymentMethod, Prisma, ShippingMethod } from "@prisma/client";
 import { db } from "@/lib/db";
 import { store } from "@/config/store";
 import { variantLabel } from "@/lib/variants";
+import { andreaniQuote, isAndreaniConfigured } from "@/lib/andreani";
+import { estimateShipping, isBulkyCategory, isValidDestination, normalizeZip, type Destination, type ShippingQuote } from "@/lib/shipping";
 
 export class OutOfStockError extends Error {
   constructor(public productName: string) {
@@ -25,13 +27,35 @@ export type OrderInput = {
   notes?: string;
 };
 
-export function shippingCostFor(method: ShippingMethod, subtotal: number) {
-  if (method === "PICKUP") return 0;
-  return subtotal >= store.freeShippingFrom ? 0 : store.shippingFlatRate;
+/**
+ * Cotiza el envío con los precios y categorías de la base de datos.
+ * Con credenciales de Andreani cotiza en vivo; si no hay o la API falla, usa la tabla por zona.
+ */
+export async function quoteShipping(items: { variantId: string; quantity: number }[], dest: Destination): Promise<ShippingQuote> {
+  if (!isValidDestination(dest)) throw new Error("Destino de envío inválido");
+  const variants = await db.variant.findMany({
+    where: { id: { in: items.map((i) => i.variantId) } },
+    include: { product: { include: { category: { include: { parent: true } } } } },
+  });
+  const lines = items.flatMap((i) => {
+    const v = variants.find((x) => x.id === i.variantId);
+    if (!v) return [];
+    const { category } = v.product;
+    return [{ bulky: isBulkyCategory(category.slug, category.parent?.slug), quantity: i.quantity, price: v.product.price }];
+  });
+  const estimate = estimateShipping(dest, lines);
+  if (estimate.free || !isAndreaniConfigured()) return estimate;
+  try {
+    return { ...estimate, cost: await andreaniQuote(normalizeZip(dest.zip)!, lines), source: "andreani" };
+  } catch (e) {
+    console.error("No se pudo cotizar con Andreani, se usa la tabla", e);
+    return estimate;
+  }
 }
 
+// Transferencia y efectivo al retirar tienen el mismo descuento (no se aplica al envío)
 export function transferDiscountFor(method: PaymentMethod, subtotal: number) {
-  return method === "TRANSFER" ? Math.round((subtotal * store.transferDiscountPct) / 100) : 0;
+  return method === "TRANSFER" || method === "CASH" ? Math.round((subtotal * store.transferDiscountPct) / 100) : 0;
 }
 
 /**
@@ -39,6 +63,11 @@ export function transferDiscountFor(method: PaymentMethod, subtotal: number) {
  * Los precios salen siempre de la base de datos, nunca del carrito del navegador.
  */
 export async function createOrder(input: OrderInput) {
+  const isDelivery = input.shippingMethod === "DELIVERY";
+  const shipping = isDelivery
+    ? await quoteShipping(input.items, { zip: input.zip ?? "", province: input.province ?? "" })
+    : null;
+
   return db.$transaction(async (tx) => {
     const lines: Prisma.OrderItemCreateManyOrderInput[] = [];
     let subtotal = 0;
@@ -64,8 +93,7 @@ export async function createOrder(input: OrderInput) {
     }
 
     const discount = transferDiscountFor(input.paymentMethod, subtotal);
-    const shippingCost = shippingCostFor(input.shippingMethod, subtotal);
-    const isDelivery = input.shippingMethod === "DELIVERY";
+    const shippingCost = shipping?.cost ?? 0;
 
     return tx.order.create({
       data: {

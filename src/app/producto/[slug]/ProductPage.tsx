@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getProduct, getRelatedProducts } from "@/lib/catalog";
 import { financingPlans, formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
 import { store, whatsappUrl } from "@/config/store";
+import { isBulkyCategory } from "@/lib/shipping";
 import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { SpecsAccordion } from "@/components/product/SpecsAccordion";
@@ -26,7 +27,7 @@ export default async function ProductPage({ params }: Props) {
     ? Math.round((1 - product.price / product.compareAt) * 100)
     : null;
   const parent = product.category.parent;
-  const isBike = [product.category.slug, parent?.slug].some((s) => s === "bicicletas" || s === "e-bike");
+  const isBike = isBulkyCategory(product.category.slug, parent?.slug);
 
   return (
     <div className="container">
@@ -99,7 +100,7 @@ export default async function ProductPage({ params }: Props) {
             </div>
           ) : (
             <BuyBox
-              product={{ slug: product.slug, name: product.name, price: product.price, image: product.images[0] ?? null }}
+              product={{ slug: product.slug, name: product.name, price: product.price, image: product.images[0] ?? null, bulky: isBike }}
               variants={product.variants.map((v) => ({ id: v.id, color: v.color, colorHex: v.colorHex, size: v.size, stock: v.stock }))}
             />
           )}

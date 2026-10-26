@@ -22,8 +22,23 @@ export const store = {
   transferDiscountPct: 25,
   // Envío gratis a partir de este monto (en centavos)
   freeShippingFrom: 300_000_00,
-  // Costo de envío fijo mientras no esté la integración con Andreani (en centavos)
-  shippingFlatRate: 15_000_00,
+  // Envíos con Andreani. Si están cargadas las credenciales (ANDREANI_* en .env) la tienda
+  // cotiza en vivo con la API; si no, o si la API no responde, usa esta tabla por zona.
+  // Montos en centavos, IVA incluido: "small" es una caja chica (repuestos, accesorios,
+  // ropa: todo lo del pedido viaja junto) y "bike" es cada bicicleta en su caja.
+  shipping: {
+    zones: {
+      amba: { label: "CABA y GBA", days: "1 a 3 días hábiles", small: 9_900_00, bike: 34_900_00 },
+      centro: { label: "Región centro", days: "3 a 5 días hábiles", small: 13_900_00, bike: 52_900_00 },
+      norte: { label: "Norte, Cuyo y Comahue", days: "4 a 7 días hábiles", small: 16_900_00, bike: 67_900_00 },
+      sur: { label: "Patagonia sur", days: "5 a 9 días hábiles", small: 21_900_00, bike: 89_900_00 },
+    },
+    // Medidas y peso de cada bulto para la cotización de Andreani
+    packages: {
+      small: { kilos: 3, cm: [40, 30, 20] },
+      bike: { kilos: 18, cm: [145, 80, 25] },
+    },
+  },
   installments: 12,
   // Planes de cuotas de la ficha de producto. recargoPct es el recargo total sobre el
   // precio de lista (0 = sin interés). Para sumar planes con interés, por ejemplo:
@@ -36,10 +51,10 @@ export const store = {
   // Video de la guía de talles: ID de YouTube (lo que va después de "v=") o URL de un .mp4.
   // Vacío usa el video propio de public/talles/guia-de-talles.mp4 (o un aviso si no está).
   sizeGuideVideo: "",
-  // Datos para transferencia bancaria
+  // Datos para transferencia (cuenta bancaria o de Mercado Pago, con alias fijo)
   bank: {
     holder: "[TITULAR DE LA CUENTA]",
-    cbu: "[CBU]",
+    cbu: "[CBU / CVU]",
     alias: "[ALIAS]",
     cuit: "[CUIT]",
   },

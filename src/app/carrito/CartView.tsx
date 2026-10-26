@@ -3,12 +3,18 @@
 import Link from "next/link";
 import { useCart } from "@/components/cart/CartProvider";
 import { formatPrice, hasFreeShipping, transferPrice } from "@/lib/pricing";
-import { store } from "@/config/store";
 import { TrashIcon } from "@/components/icons";
 import { ProductImage } from "@/components/product/ProductCard";
+import { FreeShippingProgress, ShippingCalculator } from "@/components/cart/ShippingCalculator";
+import { PaymentOptions } from "@/components/cart/PaymentOptions";
+import { useShippingQuote, type QuoteAction } from "@/components/cart/useShippingQuote";
 
-export default function CartPage() {
-  const { items, subtotal, ready, setQuantity, remove } = useCart();
+export function CartView({ quoteAction }: { quoteAction?: QuoteAction }) {
+  const { items, count, subtotal, ready, destination, setQuantity, remove } = useCart();
+  const { quote, loading } = useShippingQuote(destination, quoteAction);
+  const free = hasFreeShipping(subtotal);
+  // Hasta elegir la forma de entrega se muestra el envío a domicilio cotizado, si lo hay
+  const shippingCost = free ? 0 : quote?.cost ?? null;
 
   return (
     <div className="container">
@@ -42,24 +48,22 @@ export default function CartPage() {
                 </button>
               </div>
             ))}
+            <PaymentOptions subtotal={subtotal} />
           </div>
 
           <aside className="summary" aria-label="Resumen">
             <h2>Resumen</h2>
-            <div className="summary-row"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-            <div className="summary-row muted">
+            <FreeShippingProgress subtotal={subtotal} />
+            <div className="summary-row"><span>Subtotal ({count} {count === 1 ? "producto" : "productos"})</span><span>{formatPrice(subtotal)}</span></div>
+            <div className="summary-row">
               <span>Envío</span>
-              <span>{hasFreeShipping(subtotal) ? "Gratis" : "Se calcula en el checkout"}</span>
+              <span>{free ? "Gratis" : shippingCost !== null ? formatPrice(shippingCost) : <span className="muted">Ingresá tu código postal</span>}</span>
             </div>
-            <div className="summary-row total"><span>Total</span><span>{formatPrice(subtotal)}</span></div>
+            <ShippingCalculator quote={quote} loading={loading} />
+            <div className="summary-row total"><span>Total</span><span>{formatPrice(subtotal + (shippingCost ?? 0))}</span></div>
             <p className="price-note" style={{ margin: 0 }}>
-              Pagando con transferencia: <strong style={{ color: "var(--accent)" }}>{formatPrice(transferPrice(subtotal))}</strong>
+              Con transferencia o efectivo: <strong style={{ color: "var(--accent)" }}>{formatPrice(transferPrice(subtotal) + (shippingCost ?? 0))}</strong>
             </p>
-            {!hasFreeShipping(subtotal) && (
-              <p className="muted" style={{ margin: 0, fontSize: 14 }}>
-                Te faltan {formatPrice(store.freeShippingFrom - subtotal)} para el envío gratis.
-              </p>
-            )}
             <Link href="/checkout" className="btn btn-primary btn-block">Iniciar compra</Link>
             <Link href="/categoria/bicicletas" className="btn btn-outline btn-block">Seguir comprando</Link>
           </aside>

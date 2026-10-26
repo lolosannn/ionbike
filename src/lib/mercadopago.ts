@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { MercadoPagoConfig, Payment, Preference } from "mercadopago";
+import { store } from "@/config/store";
 
 export function isMercadoPagoConfigured() {
   return Boolean(process.env.MP_ACCESS_TOKEN);
@@ -43,6 +44,8 @@ export async function createPreference(input: PreferenceInput) {
       payer: { email: input.email },
       external_reference: input.orderId,
       statement_descriptor: "IONBIKESTORE",
+      // Tope de cuotas igual al que promociona la web (las sin interés se configuran en la cuenta)
+      payment_methods: { installments: store.installments },
       back_urls: { success: back, pending: back, failure: back },
       // Mercado Pago sólo acepta auto_return y notificaciones con URLs públicas
       ...(isPublicUrl && {

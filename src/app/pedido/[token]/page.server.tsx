@@ -53,6 +53,13 @@ export default async function OrderPage({ params, searchParams }: Props) {
         </div>
       )}
 
+      {order.paymentMethod === "CASH" && order.status === "PENDING" && (
+        <div className="notice" style={{ marginTop: 24 }}>
+          <h2 style={{ marginTop: 0 }}>Pagás {formatPrice(order.total)} en efectivo al retirar</h2>
+          <p className="muted">Te avisamos por WhatsApp cuando esté listo para retirar en {store.address} ({store.hours}).</p>
+        </div>
+      )}
+
       {order.paymentMethod === "MERCADOPAGO" && order.status === "PENDING" && (
         <div className="notice" style={{ marginTop: 24 }}>
           Estamos esperando la confirmación de Mercado Pago. Si ya pagaste, esta página se actualiza sola en unos minutos.

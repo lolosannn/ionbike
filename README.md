@@ -9,8 +9,9 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Inicio**: carrusel de banners (pasa solo, con flechas y puntos; se configura en `banners`, en `store.ts`, con las imágenes en `public/banners/`), beneficios, cinta animada de marcas, más vendidos, disciplinas, bloque "¿Cuál es tu talle?" que lleva a la guía, secciones, local (foto de cliente + mapa) y adelanto de "Quiénes somos" que lleva a contacto.
 - **Categorías** (`/categoria/[slug]`): subcategorías y filtros por rodado, marca, color, precio y envío gratis; orden por ventas, precio o novedad.
 - **Ficha de producto** (`/producto/[slug]`): galería, precio en efectivo/transferencia y de lista, tabla de **financiación** (planes en `financing`, en `store.ts`: cuotas y recargo), beneficios, envío, selección de color y rodado con stock por variante, botón de asesoramiento por WhatsApp y **especificaciones desplegables** por parte de la bici, con ícono y en orden de importancia (`src/lib/specs.ts`: partes, orden y nombres alternativos).
-- **Carrito** guardado en el navegador y **checkout** con envío a domicilio o retiro en el local.
-- **Pagos**: Mercado Pago (tarjetas, cuotas, efectivo) y transferencia con 25% off.
+- **Carrito** guardado en el navegador, con barra de avance al envío gratis, **cotizador de envío** (código postal + provincia) y cuánto sale el carrito con cada forma de pago. **Checkout** con envío a domicilio o retiro en el local.
+- **Envíos con Andreani**: gratis a todo el país desde $300.000. Debajo de ese monto, con las credenciales `ANDREANI_*` en `.env` se cotiza en vivo con la API de Andreani (`src/lib/andreani.ts`); sin ellas, o si la API no responde, se usa la tabla por zona de `shipping` en `store.ts` (CABA y GBA, centro, norte/Cuyo/Comahue y Patagonia sur; caja chica para repuestos, accesorios y ropa, y una caja grande por bici). El servidor siempre recalcula el envío al crear el pedido.
+- **Pagos**: Mercado Pago (crédito hasta 12 cuotas, débito, dinero en cuenta, Pago Fácil y Rapipago), transferencia con 25% off y efectivo al retirar en el local con 25% off. El descuento no se aplica al envío.
 - **Pedidos**: el stock se descuenta al confirmar; el webhook de Mercado Pago marca el pedido como pagado.
 - **Productos a pedido** (gama alta sin stock): campo `onRequest` del producto. En lugar de comprar, muestran "Contactanos por WhatsApp" con el nombre del modelo ya escrito en el mensaje.
 - **Guía de talles** (`/guia-de-talles`, en el menú principal): calculadora por altura, tablas de MTB, ruta/gravel e infantiles, y video explicativo animado (`public/talles/guia-de-talles.mp4`). El video se arma en `video/guia-de-talles/` (HTML animado + `render.mjs`, que lo exporta con Playwright y ffmpeg); el guion para la locución está en `video/guia-de-talles/guion.md`.
@@ -74,7 +75,8 @@ Sin `MP_ACCESS_TOKEN` el checkout solo ofrece transferencia.
 - [ ] Validar la tabla de talles con las marcas que trabaja el local (`src/app/guia-de-talles/sizes.ts`).
 - [ ] Página de Taller con pedido de turnos (service general y full, tubelizado, líquido tubeless, centrado, lavado, purgado de frenos).
 - [ ] Inicio con más impacto: carrusel de promociones y destacados.
-- [ ] Cotización de envíos con la API de Andreani (hoy es una tarifa fija en `store.ts`).
+- [ ] Cargar las credenciales de Andreani (`ANDREANI_*`) cuando esté el contrato, y ajustar la tabla de `shipping` en `store.ts` con las tarifas que pase Andreani (hoy son estimadas).
+- [ ] Cargar el alias, CBU/CVU, titular y CUIT reales para transferencias (`bank` en `store.ts`).
 - [ ] Importar el catálogo real desde Tiendanube (exportación CSV) y borrar el de muestra (`src/data/catalog.ts`) con sus ilustraciones (`public/demo/`).
 - [ ] Emails de confirmación de pedido.
 - [ ] Historia del local para "Quiénes somos" y video del local.

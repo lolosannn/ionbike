@@ -105,6 +105,8 @@ enum OrderStatus {
 enum PaymentMethod {
   MERCADOPAGO
   TRANSFER
+  // Efectivo al retirar en el local (solo con retiro)
+  CASH
 }
 
 enum ShippingMethod {
