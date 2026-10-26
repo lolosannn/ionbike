@@ -5,10 +5,14 @@ export const store = {
   whatsapp: "5491128291177",
   email: "ionbikestore@gmail.com",
   address: "Av. Fair 328, Monte Grande",
+  // Nombre de la ficha del local en Google Maps: los links abren el negocio, no solo la dirección
+  mapsName: "Ion Bike Store",
+  // Opcional: ID de lugar de Google (Place ID) para clavar la ficha exacta del local
+  mapsPlaceId: "",
   hours: "[HORARIOS DEL LOCAL]",
   // Link para dejar reseña en Google. Reemplazar por el de la ficha del local
   // (Google Business > "Pedir reseñas"); mientras tanto abre la búsqueda en Maps.
-  googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=IonBikeStore%20Av.%20Fair%20328%20Monte%20Grande",
+  googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=Ion%20Bike%20Store%2C%20Av.%20Fair%20328%2C%20Monte%20Grande",
   social: {
     instagram: "#",
     facebook: "#",
