@@ -236,6 +236,35 @@ button { cursor: pointer; }
   .marquee-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
   .marquee-track .dup { display: none; }
 }
+/* Reseñas */
+.reviews-head { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 36px; }
+.reviews-head h2 { font-size: clamp(40px, 6vw, 64px); margin-top: 6px; }
+.reviews-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
+.reviews-marquee { display: flex; flex-direction: column; gap: 16px; }
+.reviews-track { align-items: stretch; animation-duration: 70s; }
+.reviews-row.reverse .reviews-track { animation-direction: reverse; animation-duration: 80s; }
+.reviews-row:active .reviews-track { animation-play-state: paused; }
+.reviews-track > div { display: flex; }
+.review-card {
+  margin: 0; width: 340px; display: flex; flex-direction: column; gap: 14px; padding: 22px 24px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.review-stars { display: flex; gap: 2px; color: var(--border-strong); }
+.review-stars .on { color: var(--accent); }
+.review-card blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.55; color: var(--text); }
+.review-card figcaption { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+.review-card figcaption > span:last-child { display: flex; flex-direction: column; min-width: 0; }
+.review-card strong { font-size: 15px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.review-card small { font-size: 13px; color: var(--muted); }
+.review-avatar {
+  flex: none; width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 17px;
+}
+@media (max-width: 600px) { .review-card { width: 280px; padding: 18px 20px; } }
+@media (prefers-reduced-motion: reduce) {
+  .reviews-row { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .reviews-row .reviews-track { flex-wrap: nowrap; justify-content: flex-start; width: max-content; padding: 0 16px; }
+}
 .brand-chip img { max-height: 52px; max-width: 150px; object-fit: contain; }
 .brand-chip {
   flex: none; min-width: 180px; height: 88px; padding: 0 24px; border: 1px solid var(--border); border-radius: 16px;

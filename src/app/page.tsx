@@ -5,9 +5,10 @@ import { about, banners, store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
+import { ReviewsMarquee } from "@/components/layout/ReviewsMarquee";
 import { HeroCarousel } from "@/components/layout/HeroCarousel";
 import { publicFile, publicImage } from "@/lib/public-files";
-import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
+import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, StarIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 
 const brands = ["Zion", "SPY", "Polygon", "Eurobike", "Gravity"];
 
@@ -145,6 +146,20 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+      </section>
+
+      <section className="section reviews-section" aria-labelledby="resenas-titulo">
+        <div className="container reviews-head">
+          <span className="eyebrow">Reseñas en Google</span>
+          <h2 id="resenas-titulo" className="display">Lo que dicen nuestros clientes</h2>
+          <div className="reviews-actions">
+            <a href={directionsUrl} className="btn btn-outline" target="_blank" rel="noreferrer">Ver todas en Google</a>
+            <a href={store.googleReviewsUrl} className="btn btn-primary" target="_blank" rel="noreferrer">
+              <StarIcon size={20} /> Dejanos tu reseña
+            </a>
+          </div>
+        </div>
+        <ReviewsMarquee />
       </section>
 
       <section className="section container">
