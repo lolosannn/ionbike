@@ -20,6 +20,22 @@ export const reviews: Review[] = [
     name: "Claudio Linares", stars: 5, avatar: "claudio-linares-avatar", photos: ["claudio-linares-1"],
     text: "Compré 2 bicicletas con el asesoramiento de Pablo y equipo. Mejor imposible, uso, cuidados, para bicicletear en familia. Super recomendables. Gracias!",
   },
+  {
+    name: "diego gonzalez", stars: 5, avatar: "diego-gonzalez-avatar", photos: ["diego-gonzalez-1", "diego-gonzalez-2"],
+    text: "De 10. Me dedicaron todo el tiempo en explicarme la mejor opción. Me entregaron la bici en tiempo y forma. Muy recomendable",
+  },
+  {
+    name: "emanuel damian sudañes", stars: 5, photos: ["emanuel-sudanes-1", "emanuel-sudanes-2"],
+    text: "Excelente atencion y muy hermosas la bicicletas!!,.gracias ion bike y a pablo por guiarnos, explicando los componente de cada bici.para elegir la mejor y empezar una linda aventura con mi hija....",
+  },
+  {
+    name: "Mariano", stars: 5, localGuide: true, photos: ["mariano-1", "mariano-2"],
+    text: "Excelente las bicis de ION Bike!! A mí hijo le encantó la bici!! Pablo nos ayudó a elegir la mejor para él y nos explicó todo como es su funcionamiento, hasta nos ayudó a poner el porta bicicleta del auto y nos dió muchas recomendaciones para el viaje!! Súper recomendable!!! Ya estamos pensando en comprar otra!!",
+  },
+  {
+    name: "Heber Tomás Aispuru", stars: 5, avatar: "heber-aispuru-avatar", photos: ["heber-aispuru-1", "heber-aispuru-2"],
+    text: "Buenas, ya hace 3 semanas compre una Zion Strix y muy conforme. Contacte a la empresa por ML y luego los busque en Maps, llame y hable directamente con Pablo. En mi caso como vivo en CABA, fui a buscarla personalmente en un 208. Excelente…",
+  },
   { name: "Valentin Ovalle", stars: 5, text: "Muy buena atención, el lugar super nuevo y novedoso. Bicis de todos los tipos a precios accesibles." },
   { name: "Leandro Alvarez", stars: 5, localGuide: true, text: "Muy buena calidad de bicicletas con variedad de opciones... Gracias por la atención y asesoramiento" },
   { name: "Comflex S.A.", stars: 5, text: "Muy buena la atención excelentes productos a muy buen precio." },

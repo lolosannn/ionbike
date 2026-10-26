@@ -50,9 +50,23 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
   );
 }
 
+/** Reparte las reseñas en dos filas, con las de foto intercaladas entre las de solo texto. */
+function splitRows(list: Review[]): Review[][] {
+  const withPhotos = list.filter((r) => r.photos?.length);
+  const textOnly = list.filter((r) => !r.photos?.length);
+  return [0, 1].map((row) => {
+    const photos = withPhotos.filter((_, i) => i % 2 === row);
+    const texts = textOnly.filter((_, i) => i % 2 === row);
+    const out: Review[] = [];
+    const every = Math.max(1, Math.round(texts.length / Math.max(1, photos.length)));
+    photos.forEach((p, i) => out.push(p, ...texts.slice(i * every, (i + 1) * every)));
+    return [...out, ...texts.slice(photos.length * every)];
+  });
+}
+
 /** Dos filas de reseñas que se deslizan en sentidos opuestos (se frenan al pasar el mouse o tocar). */
 export function ReviewsMarquee() {
-  const rows = [reviews.filter((_, i) => i % 2 === 0), reviews.filter((_, i) => i % 2 === 1)];
+  const rows = splitRows(reviews);
   return (
     <div className="reviews-marquee">
       {rows.map((row, r) => (
