@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ProductCardData } from "@/lib/catalog";
 import { hasFreeShipping } from "@/lib/pricing";
@@ -29,6 +29,63 @@ function toggle(list: string[], value: string) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
+type PriceRange = { label: string; min: number | null; max: number | null };
+
+const pesos = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 });
+const digits = (v: string) => v.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
+const formatThousands = (v: string) => (v ? pesos.format(Number(v)) : "");
+/** Rodados (números chicos como 26, 27.5, 29) aparte de los talles (S, M, L…) */
+const isWheel = (s: string) => /^\d+(\.\d+)?$/.test(s) && Number(s) <= 29;
+
+/** Redondea a un número "lindo" para los rangos: 1.234.567 → 1.200.000 */
+function roundNice(pesosValue: number) {
+  const step = 10 ** Math.max(0, Math.floor(Math.log10(pesosValue)) - 1);
+  return Math.round(pesosValue / step) * step;
+}
+
+/** Tres rangos de precio armados según lo que hay en la lista */
+function priceRanges(prices: number[]): PriceRange[] {
+  const sorted = prices.map((c) => c / 100).sort((a, b) => a - b);
+  if (sorted.length < 4) return [];
+  const low = roundNice(sorted[Math.floor(sorted.length / 3)]);
+  const high = roundNice(sorted[Math.floor((sorted.length * 2) / 3)]);
+  if (!(low > sorted[0] && high > low && high < sorted[sorted.length - 1])) return [];
+  return [
+    { label: `Hasta $${pesos.format(low)}`, min: null, max: low },
+    { label: `$${pesos.format(low)} a $${pesos.format(high)}`, min: low, max: high },
+    { label: `Más de $${pesos.format(high)}`, min: high, max: null },
+  ];
+}
+
+function priceLabel(min: string, max: string) {
+  if (min && max) return `$${formatThousands(min)} a $${formatThousands(max)}`;
+  return min ? `Desde $${formatThousands(min)}` : `Hasta $${formatThousands(max)}`;
+}
+
+function FilterSection({ title, active, children }: { title: string; active: number; children: ReactNode }) {
+  return (
+    <details className="filter-section" open>
+      <summary>
+        <span>{title}</span>
+        {active > 0 && <span className="filters-badge">{active}</span>}
+        <svg className="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </summary>
+      <div className="filter-section-body">{children}</div>
+    </details>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
+      <circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" />
+    </svg>
+  );
+}
+
 export function ProductListing({ products, subcategories }: Props) {
   const [sub, setSub] = useState<string | null>(null);
   const [sizes, setSizes] = useState<string[]>([]);
@@ -39,6 +96,16 @@ export function ProductListing({ products, subcategories }: Props) {
   const [freeOnly, setFreeOnly] = useState(false);
   const [sort, setSort] = useState<Sort>("sales");
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // En celular los filtros se abren como panel: se traba el scroll de atrás y se cierra con Esc
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFiltersOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
+  }, [filtersOpen]);
 
   // Mantiene la disciplina en la dirección, para volver atrás o compartir el link
   const chooseSub = (slug: string | null) => {
@@ -62,12 +129,13 @@ export function ProductListing({ products, subcategories }: Props) {
       sizes: [...sizeSet].sort((a, b) => Number(a) - Number(b) || a.localeCompare(b)),
       brands: [...brandCount].sort((a, b) => a[0].localeCompare(b[0])),
       colors: [...colorMap],
+      priceRanges: priceRanges(products.map((p) => p.price)),
     };
   }, [products]);
 
   const filtered = useMemo(() => {
-    const minCents = min ? Number(min.replace(/\D/g, "")) * 100 : null;
-    const maxCents = max ? Number(max.replace(/\D/g, "")) * 100 : null;
+    const minCents = min ? Number(min) * 100 : null;
+    const maxCents = max ? Number(max) * 100 : null;
     const list = products.filter((p) => {
       if (sub && p.categorySlug !== sub) return false;
       if (sizes.length && !p.sizes.some((s) => sizes.includes(s))) return false;
@@ -89,6 +157,29 @@ export function ProductListing({ products, subcategories }: Props) {
   const clearAll = () => {
     setSizes([]); setBrands([]); setColors([]); setMin(""); setMax(""); setFreeOnly(false);
   };
+
+  const priceActive = Boolean(min || max);
+  const activeCount = sizes.length + brands.length + colors.length + (priceActive ? 1 : 0) + (freeOnly ? 1 : 0);
+  const presetActive = (r: PriceRange) => min === (r.min ? String(r.min) : "") && max === (r.max ? String(r.max) : "");
+  const choosePreset = (r: PriceRange) => {
+    if (presetActive(r)) { setMin(""); setMax(""); return; }
+    setMin(r.min ? String(r.min) : "");
+    setMax(r.max ? String(r.max) : "");
+  };
+
+  // Filtros activos, para mostrarlos arriba del listado y sacarlos de a uno
+  const activeTags: { key: string; label: string; remove: () => void }[] = [
+    ...(priceActive ? [{ key: "price", label: priceLabel(min, max), remove: () => { setMin(""); setMax(""); } }] : []),
+    ...(freeOnly ? [{ key: "free", label: "Envío gratis", remove: () => setFreeOnly(false) }] : []),
+    ...sizes.map((s) => ({ key: `s-${s}`, label: formatSize(s), remove: () => setSizes(toggle(sizes, s)) })),
+    ...brands.map((b) => ({ key: `b-${b}`, label: b, remove: () => setBrands(toggle(brands, b)) })),
+    ...colors.map((c) => ({ key: `c-${c}`, label: c, remove: () => setColors(toggle(colors, c)) })),
+  ];
+
+  const sizeGroups = [
+    { label: "Rodado", items: options.sizes.filter(isWheel) },
+    { label: "Talle", items: options.sizes.filter((s) => !isWheel(s)) },
+  ].filter((g) => g.items.length > 0);
 
   return (
     <>
@@ -113,71 +204,105 @@ export function ProductListing({ products, subcategories }: Props) {
           className="btn btn-outline btn-block filters-toggle"
           aria-expanded={filtersOpen}
           aria-controls="filtros"
-          onClick={() => setFiltersOpen((v) => !v)}
+          onClick={() => setFiltersOpen(true)}
         >
-          {filtersOpen ? "Ocultar filtros" : "Filtrar"}
+          <FilterIcon /> Filtrar{activeCount > 0 && <span className="filters-badge">{activeCount}</span>}
         </button>
+        {filtersOpen && <div className="filters-backdrop" onClick={() => setFiltersOpen(false)} />}
         <aside id="filtros" className={`filters${filtersOpen ? " open" : ""}`} aria-label="Filtros">
           <div className="filters-head">
-            <h2>Filtros</h2>
-            <button type="button" className="link-btn" onClick={clearAll}>Limpiar</button>
+            <h2>Filtros{activeCount > 0 && <span className="filters-badge">{activeCount}</span>}</h2>
+            {activeCount > 0 && <button type="button" className="link-btn" onClick={clearAll}>Limpiar todo</button>}
+            <button type="button" className="filters-close" aria-label="Cerrar filtros" onClick={() => setFiltersOpen(false)}>✕</button>
           </div>
 
-          {options.sizes.length > 0 && (
-            <fieldset>
-              <legend>Rodado / talle</legend>
-              <div className="chip-row">
-                {options.sizes.map((s) => (
-                  <label key={s} className="size-chip">
-                    <input type="checkbox" checked={sizes.includes(s)} onChange={() => setSizes(toggle(sizes, s))} />
-                    <span>{formatSize(s)}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          )}
-
-          {options.brands.length > 0 && (
-            <fieldset>
-              <legend>Marca</legend>
-              {options.brands.map(([name, n]) => (
-                <label key={name} className="check">
-                  <input type="checkbox" checked={brands.includes(name)} onChange={() => setBrands(toggle(brands, name))} />
-                  {name} <span className="muted">({n})</span>
+          <div className="filters-body">
+            <FilterSection title="Precio" active={(priceActive ? 1 : 0) + (freeOnly ? 1 : 0)}>
+              {options.priceRanges.length > 0 && (
+                <div className="price-presets">
+                  {options.priceRanges.map((r) => (
+                    <button key={r.label} type="button" className="price-preset" aria-pressed={presetActive(r)} onClick={() => choosePreset(r)}>
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="price-range">
+                <label className="price-field">
+                  <span>Desde</span>
+                  <span className="price-input">
+                    <i aria-hidden>$</i>
+                    <input inputMode="numeric" placeholder="0" value={formatThousands(min)} onChange={(e) => setMin(digits(e.target.value))} aria-label="Precio mínimo" />
+                  </span>
                 </label>
-              ))}
-            </fieldset>
-          )}
-
-          {options.colors.length > 0 && (
-            <fieldset>
-              <legend>Color</legend>
-              <div className="chip-row">
-                {options.colors.map(([name, hex]) => (
-                  <label key={name} className="swatch" title={name}>
-                    <input type="checkbox" aria-label={name} checked={colors.includes(name)} onChange={() => setColors(toggle(colors, name))} />
-                    <span style={{ background: hex ?? "#777" }} />
-                  </label>
-                ))}
+                <span className="price-sep" aria-hidden>–</span>
+                <label className="price-field">
+                  <span>Hasta</span>
+                  <span className="price-input">
+                    <i aria-hidden>$</i>
+                    <input inputMode="numeric" placeholder="Sin tope" value={formatThousands(max)} onChange={(e) => setMax(digits(e.target.value))} aria-label="Precio máximo" />
+                  </span>
+                </label>
               </div>
-            </fieldset>
-          )}
+              <label className="switch">
+                <input type="checkbox" role="switch" checked={freeOnly} onChange={(e) => setFreeOnly(e.target.checked)} />
+                <span className="switch-track" aria-hidden />
+                Solo con envío gratis
+              </label>
+            </FilterSection>
 
-          <fieldset>
-            <legend>Precio</legend>
-            <div className="chip-row" style={{ alignItems: "center", flexWrap: "nowrap" }}>
-              <label htmlFor="pmin" className="sr-only">Precio mínimo</label>
-              <input id="pmin" className="input" inputMode="numeric" placeholder="Mín." value={min} onChange={(e) => setMin(e.target.value)} />
-              <span className="muted">–</span>
-              <label htmlFor="pmax" className="sr-only">Precio máximo</label>
-              <input id="pmax" className="input" inputMode="numeric" placeholder="Máx." value={max} onChange={(e) => setMax(e.target.value)} />
-            </div>
-          </fieldset>
+            {sizeGroups.length > 0 && (
+              <FilterSection title="Rodado / talle" active={sizes.length}>
+                {sizeGroups.map((g) => (
+                  <div key={g.label} className="filter-group" role="group" aria-label={g.label}>
+                    {sizeGroups.length > 1 && <span className="filter-sublabel">{g.label}</span>}
+                    <div className="chip-row">
+                      {g.items.map((s) => (
+                        <label key={s} className="size-chip">
+                          <input type="checkbox" checked={sizes.includes(s)} onChange={() => setSizes(toggle(sizes, s))} />
+                          <span>{formatSize(s)}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </FilterSection>
+            )}
 
-          <label className="check">
-            <input type="checkbox" checked={freeOnly} onChange={(e) => setFreeOnly(e.target.checked)} />
-            Solo con envío gratis
-          </label>
+            {options.brands.length > 0 && (
+              <FilterSection title="Marca" active={brands.length}>
+                <div className="brand-list">
+                  {options.brands.map(([name, n]) => (
+                    <label key={name} className="brand-option">
+                      <input type="checkbox" checked={brands.includes(name)} onChange={() => setBrands(toggle(brands, name))} />
+                      <span className="brand-box" aria-hidden />
+                      <span className="brand-name">{name}</span>
+                      <span className="brand-count">{n}</span>
+                    </label>
+                  ))}
+                </div>
+              </FilterSection>
+            )}
+
+            {options.colors.length > 0 && (
+              <FilterSection title="Color" active={colors.length}>
+                <div className="chip-row">
+                  {options.colors.map(([name, hex]) => (
+                    <label key={name} className="color-chip">
+                      <input type="checkbox" checked={colors.includes(name)} onChange={() => setColors(toggle(colors, name))} />
+                      <span><i style={{ background: hex ?? "#777" }} />{name}</span>
+                    </label>
+                  ))}
+                </div>
+              </FilterSection>
+            )}
+          </div>
+
+          <div className="filters-foot">
+            <button type="button" className="btn btn-primary btn-block" onClick={() => setFiltersOpen(false)}>
+              Ver {filtered.length} {filtered.length === 1 ? "producto" : "productos"}
+            </button>
+          </div>
         </aside>
 
         <div className="listing-main">
@@ -193,12 +318,25 @@ export function ProductListing({ products, subcategories }: Props) {
               </select>
             </div>
           </div>
+          {activeTags.length > 0 && (
+            <div className="active-filters" aria-label="Filtros aplicados">
+              {activeTags.map((t) => (
+                <button key={t.key} type="button" className="active-filter" onClick={t.remove} aria-label={`Quitar filtro ${t.label}`}>
+                  {t.label} <span aria-hidden>✕</span>
+                </button>
+              ))}
+              <button type="button" className="link-btn" onClick={clearAll}>Limpiar todo</button>
+            </div>
+          )}
           {filtered.length > 0 ? (
             <div className="product-grid">
               {filtered.map((p) => <ProductCard key={p.slug} product={p} />)}
             </div>
           ) : (
-            <div className="empty">No hay productos con esos filtros.</div>
+            <div className="empty">
+              No hay productos con esos filtros.
+              {activeCount > 0 && <> <button type="button" className="link-btn" onClick={clearAll}>Limpiar filtros</button></>}
+            </div>
           )}
         </div>
       </div>
