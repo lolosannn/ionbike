@@ -1,4 +1,7 @@
 import { reviews, type Review } from "@/config/reviews";
+import { store } from "@/config/store";
+import { StarIcon } from "@/components/icons";
+import { directionsUrl } from "@/components/layout/StoreMap";
 
 // Colores de los avatares con la inicial, como en Google
 const avatarColors = ["#e8590c", "#2f9e44", "#1971c2", "#9c36b5", "#c2255c", "#0c8599", "#5c940d", "#6741d9"];
@@ -51,5 +54,24 @@ export function ReviewsMarquee() {
         </div>
       ))}
     </div>
+  );
+}
+
+/** Sección completa de reseñas (inicio y contacto), a todo el ancho de la pantalla. */
+export function ReviewsSection() {
+  return (
+    <section className="section reviews-section" aria-labelledby="resenas-titulo">
+      <div className="container reviews-head">
+        <span className="eyebrow">Reseñas en Google</span>
+        <h2 id="resenas-titulo" className="display">Lo que dicen nuestros clientes</h2>
+        <div className="reviews-actions">
+          <a href={directionsUrl} className="btn btn-outline" target="_blank" rel="noreferrer">Ver todas en Google</a>
+          <a href={store.googleReviewsUrl} className="btn btn-primary" target="_blank" rel="noreferrer">
+            <StarIcon size={20} /> Dejanos tu reseña
+          </a>
+        </div>
+      </div>
+      <ReviewsMarquee />
+    </section>
   );
 }
