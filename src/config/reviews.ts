@@ -1,8 +1,25 @@
 // Reseñas del local copiadas de Google Maps (texto tal cual lo dejó cada cliente).
 // Para sumar una, agregarla a la lista; se reparten solas entre las dos filas del carrusel.
-export type Review = { name: string; text: string; stars: number; localGuide?: boolean };
+// Fotos: archivos en public/resenas/ con el nombre de `photos` (y `avatar` para la foto del cliente).
+export type Review = { name: string; text: string; stars: number; localGuide?: boolean; avatar?: string; photos?: string[] };
 
 export const reviews: Review[] = [
+  {
+    name: "Mariana Quintero", stars: 5, photos: ["mariana-quintero-1"],
+    text: "Tengo mi primer bici Gravity 😳 Gracias a ionbikestore, la elección fue dificil ya q es una más linda q la otra. Pablo con su atencion y predisposición me ayudo. Estuvo en todo detalle. El lugar es muy confortable y la gente q trabaja ahi…",
+  },
+  {
+    name: "Gonzalo Ruben Almarcha Paredes", stars: 5, avatar: "gonzalo-almarcha-avatar", photos: ["gonzalo-almarcha-1", "gonzalo-almarcha-2"],
+    text: "Eternamente agradecido al equipo de IONBIKESTORE y principalmente a Pablo que me brindo desde un principio la mejor atención posible, ya que los contacte vía llamada desde San Juan y me ofrecieron una atención extra en el precio por pagar…",
+  },
+  {
+    name: "Roman Machado", stars: 5, photos: ["roman-machado-1", "roman-machado-2"],
+    text: "La verdad se pasaron con las bicis, Eydan súper contento y sinceramente me encantaron .. sobre todo muy buena onda y excelente servicio y precios !! 👌…",
+  },
+  {
+    name: "Claudio Linares", stars: 5, avatar: "claudio-linares-avatar", photos: ["claudio-linares-1"],
+    text: "Compré 2 bicicletas con el asesoramiento de Pablo y equipo. Mejor imposible, uso, cuidados, para bicicletear en familia. Super recomendables. Gracias!",
+  },
   { name: "Valentin Ovalle", stars: 5, text: "Muy buena atención, el lugar super nuevo y novedoso. Bicis de todos los tipos a precios accesibles." },
   { name: "Leandro Alvarez", stars: 5, localGuide: true, text: "Muy buena calidad de bicicletas con variedad de opciones... Gracias por la atención y asesoramiento" },
   { name: "Comflex S.A.", stars: 5, text: "Muy buena la atención excelentes productos a muy buen precio." },

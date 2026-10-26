@@ -248,21 +248,34 @@ button { cursor: pointer; }
 .reviews-row:active .reviews-track { animation-play-state: paused; }
 .reviews-track > div { display: flex; }
 .review-card {
-  margin: 0; width: 340px; display: flex; flex-direction: column; gap: 14px; padding: 22px 24px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  margin: 0; width: 340px; display: flex; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
 }
+.review-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 22px 24px; }
+/* Con fotos: foto a la izquierda y texto a la derecha, así todas las tarjetas quedan de la misma altura */
+.review-card.has-photos { width: 600px; }
+.review-photos { flex: none; width: 220px; display: flex; gap: 3px; }
+.review-photos:has(img + img) { width: 280px; }
+.review-photos img { flex: 1; min-width: 0; height: 100%; object-fit: cover; }
+.review-card.has-photos blockquote { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .review-stars { display: flex; gap: 2px; color: var(--border-strong); }
 .review-stars .on { color: var(--accent); }
-.review-card blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.55; color: var(--text); }
-.review-card figcaption { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+.review-card blockquote { margin: 0; font-size: 16px; line-height: 1.55; color: var(--text); }
+.review-card figcaption { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); }
 .review-card figcaption > span:last-child { display: flex; flex-direction: column; min-width: 0; }
 .review-card strong { font-size: 15px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .review-card small { font-size: 13px; color: var(--muted); }
 .review-avatar {
   flex: none; width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: 700; font-size: 17px;
+  color: #fff; font-weight: 700; font-size: 17px; object-fit: cover;
 }
-@media (max-width: 600px) { .review-card { width: 280px; padding: 18px 20px; } }
+@media (max-width: 600px) {
+  .review-card { width: 280px; }
+  .review-body { padding: 18px 20px; }
+  .review-card.has-photos { width: 280px; flex-direction: column; }
+  .review-photos, .review-photos:has(img + img) { width: auto; height: 150px; }
+  .review-card.has-photos blockquote { -webkit-line-clamp: 3; }
+}
 @media (prefers-reduced-motion: reduce) {
   .reviews-row { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
   .reviews-row .reviews-track { flex-wrap: nowrap; justify-content: flex-start; width: max-content; padding: 0 16px; }

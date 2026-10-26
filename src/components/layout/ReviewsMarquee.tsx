@@ -2,6 +2,7 @@ import { reviews, type Review } from "@/config/reviews";
 import { store } from "@/config/store";
 import { StarIcon } from "@/components/icons";
 import { directionsUrl } from "@/components/layout/StoreMap";
+import { publicImage } from "@/lib/public-files";
 
 // Colores de los avatares con la inicial, como en Google
 const avatarColors = ["#e8590c", "#2f9e44", "#1971c2", "#9c36b5", "#c2255c", "#0c8599", "#5c940d", "#6741d9"];
@@ -19,19 +20,32 @@ function Stars({ n }: { n: number }) {
 }
 
 function ReviewCard({ review, index }: { review: Review; index: number }) {
+  const photos = (review.photos ?? []).map((p) => publicImage("resenas", p)).filter((p): p is string => Boolean(p));
+  const avatar = review.avatar ? publicImage("resenas", review.avatar) : null;
   return (
-    <figure className="review-card">
-      <Stars n={review.stars} />
-      <blockquote>“{review.text}”</blockquote>
-      <figcaption>
-        <span className="review-avatar" style={{ background: avatarColors[index % avatarColors.length] }} aria-hidden>
-          {review.name.charAt(0).toUpperCase()}
-        </span>
-        <span>
-          <strong>{review.name}</strong>
-          <small>{review.localGuide ? "Local Guide · " : ""}Reseña en Google</small>
-        </span>
-      </figcaption>
+    <figure className={`review-card${photos.length ? " has-photos" : ""}`}>
+      {photos.length > 0 && (
+        <div className="review-photos">
+          {photos.slice(0, 2).map((src) => <img key={src} src={src} alt={`Foto de la reseña de ${review.name}`} loading="lazy" />)}
+        </div>
+      )}
+      <div className="review-body">
+        <Stars n={review.stars} />
+        <blockquote>“{review.text}”</blockquote>
+        <figcaption>
+          {avatar ? (
+            <img className="review-avatar" src={avatar} alt="" loading="lazy" />
+          ) : (
+            <span className="review-avatar" style={{ background: avatarColors[index % avatarColors.length] }} aria-hidden>
+              {review.name.charAt(0).toUpperCase()}
+            </span>
+          )}
+          <span>
+            <strong>{review.name}</strong>
+            <small>{review.localGuide ? "Local Guide · " : ""}Reseña en Google</small>
+          </span>
+        </figcaption>
+      </div>
     </figure>
   );
 }
