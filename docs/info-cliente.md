@@ -13,6 +13,7 @@ Datos confirmados con el cliente (reunión inicial).
 ## Datos tomados de la web actual
 
 - **Ubicación / retiro:** Av. Fair 328, Monte Grande
+- **Horarios:** lunes a viernes de 8 a 17 h, sábados de 8 a 13 h, domingos cerrado
 - **Contacto:** +54 11 2829-1177 · ionbikestore@gmail.com · WhatsApp flotante
 - **Redes:** Instagram, Facebook, TikTok
 - **Menú:** Inicio, Bicicletas, E-Bike, Repuestos, Accesorios, Indumentaria, Contacto

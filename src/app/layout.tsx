@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { store, whatsappUrl } from "@/config/store";
 import { CartProvider } from "@/components/cart/CartProvider";
-import { SplashLoader } from "@/components/loader/BikeLoader";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsappIcon } from "@/components/icons";
@@ -27,7 +26,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body>
-        <SplashLoader />
         <CartProvider>
           {isStaticDemo && (
             <div className="demo-bar">Vista previa · los pagos y pedidos están desactivados</div>

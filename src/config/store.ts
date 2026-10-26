@@ -9,7 +9,7 @@ export const store = {
   mapsName: "Ion Bike Store",
   // Opcional: ID de lugar de Google (Place ID) para clavar la ficha exacta del local
   mapsPlaceId: "",
-  hours: "[HORARIOS DEL LOCAL]",
+  hours: "Lun a vie de 8 a 17 h · Sáb de 8 a 13 h",
   // Link para dejar reseña en Google. Reemplazar por el de la ficha del local
   // (Google Business > "Pedir reseñas"); mientras tanto abre la búsqueda en Maps.
   googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=Ion%20Bike%20Store%2C%20Av.%20Fair%20328%2C%20Monte%20Grande",

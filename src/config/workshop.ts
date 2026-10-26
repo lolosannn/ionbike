@@ -44,16 +44,16 @@ export const workshopServices: WorkshopService[] = [
 ];
 
 // Agenda: los turnos son para dejar la bici en el local.
-// [HORARIOS A CONFIRMAR CON EL LOCAL]
+// Mismos horarios que el local (lun a vie 8 a 17 h, sáb 8 a 13 h).
 export const workshopSchedule = {
   // Horarios por día de la semana (0 = domingo … 6 = sábado). Sin entrada = cerrado.
   hours: {
-    1: [["10:00", "18:00"]],
-    2: [["10:00", "18:00"]],
-    3: [["10:00", "18:00"]],
-    4: [["10:00", "18:00"]],
-    5: [["10:00", "18:00"]],
-    6: [["10:00", "13:00"]],
+    1: [["08:00", "17:00"]],
+    2: [["08:00", "17:00"]],
+    3: [["08:00", "17:00"]],
+    4: [["08:00", "17:00"]],
+    5: [["08:00", "17:00"]],
+    6: [["08:00", "13:00"]],
   } as Record<number, [string, string][]>,
   // Cada cuántos minutos hay un turno
   slotMinutes: 30,

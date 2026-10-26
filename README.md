@@ -18,7 +18,6 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Disciplinas del inicio**: Mountain Bike, Dirt Jump, Ruta, Gravel y E-Bike (orden en `disciplineOrder`, `src/lib/catalog.ts`), con foto en `public/disciplinas/<slug>.jpg`.
 - **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
 - **Taller** (`/taller`): los 7 servicios y agenda de turnos para dejar la bici. El cliente elige servicios, día y horario libre y deja sus datos; el turno se guarda (modelo `Appointment`) respetando el cupo por horario, y al final puede avisar al local por WhatsApp. Servicios, precios, horarios y cupos en `src/config/workshop.ts`.
-- **Animación de carga**: ciclista que acelera mientras carga y sale disparado al terminar (`src/components/loader/`). Solo aparece si la carga tarda más de 0,35 s; para verla igual, abrir cualquier página con `?carga`.
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
 
 Las reglas comerciales (descuento por transferencia, envío gratis, cuotas, datos bancarios y de contacto) están en `src/config/store.ts`.

@@ -712,35 +712,6 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 }
 .about-teaser-photos:hover .about-teaser-play { background: var(--accent-hover); }
 
-/* Animación de carga (ciclista) */
-.bike-loader { display: flex; align-items: center; justify-content: center; }
-.bike-splash {
-  position: fixed; inset: 0; z-index: 100; background: var(--bg);
-  opacity: 0; visibility: hidden; transition: opacity 0.35s, visibility 0.35s;
-}
-.bike-splash.is-visible { opacity: 1; visibility: visible; }
-.bike-splash.is-done { opacity: 0; visibility: hidden; }
-.bike-page-loader { min-height: 60vh; animation: loader-in 0.3s 0.3s both; }
-@keyframes loader-in { from { opacity: 0; } to { opacity: 1; } }
-.bike-loader-inner { width: min(360px, 80vw); display: flex; flex-direction: column; align-items: center; gap: 18px; }
-.bike-loader-svg { width: 100%; height: auto; overflow: visible; }
-.bike-loader-svg * { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.bl-frame * { stroke: var(--accent); stroke-width: 5; }
-.bl-wheel circle { stroke: var(--text); stroke-width: 4; }
-.bl-wheel line { stroke: #6f6f6b; stroke-width: 1.5; }
-.bl-crank line { stroke: var(--text-2); stroke-width: 4; }
-.bl-body line, .bl-body polyline { stroke: var(--text); stroke-width: 7; }
-.bl-head { fill: var(--text) !important; stroke: none; }
-.bl-helmet { fill: var(--accent) !important; stroke: none; }
-.bl-leg-near polyline { stroke: var(--text); stroke-width: 7; }
-.bl-leg-far polyline { stroke: #77776f; stroke-width: 6; }
-.bl-ground { stroke: var(--border-strong); stroke-width: 3; stroke-dasharray: 18 14; }
-.bl-speed { opacity: 0; }
-.bl-speed line { stroke: var(--accent); stroke-width: 4; }
-.bike-loader-bar { width: 100%; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-.bike-loader-bar span { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
-.bike-loader-text { margin: 0; font-family: var(--font-display); font-style: italic; font-weight: 800; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); }
-
 /* "Ver todo" de Más vendidos */
 .section-head a.see-all-btn { font-size: 19px; }
 .see-all-btn svg { transition: transform 0.2s; }
