@@ -301,6 +301,37 @@ button { cursor: pointer; }
 .breadcrumb a { color: var(--muted); text-decoration: none; }
 .breadcrumb a:hover { color: var(--text); }
 .page-head h1 { font-size: clamp(56px, 8vw, 88px); margin-top: 12px; }
+/* Encabezado de categoría: centrado y protagonista */
+.category-head { text-align: center; padding-top: 32px; }
+.category-head .breadcrumb { display: block; }
+.category-head h1 { font-size: clamp(64px, 13vw, 150px); margin-top: 20px; line-height: 0.88; }
+.category-desc { max-width: 680px; margin: 20px auto 0; color: var(--text-2); font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; }
+.category-head + .pills, .size-guide-cta + .pills { justify-content: center; }
+
+/* Llamado a la guía de talles en las categorías de bicis */
+.size-guide-cta {
+  display: flex; align-items: center; gap: 20px 24px; margin-top: 36px; padding: 22px 24px; border-radius: var(--radius);
+  background: linear-gradient(110deg, rgba(242, 196, 15, 0.16), rgba(242, 196, 15, 0.04) 60%), var(--surface);
+  border: 1px solid rgba(242, 196, 15, 0.45); color: var(--text); text-decoration: none; transition: border-color 0.2s, transform 0.2s;
+}
+.size-guide-cta:hover { color: var(--text); border-color: var(--accent); transform: translateY(-2px); }
+.size-guide-cta-icon {
+  flex: none; width: 64px; height: 64px; border-radius: 999px; background: var(--accent); color: var(--on-accent);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.size-guide-cta-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.size-guide-cta-text strong { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: clamp(26px, 3vw, 34px); line-height: 1; text-transform: uppercase; }
+.size-guide-cta-text span { color: var(--text-2); font-size: 16px; }
+.size-guide-cta-btn { flex: none; gap: 10px; min-height: 54px; padding: 0 26px; font-size: 19px; }
+.size-guide-cta-btn svg { transition: transform 0.2s; }
+.size-guide-cta:hover .size-guide-cta-btn { background: var(--accent-hover); }
+.size-guide-cta:hover .size-guide-cta-btn svg { transform: translateX(4px); }
+@media (max-width: 720px) {
+  .size-guide-cta { flex-wrap: wrap; padding: 20px; }
+  .size-guide-cta { align-items: flex-start; }
+  .size-guide-cta-icon { width: 52px; height: 52px; }
+  .size-guide-cta-btn { width: 100%; }
+}
 .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
 .pill {
   min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--border-strong); background: transparent;
@@ -544,8 +575,6 @@ textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: ver
 /* Productos a pedido */
 .on-request { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px; border-radius: 16px; border: 1px solid var(--accent); }
 .on-request p { margin: 0; color: var(--text-2); }
-.size-guide-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
-.page-head .size-guide-link { margin-top: 12px; }
 
 /* Guía de talles */
 .size-guide { display: flex; flex-wrap: wrap; gap: 40px; padding-top: 36px; align-items: flex-start; }
