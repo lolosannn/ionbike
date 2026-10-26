@@ -65,6 +65,7 @@ export function transferDiscountFor(method: PaymentMethod, subtotal: number) {
  * Los precios salen siempre de la base de datos, nunca del carrito del navegador.
  */
 export async function createOrder(input: OrderInput) {
+  await expireStaleOrders();
   const isDelivery = input.shippingMethod === "DELIVERY";
   const shipping = isDelivery
     ? await quoteShipping(input.items, { zip: input.zip ?? "", province: input.province ?? "" })
@@ -134,18 +135,67 @@ export async function cancelPendingOrder(orderId: string) {
   });
 }
 
-/** Marca un pedido como pagado y suma las ventas a cada producto. Idempotente. */
+/** Hasta cuándo reserva stock un pedido impago según el medio de pago. */
+export function holdUntil(method: PaymentMethod, from = new Date()) {
+  return new Date(from.getTime() + store.orderHoldHours[method] * 60 * 60 * 1000);
+}
+
+let lastExpiry = 0;
+
+/**
+ * Cancela los pedidos impagos que pasaron su plazo de reserva y devuelve el stock.
+ * Se llama antes de crear pedidos y al ver uno; corre como mucho una vez por minuto.
+ */
+export async function expireStaleOrders() {
+  const now = Date.now();
+  if (now - lastExpiry < 60_000) return;
+  lastExpiry = now;
+  const methods = Object.keys(store.orderHoldHours) as PaymentMethod[];
+  const stale = await db.order.findMany({
+    where: {
+      status: "PENDING",
+      OR: methods.map((m) => ({ paymentMethod: m, createdAt: { lt: new Date(now - store.orderHoldHours[m] * 60 * 60 * 1000) } })),
+    },
+    select: { id: true },
+    take: 200,
+  });
+  for (const o of stale) await cancelPendingOrder(o.id);
+}
+
+/** Pedidos impagos del mismo cliente (por DNI, email o teléfono). */
+export async function pendingOrdersFor(c: { dni: string; email: string; phone: string }) {
+  return db.order.count({
+    where: { status: "PENDING", OR: [{ dni: c.dni }, { email: { equals: c.email, mode: "insensitive" } }, { phone: c.phone }] },
+  });
+}
+
+/**
+ * Marca un pedido como pagado y suma las ventas a cada producto. Idempotente.
+ * Si el pago llega después de que el pedido venció (por ejemplo un cupón pagado en el
+ * último momento), igual se registra: la plata ya entró. Se vuelve a descontar el stock
+ * y queda un aviso en el log para revisarlo a mano.
+ */
 export async function markOrderPaid(orderId: string, mpPaymentId?: string) {
   await db.$transaction(async (tx) => {
-    const changed = await tx.order.updateMany({
+    let changed = await tx.order.updateMany({
       where: { id: orderId, status: "PENDING" },
       data: { status: "PAID", mpPaymentId },
     });
+    let revived = false;
+    if (changed.count === 0) {
+      changed = await tx.order.updateMany({
+        where: { id: orderId, status: "CANCELLED", mpPaymentId: null },
+        data: { status: "PAID", mpPaymentId },
+      });
+      revived = changed.count > 0;
+    }
     if (changed.count === 0) return;
     const items = await tx.orderItem.findMany({ where: { orderId }, include: { variant: true } });
     for (const item of items) {
       await tx.product.update({ where: { id: item.variant.productId }, data: { salesCount: { increment: item.quantity } } });
+      if (revived) await tx.variant.update({ where: { id: item.variantId }, data: { stock: { decrement: item.quantity } } });
     }
+    if (revived) console.error(`Pedido ${orderId} pagado después de vencer: revisar que haya stock para entregarlo`);
   });
 }
 
@@ -154,6 +204,7 @@ export async function attachQr(orderId: string) {
   const order = await db.order.findUnique({ where: { id: orderId } });
   if (!order || order.status !== "PENDING" || order.paymentMethod !== "QR") return;
   if (order.mpQrData && order.mpQrExpiresAt && order.mpQrExpiresAt > new Date()) return;
+  if (holdUntil(order.paymentMethod, order.createdAt) <= new Date()) return;
   const qr = await createQrOrder({ orderId: order.id, orderNumber: order.number, total: order.total });
   await db.order.update({
     where: { id: order.id },
@@ -165,7 +216,7 @@ export async function attachQr(orderId: string) {
 export async function syncQrPayment(mpQrOrderId: string) {
   const qr = await getQrOrder(mpQrOrderId);
   const order = await db.order.findFirst({ where: { id: qr.externalReference, mpQrOrderId } });
-  if (!order || order.status !== "PENDING") return;
+  if (!order || (order.status !== "PENDING" && order.status !== "CANCELLED")) return;
   if (qr.status !== "processed") return;
   if (qr.paid < order.total) {
     console.error(`QR ${mpQrOrderId} por ${qr.paid} menor al total del pedido ${order.number} (${order.total})`);

@@ -40,6 +40,8 @@ type PreferenceInput = {
   shippingCost: number;
   discount: number;
   total: number;
+  // Fin de la reserva del pedido: después Mercado Pago ya no acepta el pago
+  expiresAt: Date;
 };
 
 /** Crea una preferencia de Checkout Pro. Montos en centavos. */
@@ -58,6 +60,8 @@ export async function createPreference(input: PreferenceInput) {
   const billed = input.discount > 0
     ? [{ id: input.orderId, title: `Pedido #${input.orderNumber} IonBikeStore`, quantity: 1, unit_price: input.total / 100, currency_id: "ARS" }]
     : items;
+  // El cupón vence un día antes que la reserva, para que llegue la acreditación
+  const payBy = new Date(input.expiresAt.getTime() - (input.method === "TICKET" ? 24 * 60 * 60 * 1000 : 0));
   const back = `${siteUrl()}/pedido/${input.publicToken}?nuevo=1`;
   const isPublicUrl = siteUrl().startsWith("https://");
   const preference = await new Preference(client()).create({
@@ -72,6 +76,11 @@ export async function createPreference(input: PreferenceInput) {
         excluded_payment_types: excludedTypes[input.method].map((id) => ({ id })),
       },
       back_urls: { success: back, pending: back, failure: back },
+      expires: true,
+      expiration_date_from: new Date().toISOString(),
+      expiration_date_to: payBy.toISOString(),
+      // Vencimiento del cupón de Pago Fácil / Rapipago
+      date_of_expiration: payBy.toISOString(),
       // Mercado Pago sólo acepta auto_return y notificaciones con URLs públicas
       ...(isPublicUrl && {
         auto_return: "approved",

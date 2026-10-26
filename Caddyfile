@@ -1,0 +1,22 @@
+# Proxy de entrada: HTTPS automático (Let's Encrypt), redirección de http a https y
+# compresión. La app no queda expuesta a internet: solo Caddy habla con ella.
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	# Nadie de afuera puede hacerse pasar por otra IP: Caddy pisa X-Forwarded-For
+	reverse_proxy app:3000
+
+	request_body {
+		max_size 1MB
+	}
+
+	header {
+		-Server
+		-X-Powered-By
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

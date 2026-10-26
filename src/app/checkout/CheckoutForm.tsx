@@ -120,6 +120,7 @@ export function CheckoutForm({ mercadoPagoEnabled, qrEnabled, action: placeOrder
   return (
     <form action={action} className="cart-layout">
       <input type="hidden" name="items" value={JSON.stringify(items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })))} />
+      <input type="text" name="website" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
       <div className="cart-items form">
         <fieldset>
@@ -239,6 +240,13 @@ export function CheckoutForm({ mercadoPagoEnabled, qrEnabled, action: placeOrder
           <span>{shippingCost === null ? <span className="muted">A cotizar</span> : shippingCost ? formatPrice(shippingCost) : "Gratis"}</span>
         </div>
         <div className="summary-row total"><span>Total</span><span>{formatPrice(total)}</span></div>
+        <label className="terms">
+          <input type="checkbox" name="terms" required />
+          <span>
+            Acepto los <Link href="/terminos" target="_blank">términos y condiciones</Link> y la{" "}
+            <Link href="/privacidad" target="_blank">política de privacidad</Link>.
+          </span>
+        </label>
         {state?.error && <p className="alert" role="alert">{state.error}</p>}
         <button type="submit" className="btn btn-primary btn-block" disabled={pending}>
           {pending ? "Procesando…" : submitText[payment]}

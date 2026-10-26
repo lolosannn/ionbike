@@ -1,6 +1,12 @@
 node_modules
 .next
-.env
+out
+# Ningún secreto entra en la imagen: las variables llegan al contenedor con env_file
+.env*
+!.env.example
 .git
+.github
 diseno
 docs
+video
+*.md

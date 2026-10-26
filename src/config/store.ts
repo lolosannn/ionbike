@@ -54,6 +54,27 @@ export const store = {
   // Video de la guía de talles: ID de YouTube (lo que va después de "v=") o URL de un .mp4.
   // Vacío usa el video propio de public/talles/guia-de-talles.mp4 (o un aviso si no está).
   sizeGuideVideo: "",
+  // Horas que un pedido impago reserva el stock. Pasado ese plazo se cancela solo y el stock
+  // vuelve a estar disponible (así nadie puede dejar la tienda "sin stock" con pedidos que no paga).
+  orderHoldHours: {
+    CARD: 2,
+    MERCADOPAGO: 2,
+    QR: 2,
+    TRANSFER: 48,
+    CASH: 72,
+    // El cupón de Pago Fácil / Rapipago vence un día antes, para dar tiempo a la acreditación
+    TICKET: 96,
+  },
+  // Topes contra el abuso: pedidos impagos por cliente (DNI, email o teléfono) y turnos
+  // futuros del taller por teléfono
+  maxPendingOrders: 3,
+  maxUpcomingAppointments: 2,
+  // Datos del responsable de la tienda para las páginas legales (Ley 24.240 y 25.326)
+  legal: {
+    razonSocial: "[RAZÓN SOCIAL]",
+    cuit: "[CUIT]",
+    domicilio: "Av. Fair 328, Monte Grande, provincia de Buenos Aires",
+  },
   // Datos para transferencia (cuenta bancaria o de Mercado Pago, con alias fijo)
   bank: {
     holder: "[TITULAR DE LA CUENTA]",

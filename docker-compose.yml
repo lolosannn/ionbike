@@ -1,14 +1,20 @@
 # Producción en un servidor propio: `docker compose up -d --build`
+# Solo Caddy queda expuesto (puertos 80 y 443); la app y la base no salen a internet.
+x-hardening: &hardening
+  security_opt: ["no-new-privileges:true"]
+  restart: unless-stopped
+
 services:
   db:
+    <<: *hardening
     image: postgres:16
-    restart: unless-stopped
     environment:
       POSTGRES_USER: ion
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?definí POSTGRES_PASSWORD en .env}
       POSTGRES_DB: ionbikestore
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks: [internal]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ion -d ionbikestore"]
       interval: 5s
@@ -18,21 +24,56 @@ services:
   migrate:
     build: { context: ., target: builder }
     command: npx prisma migrate deploy
+    security_opt: ["no-new-privileges:true"]
     environment:
       DATABASE_URL: postgresql://ion:${POSTGRES_PASSWORD}@db:5432/ionbikestore
+    networks: [internal]
     depends_on:
       db: { condition: service_healthy }
 
   app:
+    <<: *hardening
     build: .
-    restart: unless-stopped
     env_file: .env
     environment:
       DATABASE_URL: postgresql://ion:${POSTGRES_PASSWORD}@db:5432/ionbikestore
+    # Sistema de archivos de solo lectura y sin capacidades de Linux
+    read_only: true
+    tmpfs: ["/tmp", "/app/.next/cache"]
+    cap_drop: [ALL]
+    # La app sale a internet (Mercado Pago, Andreani), por eso está también en "edge"
+    networks: [internal, edge]
+    # Solo para probar en el mismo servidor; desde afuera se entra por Caddy
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       migrate: { condition: service_completed_successfully }
 
+  caddy:
+    <<: *hardening
+    image: caddy:2
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?definí SITE_DOMAIN en .env (ej. www.ionbikestore.com.ar)}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    networks: [edge]
+    depends_on: [app]
+
+networks:
+  # Sin salida a internet: la base solo habla con la app
+  internal:
+    internal: true
+  edge:
+
 volumes:
   pgdata:
+  caddy_data:
+  caddy_config:

@@ -6,9 +6,12 @@ import QRCode from "qrcode";
 import { ClearCart } from "./ClearCart";
 import { QrPayment } from "./QrPayment";
 import { checkQrPayment, renewQr } from "../../checkout/actions";
+import { expireStaleOrders, holdUntil } from "@/lib/orders";
+import { isPublicToken } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Tu pedido", robots: { index: false } };
+// El link del pedido es la llave para verlo: no se indexa ni se manda en el Referer
+export const metadata = { title: "Tu pedido", robots: { index: false, follow: false }, referrer: "no-referrer" as const };
 
 const statusText = {
   PENDING: "Pendiente de pago",
@@ -26,6 +29,8 @@ type Props = {
 export default async function OrderPage({ params, searchParams }: Props) {
   const { token } = await params;
   const { nuevo } = await searchParams;
+  if (!isPublicToken(token)) notFound();
+  await expireStaleOrders();
   const order = await db.order.findUnique({ where: { publicToken: token }, include: { items: true } });
   if (!order) notFound();
 
@@ -39,6 +44,22 @@ export default async function OrderPage({ params, searchParams }: Props) {
         </h1>
         <p className="muted">Estado: <strong style={{ color: "var(--text)" }}>{statusText[order.status]}</strong>. Te escribimos a {order.email}.</p>
       </div>
+
+      {order.status === "PENDING" && (
+        <p className="muted" style={{ marginTop: 16 }}>
+          Te reservamos los productos hasta el{" "}
+          <strong style={{ color: "var(--text)" }}>
+            {holdUntil(order.paymentMethod, order.createdAt).toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires", dateStyle: "long", timeStyle: "short" })} h
+          </strong>. Si para entonces no se acreditó el pago, el pedido se cancela solo.
+        </p>
+      )}
+
+      {order.status === "CANCELLED" && (
+        <div className="notice" style={{ marginTop: 24 }}>
+          Este pedido se canceló porque venció el plazo para pagarlo. Si ya pagaste o lo querés retomar,{" "}
+          <a href={whatsappUrl(`Hola! Consulto por el pedido #${order.number}`)} target="_blank" rel="noreferrer">escribinos por WhatsApp</a>.
+        </div>
+      )}
 
       {order.paymentMethod === "TRANSFER" && order.status === "PENDING" && (
         <div className="notice bank" style={{ marginTop: 24 }}>

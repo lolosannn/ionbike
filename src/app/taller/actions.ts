@@ -2,8 +2,10 @@
 
 import { Prisma } from "@prisma/client";
 import { workshopServices } from "@/config/workshop";
-import { createAppointment, SlotFullError } from "@/lib/appointments";
+import { createAppointment, SlotFullError, TooManyAppointmentsError } from "@/lib/appointments";
 import { isBookable } from "@/lib/workshop";
+import { allowed } from "@/lib/rate-limit";
+import { isEmail, isPhone, onlyDigits } from "@/lib/validation";
 import type { BookingState } from "./WorkshopBooking";
 
 function text(form: FormData, key: string, max = 200) {
@@ -11,12 +13,14 @@ function text(form: FormData, key: string, max = 200) {
 }
 
 export async function bookAppointment(_prev: BookingState, form: FormData): Promise<BookingState> {
+  // Campo trampa: invisible para las personas, los bots lo completan
+  if (text(form, "website")) return { error: "No pudimos reservar el turno." };
   const services = form.getAll("services").map(String).filter((id) => workshopServices.some((s) => s.id === id));
   const date = text(form, "date", 10);
   const time = text(form, "time", 5);
   const data = {
     name: text(form, "name"),
-    phone: text(form, "phone", 40),
+    phone: onlyDigits(text(form, "phone", 40)),
     email: text(form, "email") || undefined,
     bike: text(form, "bike") || undefined,
     notes: text(form, "notes", 1000) || undefined,
@@ -25,12 +29,18 @@ export async function bookAppointment(_prev: BookingState, form: FormData): Prom
   if (services.length === 0) return { error: "Elegí al menos un servicio." };
   if (!isBookable(date, time)) return { error: "Elegí un día y un horario disponibles." };
   if (!data.name || !data.phone) return { error: "Completá tu nombre y teléfono." };
-  if (data.email && !/^\S+@\S+\.\S+$/.test(data.email)) return { error: "Revisá el email." };
+  if (!isPhone(data.phone)) return { error: "Revisá el teléfono (con código de área)." };
+  if (data.email && !isEmail(data.email)) return { error: "Revisá el email." };
+
+  if (!(await allowed("booking"))) return { error: "Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo." };
 
   try {
     await createAppointment({ date, time, services, ...data });
   } catch (e) {
     const conflict = e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2034";
+    if (e instanceof TooManyAppointmentsError) {
+      return { error: "Ya tenés turnos reservados. Si necesitás otro, escribinos por WhatsApp." };
+    }
     if (e instanceof SlotFullError || conflict) {
       return { error: "Ese horario se acaba de ocupar. Elegí otro, por favor.", full: { date, time } };
     }

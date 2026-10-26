@@ -3,7 +3,10 @@
 import { redirect } from "next/navigation";
 import { PaymentMethod, ShippingMethod } from "@prisma/client";
 import { db } from "@/lib/db";
-import { attachQr, cancelPendingOrder, syncQrPayment, createOrder, OutOfStockError, quoteShipping } from "@/lib/orders";
+import { attachQr, cancelPendingOrder, createOrder, expireStaleOrders, holdUntil, OutOfStockError, pendingOrdersFor, quoteShipping, syncQrPayment } from "@/lib/orders";
+import { allowed, hit } from "@/lib/rate-limit";
+import { isDni, isEmail, isPhone, onlyDigits, isPublicToken } from "@/lib/validation";
+import { store } from "@/config/store";
 import { isValidDestination, type ShippingQuote } from "@/lib/shipping";
 import { createPreference, isMercadoPagoConfigured, isQrConfigured } from "@/lib/mercadopago";
 import type { CheckoutState } from "./CheckoutForm";
@@ -27,6 +30,7 @@ export async function quoteShippingAction(
   rawItems: { variantId: string; quantity: number }[],
   dest: { zip: string; province: string },
 ): Promise<ShippingQuote | null> {
+  if (!(await allowed("quote"))) return null;
   const items = parseItems(rawItems);
   const d = { zip: String(dest?.zip ?? "").slice(0, 12), province: String(dest?.province ?? "").slice(0, 100) };
   if (items.length === 0 || !isValidDestination(d)) return null;
@@ -34,6 +38,10 @@ export async function quoteShippingAction(
 }
 
 export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<CheckoutState> {
+  // Campo trampa: invisible para las personas, los bots lo completan
+  if (text(form, "website")) return { error: "No pudimos procesar el pedido." };
+  if (form.get("terms") !== "on") return { error: "Tenés que aceptar los términos y la política de privacidad." };
+
   let items: { variantId: string; quantity: number }[];
   try {
     items = parseItems(JSON.parse(String(form.get("items") ?? "[]")));
@@ -50,8 +58,8 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
   const data = {
     name: text(form, "name"),
     email: text(form, "email"),
-    phone: text(form, "phone", 40),
-    dni: text(form, "dni", 20),
+    phone: onlyDigits(text(form, "phone", 40)),
+    dni: onlyDigits(text(form, "dni", 20)),
     address: text(form, "address"),
     city: text(form, "city", 100),
     province: text(form, "province", 100),
@@ -59,7 +67,9 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
     notes: text(form, "notes", 1000),
   };
   if (!data.name || !data.phone || !data.dni) return { error: "Completá nombre, teléfono y DNI." };
-  if (!/^\S+@\S+\.\S+$/.test(data.email)) return { error: "Revisá el email." };
+  if (!isDni(data.dni)) return { error: "Revisá el DNI (solo números)." };
+  if (!isPhone(data.phone)) return { error: "Revisá el teléfono (con código de área)." };
+  if (!isEmail(data.email)) return { error: "Revisá el email." };
   if (shippingMethod === "DELIVERY" && (!data.address || !data.city || !data.province || !data.zip)) {
     return { error: "Completá la dirección de envío." };
   }
@@ -72,6 +82,13 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
   }
   if (paymentMethod === "QR" && !isQrConfigured()) {
     return { error: "El pago con QR todavía no está habilitado. Elegí transferencia al alias." };
+  }
+
+  // El límite cuenta solo los envíos válidos: equivocarse en un dato no gasta intentos
+  if (!(await allowed("order"))) return { error: "Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo." };
+  await expireStaleOrders();
+  if ((await pendingOrdersFor(data)) >= store.maxPendingOrders) {
+    return { error: "Tenés pedidos pendientes de pago. Pagalos o escribinos por WhatsApp antes de hacer uno nuevo." };
   }
 
   let order;
@@ -110,6 +127,7 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
       shippingCost: order.shippingCost,
       discount: order.discount,
       total: order.total,
+      expiresAt: holdUntil(order.paymentMethod, order.createdAt),
     });
     await db.order.update({ where: { id: order.id }, data: { mpPreferenceId: pref.id } });
     initPoint = pref.initPoint;
@@ -123,16 +141,19 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
 
 /** Genera un QR nuevo para un pedido pendiente (el anterior vence a los 30 minutos). */
 export async function renewQr(token: string) {
-  const order = await db.order.findUnique({ where: { publicToken: String(token) } });
+  if (!isPublicToken(token) || !(await allowed("qrRenew"))) return;
+  const order = await db.order.findUnique({ where: { publicToken: token } });
   if (!order) return;
   await attachQr(order.id).catch((e) => console.error("Error renovando el QR", e));
 }
 
 /** Consulta si ya se pagó el QR del pedido. Devuelve true cuando está pagado. */
 export async function checkQrPayment(token: string) {
-  const order = await db.order.findUnique({ where: { publicToken: String(token) } });
+  if (!isPublicToken(token) || !(await allowed("qrCheck"))) return false;
+  const order = await db.order.findUnique({ where: { publicToken: token } });
   if (!order) return false;
-  if (order.status === "PENDING" && order.mpQrOrderId) {
+  // A Mercado Pago se le consulta como mucho cada 4 segundos por pedido (el webhook también avisa)
+  if (order.status === "PENDING" && order.mpQrOrderId && hit(`qr-sync:${order.id}`, 1, 4000)) {
     await syncQrPayment(order.mpQrOrderId).catch((e) => console.error("Error consultando el QR", e));
     return (await db.order.findUnique({ where: { id: order.id } }))?.status === "PAID";
   }

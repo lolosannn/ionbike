@@ -56,11 +56,12 @@ Los archivos `*.server.tsx` / `*.server.ts` son solo de la tienda real y `*.demo
 En un VPS con Docker:
 
 ```bash
-cp .env.example .env          # completar POSTGRES_PASSWORD, SITE_URL (https://www.ionbikestore.com), MP_*
+cp .env.example .env          # completar POSTGRES_PASSWORD, SITE_DOMAIN, SITE_URL (https://...), MP_*
+chmod 600 .env
 docker compose up -d --build
 ```
 
-Levanta PostgreSQL, aplica las migraciones y deja la tienda en el puerto 3000. Delante va un proxy con HTTPS (Caddy o Nginx + Let's Encrypt) apuntando al dominio.
+Levanta PostgreSQL, aplica las migraciones, arranca la tienda y pone adelante Caddy, que saca solo el certificado HTTPS para `SITE_DOMAIN` (el DNS del dominio tiene que apuntar al servidor y los puertos 80 y 443 estar abiertos). La app y la base no quedan expuestas a internet. Las medidas de seguridad y lo que falta están en [`docs/seguridad.md`](docs/seguridad.md).
 
 ### Mercado Pago
 
@@ -90,4 +91,5 @@ Sin `MP_ACCESS_TOKEN` el checkout ofrece solo transferencia al alias y efectivo 
 - [ ] Link de reseñas de Google del local (`googleReviewsUrl` en `store.ts`), horarios y redes sociales.
 - [ ] Planes de cuotas reales con sus recargos (`financing` en `store.ts`; hoy 3, 6 y 12 sin interés).
 - [ ] Fotos reales, logo original, alias de Mercado Pago y horarios (marcados entre corchetes).
-- [ ] Términos y condiciones, y políticas de cambios y envíos.
+- [x] Términos y condiciones, cambios y devoluciones, y política de privacidad (`/terminos` y `/privacidad`).
+- [ ] Completar razón social y CUIT (`legal` en `store.ts`) y revisar los textos legales con un abogado o contador.

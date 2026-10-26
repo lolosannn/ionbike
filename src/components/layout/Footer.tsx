@@ -72,6 +72,8 @@ export function Footer() {
         <div className="container">
           <span>© {new Date().getFullYear()} {store.name}. Todos los derechos reservados.</span>
           <nav aria-label="Legales">
+            <Link href="/terminos">Términos y condiciones</Link>
+            <Link href="/privacidad">Política de privacidad</Link>
             <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noreferrer">
               Defensa del consumidor
             </a>

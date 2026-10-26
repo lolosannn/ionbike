@@ -1,0 +1,30 @@
+# Revisa dependencias vulnerables y tipos en cada push, en cada PR y todas las semanas
+# (las vulnerabilidades nuevas aparecen aunque no cambie el código).
+name: Seguridad
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Dependencias con vulnerabilidades altas o críticas
+        run: npm audit --audit-level=high
+      - name: Tipos
+        run: npx prisma generate && npx next typegen && npm run lint

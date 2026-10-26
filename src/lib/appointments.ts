@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { workshopSchedule } from "@/config/workshop";
+import { store } from "@/config/store";
 import { bookableDays, slotKey, todayKey } from "@/lib/workshop";
 
 export class SlotFullError extends Error {}
+export class TooManyAppointmentsError extends Error {}
 
 /** Turnos ocupados por horario ("AAAA-MM-DD HH:MM" → cantidad) en los días reservables. */
 export async function takenSlots() {
@@ -27,7 +29,7 @@ export type AppointmentInput = {
   notes?: string;
 };
 
-/** Crea el turno si todavía hay cupo en ese horario (serializable: dos reservas a la vez no pasan el cupo). */
+/** Crea el turno si todavía hay cupo en ese horario y el cliente no pasó su tope (serializable: dos reservas a la vez no pasan el cupo). */
 export async function createAppointment(input: AppointmentInput) {
   return db.$transaction(
     async (tx) => {
@@ -35,6 +37,11 @@ export async function createAppointment(input: AppointmentInput) {
         where: { date: input.date, time: input.time, status: { not: "CANCELLED" } },
       });
       if (taken >= workshopSchedule.perSlot) throw new SlotFullError();
+      // Tope de turnos futuros por teléfono, para que nadie llene la agenda
+      const upcoming = await tx.appointment.count({
+        where: { phone: input.phone, date: { gte: todayKey() }, status: { not: "CANCELLED" } },
+      });
+      if (upcoming >= store.maxUpcomingAppointments) throw new TooManyAppointmentsError();
       return tx.appointment.create({ data: input });
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },

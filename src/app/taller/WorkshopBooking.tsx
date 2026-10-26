@@ -99,6 +99,7 @@ export function WorkshopBooking({ taken, action }: Props) {
 
   return (
     <form action={formAction} className="booking">
+      <input type="text" name="website" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       <div className="booking-main">
         <fieldset className="booking-step">
           <legend><span>1</span> Elegí los servicios</legend>
