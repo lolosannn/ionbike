@@ -33,6 +33,11 @@ export function financingPlans(cents: number) {
   });
 }
 
+/** Porcentaje de descuento sobre el precio anterior tachado, o null si no está en oferta. */
+export function discountPct(price: number, compareAt: number | null | undefined): number | null {
+  return compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : null;
+}
+
 export function hasFreeShipping(cents: number): boolean {
   return cents >= store.freeShippingFrom;
 }

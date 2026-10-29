@@ -43,6 +43,7 @@ export default async function CategoryPage({ params }: Props) {
       <ProductListing
         products={products}
         subcategories={category.children.map((c) => ({ slug: c.slug, name: c.name }))}
+        categorySlugs={[category.slug, ...(category.parent ? [category.parent.slug] : [])]}
       />
     </div>
   );

@@ -1,18 +1,27 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Fragment, Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ProductCardData } from "@/lib/catalog";
-import { hasFreeShipping } from "@/lib/pricing";
+import { discountPct, hasFreeShipping } from "@/lib/pricing";
 import { ProductCard } from "@/components/product/ProductCard";
+import { PromoCard } from "@/components/promos/Promos";
+import { usePromos } from "@/components/promos/PromosProvider";
 import { formatSize } from "@/lib/variants";
 
-type Sort = "sales" | "price-asc" | "price-desc" | "new";
+type Sort = "offers" | "sales" | "price-asc" | "price-desc" | "new";
+
+const onSale = (p: ProductCardData) => discountPct(p.price, p.compareAt) !== null;
+
+// Tarjetas de promo entre los productos: la primera en el tercer lugar y después una cada 8
+const promoSlot = (i: number) => i === 2 || (i > 2 && (i - 2) % 8 === 0);
 
 type Props = {
   products: ProductCardData[];
   // Subcategorías para las pastillas (vacío si la categoría no tiene hijas)
   subcategories: { slug: string; name: string }[];
+  // Slugs de la categoría y su madre, para mostrar solo las promos que aplican (vacío: todas)
+  categorySlugs?: string[];
 };
 
 /** Disciplina elegida desde el inicio: /categoria/bicicletas?disciplina=mtb */
@@ -86,7 +95,7 @@ function FilterIcon() {
   );
 }
 
-export function ProductListing({ products, subcategories }: Props) {
+export function ProductListing({ products, subcategories, categorySlugs }: Props) {
   const [sub, setSub] = useState<string | null>(null);
   const [sizes, setSizes] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
@@ -94,7 +103,12 @@ export function ProductListing({ products, subcategories }: Props) {
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
   const [freeOnly, setFreeOnly] = useState(false);
-  const [sort, setSort] = useState<Sort>("sales");
+  const [saleOnly, setSaleOnly] = useState(false);
+  // Por defecto, primero lo que está en oferta y después lo más vendido
+  const [sort, setSort] = useState<Sort>("offers");
+  const promos = usePromos("listado", categorySlugs?.length ? { categories: categorySlugs, products: products.map((p) => p.slug) } : undefined);
+  // "Solo en oferta" tiene sentido si hay de los dos (en Ofertas están todos)
+  const saleFilter = useMemo(() => products.some(onSale) && !products.every(onSale), [products]);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   // En celular los filtros se abren como panel: se traba el scroll de atrás y se cierra con Esc
@@ -144,6 +158,7 @@ export function ProductListing({ products, subcategories }: Props) {
       if (minCents !== null && p.price < minCents) return false;
       if (maxCents !== null && p.price > maxCents) return false;
       if (freeOnly && !hasFreeShipping(p.price)) return false;
+      if (saleOnly && !onSale(p)) return false;
       return true;
     });
     const sorted = [...list];
@@ -151,15 +166,21 @@ export function ProductListing({ products, subcategories }: Props) {
     if (sort === "price-desc") sorted.sort((a, b) => b.price - a.price);
     if (sort === "new") sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     if (sort === "sales") sorted.sort((a, b) => b.salesCount - a.salesCount);
+    if (sort === "offers") {
+      sorted.sort((a, b) =>
+        Number(onSale(b)) - Number(onSale(a)) ||
+        (discountPct(b.price, b.compareAt) ?? 0) - (discountPct(a.price, a.compareAt) ?? 0) ||
+        b.salesCount - a.salesCount);
+    }
     return sorted;
-  }, [products, sub, sizes, brands, colors, min, max, freeOnly, sort]);
+  }, [products, sub, sizes, brands, colors, min, max, freeOnly, saleOnly, sort]);
 
   const clearAll = () => {
-    setSizes([]); setBrands([]); setColors([]); setMin(""); setMax(""); setFreeOnly(false);
+    setSizes([]); setBrands([]); setColors([]); setMin(""); setMax(""); setFreeOnly(false); setSaleOnly(false);
   };
 
   const priceActive = Boolean(min || max);
-  const activeCount = sizes.length + brands.length + colors.length + (priceActive ? 1 : 0) + (freeOnly ? 1 : 0);
+  const activeCount = sizes.length + brands.length + colors.length + (priceActive ? 1 : 0) + (freeOnly ? 1 : 0) + (saleOnly ? 1 : 0);
   const presetActive = (r: PriceRange) => min === (r.min ? String(r.min) : "") && max === (r.max ? String(r.max) : "");
   const choosePreset = (r: PriceRange) => {
     if (presetActive(r)) { setMin(""); setMax(""); return; }
@@ -171,6 +192,7 @@ export function ProductListing({ products, subcategories }: Props) {
   const activeTags: { key: string; label: string; remove: () => void }[] = [
     ...(priceActive ? [{ key: "price", label: priceLabel(min, max), remove: () => { setMin(""); setMax(""); } }] : []),
     ...(freeOnly ? [{ key: "free", label: "Envío gratis", remove: () => setFreeOnly(false) }] : []),
+    ...(saleOnly ? [{ key: "sale", label: "En oferta", remove: () => setSaleOnly(false) }] : []),
     ...sizes.map((s) => ({ key: `s-${s}`, label: formatSize(s), remove: () => setSizes(toggle(sizes, s)) })),
     ...brands.map((b) => ({ key: `b-${b}`, label: b, remove: () => setBrands(toggle(brands, b)) })),
     ...colors.map((c) => ({ key: `c-${c}`, label: c, remove: () => setColors(toggle(colors, c)) })),
@@ -217,7 +239,7 @@ export function ProductListing({ products, subcategories }: Props) {
           </div>
 
           <div className="filters-body">
-            <FilterSection title="Precio" active={(priceActive ? 1 : 0) + (freeOnly ? 1 : 0)}>
+            <FilterSection title="Precio" active={(priceActive ? 1 : 0) + (freeOnly ? 1 : 0) + (saleOnly ? 1 : 0)}>
               {options.priceRanges.length > 0 && (
                 <div className="price-presets">
                   {options.priceRanges.map((r) => (
@@ -249,6 +271,13 @@ export function ProductListing({ products, subcategories }: Props) {
                 <span className="switch-track" aria-hidden />
                 Solo con envío gratis
               </label>
+              {saleFilter && (
+                <label className="switch">
+                  <input type="checkbox" role="switch" checked={saleOnly} onChange={(e) => setSaleOnly(e.target.checked)} />
+                  <span className="switch-track" aria-hidden />
+                  Solo en oferta
+                </label>
+              )}
             </FilterSection>
 
             {sizeGroups.length > 0 && (
@@ -311,6 +340,7 @@ export function ProductListing({ products, subcategories }: Props) {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <label htmlFor="orden" className="muted" style={{ fontSize: 14 }}>Ordenar por</label>
               <select id="orden" className="input" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+                <option value="offers">Ofertas primero</option>
                 <option value="sales">Más vendidos</option>
                 <option value="price-asc">Menor precio</option>
                 <option value="price-desc">Mayor precio</option>
@@ -330,7 +360,19 @@ export function ProductListing({ products, subcategories }: Props) {
           )}
           {filtered.length > 0 ? (
             <div className="product-grid">
-              {filtered.map((p) => <ProductCard key={p.slug} product={p} />)}
+              {filtered.map((p, i) => {
+                // Cada lugar de promo toma la siguiente promo vigente, hasta que se acaban
+                const slot = promoSlot(i) ? (i === 2 ? 0 : (i - 2) / 8) : -1;
+                const promo = slot >= 0 ? promos[slot] : undefined;
+                return (
+                  <Fragment key={p.slug}>
+                    {promo && <PromoCard promo={promo} />}
+                    <ProductCard product={p} />
+                  </Fragment>
+                );
+              })}
+              {/* Con pocos productos, la promo va al final para que igual se vea */}
+              {filtered.length > 0 && filtered.length <= 2 && promos[0] && <PromoCard promo={promos[0]} />}
             </div>
           ) : (
             <div className="empty">

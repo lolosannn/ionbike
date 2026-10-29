@@ -2,13 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProduct, getRelatedProducts } from "@/lib/catalog";
-import { financingPlans, formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
+import { discountPct, financingPlans, formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
 import { store, whatsappUrl } from "@/config/store";
 import { isBulkyCategory } from "@/lib/shipping";
 import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { SpecsAccordion } from "@/components/product/SpecsAccordion";
 import { ProductCard } from "@/components/product/ProductCard";
+import { PromoProductBox } from "@/components/promos/Promos";
 import { ArrowIcon, ChatIcon, PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -23,9 +24,7 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound();
   const related = await getRelatedProducts(product.categoryId, product.slug);
   const specs = (Array.isArray(product.specs) ? product.specs : []) as { label: string; value: string }[];
-  const off = product.compareAt && product.compareAt > product.price
-    ? Math.round((1 - product.price / product.compareAt) * 100)
-    : null;
+  const off = discountPct(product.price, product.compareAt);
   const parent = product.category.parent;
   const isBike = isBulkyCategory(product.category.slug, parent?.slug);
 
@@ -61,6 +60,8 @@ export default async function ProductPage({ params }: Props) {
               </strong>
             </div>
           </div>
+
+          <PromoProductBox slug={product.slug} categories={[product.category.slug, parent?.slug]} />
 
           <section className="financing" aria-labelledby="financiacion">
             <div className="financing-head">

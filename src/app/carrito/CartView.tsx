@@ -7,6 +7,7 @@ import { TrashIcon } from "@/components/icons";
 import { ProductImage } from "@/components/product/ProductCard";
 import { FreeShippingProgress, ShippingCalculator } from "@/components/cart/ShippingCalculator";
 import { PaymentOptions } from "@/components/cart/PaymentOptions";
+import { CartPromos } from "@/components/promos/Promos";
 import { useShippingQuote, type QuoteAction } from "@/components/cart/useShippingQuote";
 
 export function CartView({ quoteAction }: { quoteAction?: QuoteAction }) {
@@ -30,6 +31,7 @@ export function CartView({ quoteAction }: { quoteAction?: QuoteAction }) {
       ) : (
         <div className="cart-layout">
           <div className="cart-items">
+            <CartPromos />
             {items.map((item) => (
               <div key={item.variantId} className="cart-item">
                 <div className="cart-thumb"><ProductImage src={item.image} alt="" /></div>

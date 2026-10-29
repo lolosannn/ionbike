@@ -2,13 +2,14 @@ import { connection } from "next/server";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { demoCategories, demoProducts, withRelations } from "@/lib/demo-store";
+import { discountPct } from "@/lib/pricing";
 
 // Vista previa estática (GitHub Pages): sin base de datos, lee el catálogo de ejemplo.
 export const isStaticDemo = process.env.DEMO_STATIC === "1";
 
 const cardInclude = {
   brand: true,
-  category: true,
+  category: { include: { parent: true } },
   variants: true,
 } satisfies Prisma.ProductInclude;
 
@@ -20,6 +21,8 @@ export type ProductCardData = {
   brand: string | null;
   category: string;
   categorySlug: string;
+  // Categoría madre (ej. "bicicletas" para una MTB), para las promos por categoría
+  parentCategorySlug: string | null;
   price: number;
   compareAt: number | null;
   image: string | null;
@@ -44,6 +47,7 @@ function toCard(p: ProductWithRelations): ProductCardData {
     brand: p.brand?.name ?? null,
     category: p.category.name,
     categorySlug: p.category.slug,
+    parentCategorySlug: p.category.parent?.slug ?? null,
     price: p.price,
     compareAt: p.compareAt,
     image: p.images[0] ?? null,
@@ -82,6 +86,22 @@ export async function getAllProducts() {
   await live();
   const products = await db.product.findMany({ where: { active: true }, include: cardInclude, orderBy: { salesCount: "desc" } });
   return products.map(toCard);
+}
+
+/** Productos en oferta (con precio anterior tachado), del mayor descuento al menor */
+export async function getSaleProducts(limit?: number) {
+  const byDiscount = (a: ProductCardData, b: ProductCardData) =>
+    (discountPct(b.price, b.compareAt) ?? 0) - (discountPct(a.price, a.compareAt) ?? 0) || b.salesCount - a.salesCount;
+  let cards: ProductCardData[];
+  if (isStaticDemo) {
+    cards = demoCards((p) => discountPct(p.price, p.compareAt) !== null);
+  } else {
+    await live();
+    // Prisma no compara dos columnas entre sí: se traen los que tienen precio anterior y se filtra acá
+    const products = await db.product.findMany({ where: { active: true, compareAt: { not: null } }, include: cardInclude });
+    cards = products.map(toCard).filter((p) => discountPct(p.price, p.compareAt) !== null);
+  }
+  return cards.sort(byDiscount).slice(0, limit);
 }
 
 export async function getCategoryWithProducts(slug: string) {

@@ -119,6 +119,7 @@ export const about = {
 
 export const nav = [
   { label: "Inicio", href: "/" },
+  { label: "Ofertas", href: "/ofertas" },
   { label: "Bicicletas", href: "/categoria/bicicletas" },
   { label: "Taller", href: "/taller" },
   { label: "Repuestos", href: "/categoria/repuestos" },

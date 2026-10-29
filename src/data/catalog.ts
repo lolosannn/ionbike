@@ -50,7 +50,8 @@ export const products: ProductData[] = [
   {
     slug: "bicicleta-mtb-zion-aspro-rodado-29-21v",
     name: "Bicicleta MTB Zion Aspro Rodado 29 21V",
-    brand: "Zion", category: "mtb", price: 565_978_00, salesCount: 40, featured: true,
+    // compareAt: precio anterior de ejemplo, para ver cómo se muestran las ofertas
+    brand: "Zion", category: "mtb", price: 565_978_00, compareAt: 649_990_00, salesCount: 40, featured: true,
     colors: ["Negro", "Naranja", "Gris"], sizes: ["29"], stock: 3,
     specs: [{ label: "Rodado", value: "29" }, { label: "Velocidades", value: "21" }, { label: "Frenos", value: "[A CONFIRMAR]" }],
     description: "[DESCRIPCIÓN DEL PRODUCTO]", images: [],
@@ -74,7 +75,7 @@ export const products: ProductData[] = [
   {
     slug: "bicicleta-spy-ridder-r26-2026",
     name: "Bicicleta SPY Ridder R26 2026",
-    brand: "SPY", category: "dirt-jump", price: 632_583_60, salesCount: 25, featured: true,
+    brand: "SPY", category: "dirt-jump", price: 632_583_60, compareAt: 744_216_00, salesCount: 25, featured: true,
     colors: ["Celeste", "Negro", "Gris"], sizes: ["26"], stock: 3,
     specs: [{ label: "Rodado", value: "26" }, { label: "Uso", value: "MTB / Dirt" }],
     description: "[DESCRIPCIÓN DEL PRODUCTO]", images: [],

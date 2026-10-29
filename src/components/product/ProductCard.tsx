@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { ProductCardData } from "@/lib/catalog";
-import { formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
+import { discountPct, formatPrice, hasFreeShipping, installmentPrice, transferPrice } from "@/lib/pricing";
 import { store } from "@/config/store";
 import { BikeIcon } from "@/components/icons";
+import { PromoBadge } from "@/components/promos/Promos";
 
 export function ProductImage({ src, alt }: { src: string | null; alt: string }) {
   if (src) return <img src={src} alt={alt} loading="lazy" />;
@@ -16,9 +17,7 @@ export function ProductImage({ src, alt }: { src: string | null; alt: string }) 
 
 export function ProductCard({ product }: { product: ProductCardData }) {
   const href = `/producto/${product.slug}`;
-  const off = product.compareAt && product.compareAt > product.price
-    ? Math.round((1 - product.price / product.compareAt) * 100)
-    : null;
+  const off = discountPct(product.price, product.compareAt);
 
   return (
     <article className="product-card">
@@ -27,6 +26,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         <div className="badges">
           {hasFreeShipping(product.price) && <span className="badge">Envío gratis</span>}
           {off && <span className="badge badge-accent">{off}% OFF</span>}
+          <PromoBadge slug={product.slug} categories={[product.categorySlug, product.parentCategorySlug]} />
           {product.onRequest
             ? <span className="badge badge-muted">A pedido</span>
             : !product.inStock && <span className="badge badge-muted">Sin stock</span>}

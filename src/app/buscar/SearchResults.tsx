@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import type { ProductCardData } from "@/lib/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
+import { discountPct } from "@/lib/pricing";
 
 const normalize = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -15,6 +16,8 @@ export function SearchResults({ products }: { products: ProductCardData[] }) {
         return terms.every((t) => haystack.includes(t));
       })
     : [];
+  // Lo que está en oferta, primero
+  results.sort((a, b) => Number(discountPct(b.price, b.compareAt) !== null) - Number(discountPct(a.price, a.compareAt) !== null));
 
   return (
     <>

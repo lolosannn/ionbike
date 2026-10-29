@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { getDisciplines, getFeaturedProducts } from "@/lib/catalog";
+import { getDisciplines, getFeaturedProducts, getSaleProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/pricing";
 import { about, store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
+import { PromoBanner } from "@/components/promos/Promos";
 import { publicFile, publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon, HelmetIcon, ShirtIcon, SprocketIcon } from "@/components/icons";
 
@@ -30,7 +31,7 @@ const heroVideo = publicFile("hero", "hero", ["mp4"]);
 const heroPoster = publicImage("hero", "hero");
 
 export default async function HomePage() {
-  const [categories, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
+  const [categories, featured, onSale] = await Promise.all([getDisciplines(), getFeaturedProducts(4), getSaleProducts(4)]);
   // Foto de cada disciplina: public/disciplinas/<slug>.jpg
   // Las subcategorías llevan al listado de la categoría madre con esa disciplina ya filtrada
   const disciplines = categories.map((c) => ({
@@ -70,6 +71,23 @@ export default async function HomePage() {
         <span className="eyebrow brands-title">Marcas que trabajamos</span>
         <BrandMarquee brands={brands} />
       </section>
+
+      <PromoBanner />
+
+      {onSale.length > 0 && (
+        <section className="section container">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">Precios rebajados</span>
+              <h2 className="display">Ofertas</h2>
+            </div>
+            <Link href="/ofertas" className="btn btn-primary see-all-btn">Ver todas <ArrowIcon /></Link>
+          </div>
+          <div className="product-grid">
+            {onSale.map((p) => <ProductCard key={p.slug} product={p} />)}
+          </div>
+        </section>
+      )}
 
       {featured.length > 0 && (
         <section className="section container">
