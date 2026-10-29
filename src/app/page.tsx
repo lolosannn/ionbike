@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { getDisciplines, getFeaturedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/pricing";
-import { about, banners, store, whatsappUrl } from "@/config/store";
+import { about, store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
 import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
-import { HeroCarousel } from "@/components/layout/HeroCarousel";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { publicFile, publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
@@ -30,15 +29,6 @@ const aboutPhotos = [1, 2, 4]
 // Video del hero: public/hero/hero.mp4 (sin audio), con portada public/hero/hero.jpg
 const heroVideo = publicFile("hero", "hero", ["mp4"]);
 const heroPoster = publicImage("hero", "hero");
-
-// Banners del carrusel (los que no tienen archivo en public/banners/ se saltean)
-const slides = banners.flatMap((b) => {
-  const [name, ext] = [b.file.replace(/\.[^.]+$/, ""), b.file.split(".").pop()!];
-  const src = publicFile("banners", name, [ext]);
-  if (!src) return [];
-  const mobile = b.mobile ? publicFile("banners", b.mobile.replace(/\.[^.]+$/, ""), [b.mobile.split(".").pop()!]) : null;
-  return [{ src, mobileSrc: mobile, alt: b.alt, href: b.href }];
-});
 
 export default async function HomePage() {
   const [categories, featured] = await Promise.all([getDisciplines(), getFeaturedProducts(4)]);
@@ -65,8 +55,6 @@ export default async function HomePage() {
           <AutoplayVideo src={heroVideo} poster={heroPoster ?? undefined} preload="auto" aria-hidden="true" />
         </section>
       )}
-
-      <HeroCarousel slides={slides} />
 
       <section className="benefits" aria-label="Beneficios">
         <div className="container">
