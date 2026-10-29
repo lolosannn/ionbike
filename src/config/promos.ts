@@ -22,7 +22,7 @@ export type Promo = {
   id: string;
   title: string;
   text?: string;
-  // Sello corto para las tarjetas de producto ("Hot Sale", "Regalo")
+  // Sello corto para las tarjetas de producto ("Hot Sale", "Combo")
   tag?: string;
   href?: string;
   cta?: string;
@@ -50,10 +50,10 @@ export const promos: Promo[] = [
     priority: 3,
   },
   {
-    id: "zion-luces-de-regalo",
-    title: "Kit de luces de regalo con tu Zion",
-    text: "Llevate cualquier Zion rodado 29 y te regalamos el kit de luces delantera y trasera.",
-    tag: "Regalo",
+    id: "zion-combo-luces",
+    title: "Kit de luces al 50% con tu Zion",
+    text: "Llevate cualquier Zion rodado 29 y sumá el kit de luces delantera y trasera a mitad de precio.",
+    tag: "Combo",
     href: "/categoria/mtb",
     cta: "Ver las Zion",
     from: "2026-10-01",
