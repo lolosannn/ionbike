@@ -7,6 +7,6 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Ingresar" };
 
 export default async function LoginPage() {
-  if (await getAdmin()) redirect("/admin/productos");
+  if (await getAdmin()) redirect("/admin/estadisticas");
   return <LoginForm action={login} />;
 }

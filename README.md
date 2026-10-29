@@ -30,7 +30,14 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 
 ## Panel de administración
 
-En `/admin` (no aparece en la tienda ni en buscadores). Por ahora tiene **Productos**:
+En `/admin` (no aparece en la tienda ni en buscadores). Secciones:
+
+- **Estadísticas**: visitantes, páginas vistas, pedidos, conversión, ventas cobradas y ticket promedio, comparados con el período anterior (7, 30 o 90 días); gráficos de visitantes y ventas por día, embudo de compra (entraron → vieron un producto → carrito → checkout → pedido → pago), de dónde llegan (Google, Instagram, WhatsApp, directo… o lo que diga `?utm_source=` en el link), dispositivos, productos y páginas más vistas, turnos y consultas. Son propias y sin cookies (`src/lib/analytics.ts`): cada visitante se cuenta con un hash diario de IP + navegador que no se puede revertir; los robots no cuentan; más de 13 meses se borra solo.
+- **Pedidos**: por estado (por cobrar, cobrados, enviados, entregados, cancelados). En cada pedido: marcar como cobrado (transferencias y efectivo; Mercado Pago avisa solo), despachar con número de seguimiento de Andreani (el cliente lo ve en su pedido), entregar o cancelar (el stock vuelve), notas internas y mensajes de WhatsApp ya escritos para el cliente.
+- **Consultas a pedido**: las bicis marcadas «A pedido» tienen en la ficha un formulario además del WhatsApp. Cada consulta queda acá y se sigue por estado (nueva, contactado, señó, vendida, no avanzó) con notas.
+- **Turnos del taller**: agenda por semana y lista de turnos por confirmar; confirmar, terminado (con aviso de «tu bici está lista» por WhatsApp), cancelar (libera el horario), notas, y carga de turnos que se toman por teléfono.
+- **Promociones**: alta, edición, pausa y borrado de las promos que se ven en la web (barra de arriba, banner del inicio con foto, tarjeta en los listados, sello en los productos y aviso en el carrito), con fechas, prioridad, a qué categorías o productos aplican y vista previa. Se guardan en la base; `src/config/promos.ts` queda como ejemplo para la vista previa y la carga inicial (`npm run db:seed`).
+- **Productos**:
 
 - Listado con buscador, filtro por categoría y por estado (publicados, ocultos, sin stock), y un interruptor para mostrar u ocultar cada producto en la tienda.
 - Alta, edición, duplicado y borrado de productos: nombre, link, descripción, fotos (se suben arrastrando, se ordenan y la primera es la portada), precio de lista y precio anterior tachado (con vista previa de cómo queda en la tienda), variantes de color y rodado/talle con su stock (o varias juntas: "Negro, Rojo" × "S, M, L"), especificaciones, categoría, marca (si es nueva se crea sola), publicado, destacado y a pedido.

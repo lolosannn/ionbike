@@ -48,8 +48,13 @@ export function waTo(phone: string, text: string) {
   return `https://wa.me/${full}?text=${encodeURIComponent(text)}`;
 }
 
-const dateTime = new Intl.DateTimeFormat("es-AR", { timeZone: "America/Argentina/Buenos_Aires", day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-export const formatDateTime = (iso: string) => dateTime.format(new Date(iso));
+const dateTime = new Intl.DateTimeFormat("en-GB", { timeZone: "America/Argentina/Buenos_Aires", day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+
+/** "29/10/26 14:05" (armado a mano: el servidor y el navegador pueden formatear distinto los espacios) */
+export function formatDateTime(iso: string) {
+  const parts = Object.fromEntries(dateTime.formatToParts(new Date(iso)).map((p) => [p.type, p.value]));
+  return `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute}`;
+}
 
 /** "hace 5 min", "hace 3 h", "hace 2 días" */
 export function timeAgo(iso: string, now = Date.now()) {

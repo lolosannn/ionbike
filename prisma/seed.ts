@@ -1,6 +1,7 @@
 // Carga el catálogo de ejemplo de src/data/catalog.ts en la base de datos.
 import { PrismaClient } from "@prisma/client";
 import { brands, categories, demoImages, palette, products, skuFor } from "../src/data/catalog";
+import { promos } from "../src/config/promos";
 
 const db = new PrismaClient();
 
@@ -42,6 +43,17 @@ async function main() {
           create: { sku, color, colorHex: palette[color], size, stock: p.stock, productId: product.id },
         });
       }
+    }
+  }
+  // Promos de ejemplo, solo si todavía no se cargó ninguna desde el panel
+  if ((await db.promo.count()) === 0) {
+    for (const p of promos) {
+      await db.promo.create({
+        data: {
+          title: p.title, text: p.text, tag: p.tag, href: p.href, cta: p.cta, startsOn: p.from, endsOn: p.until,
+          placements: p.placements, categories: p.categories ?? [], products: p.products ?? [], priority: p.priority ?? 0,
+        },
+      });
     }
   }
   console.log("Seed listo");

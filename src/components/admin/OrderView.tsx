@@ -88,7 +88,7 @@ export function OrderView({ order, now, changeStatus, saveNotes }: Props) {
         </ol>
       )}
 
-      <div className="adm-editor-grid">
+      <div className="adm-editor-grid adm-order-grid">
         <div className="adm-editor-main">
           <section className="adm-card" aria-labelledby="t-productos">
             <h2 id="t-productos">Productos</h2>

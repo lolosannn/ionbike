@@ -41,6 +41,12 @@ Estado al 29 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](..
 - **Fotos**: solo con sesión, hasta 15 MB, límite por IP; se decodifican y se vuelven a generar desde cero con sharp (WebP, sin metadatos), con nombre aleatorio. Nunca se sirve el archivo original. Se sirven con `nosniff` y CSP `sandbox`.
 - **Registro de acciones** (`AdminLog`): ingresos, fallos, bloqueos, salidas, fotos subidas y cada alta, cambio (qué campos), borrado, publicación u ocultamiento de productos, con usuario, IP y hora.
 - `/admin` va sin caché, con `noindex` y fuera de los buscadores.
+- Las promociones solo aceptan links internos (`/…`) o `https://` (nada de `javascript:`), y fotos subidas al panel.
+
+### Estadísticas
+- Propias, sin cookies ni scripts de terceros. No se guarda la IP: cada visitante es un HMAC diario de IP + navegador con `ADMIN_SECRET` (no se puede revertir ni cruzar entre días). Robots y el propio panel no cuentan.
+- El endpoint `/api/v` limita tamaño y cantidad de pedidos por IP y valida todo lo que recibe; los eventos de más de 13 meses se borran solos.
+- El formulario de consultas por bicis a pedido tiene campo trampa, validación en el servidor y límite por IP.
 
 ### Dependencias y repositorio
 - `npm audit` sin vulnerabilidades (postcss y deepmerge-ts forzados a versiones corregidas con `overrides`).
@@ -63,6 +69,6 @@ Estado al 29 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](..
 | 7 | Credenciales de Mercado Pago | Dueño | Usar las de producción solo en el servidor, activar 2FA en la cuenta y rotar el token si alguien que lo vio deja el proyecto. |
 | 8 | Datos legales reales | Dueño | Razón social y CUIT (`legal` en `store.ts`), datos bancarios, y confirmar la política de cambios (hoy 30 días). Hacer revisar los textos legales por un abogado o contador. |
 | 9 | Registro de la base ante la AAIP | Dueño | La Ley 25.326 pide inscribir las bases de datos con datos personales en el Registro Nacional de Bases de Datos. |
-| 10 | Borrado periódico | Desarrollo | Tarea que anonimice turnos de más de 2 años (lo que promete la política de privacidad). |
+| 10 | Borrado periódico | Hecho | Al abrir las estadísticas del panel se anonimizan turnos y consultas de más de 2 años y se borran las estadísticas de más de 13 meses. Si el panel no se usa por meses, no corre: conviene sumar una tarea programada. |
 | 11 | CSP con nonces | Desarrollo | La CSP permite scripts inline porque Next los necesita; con nonces se puede sacar `'unsafe-inline'`, a costo de que todas las páginas pasen a ser dinámicas. |
 | 12 | Límite por IP en memoria | Desarrollo | Sirve con un solo servidor. Si algún día hay varias instancias, pasarlo a Redis. |

@@ -36,7 +36,8 @@ export function Analytics({ active }: { active: boolean }) {
     const first = !sessionStorageGet("ion-v");
     sessionStorageSet("ion-v", "1");
     const utm = new URLSearchParams(window.location.search).get("utm_source") ?? "";
-    send({ t: "view", r: first ? document.referrer : "", u: first ? utm : "" });
+    // f: primera página de la visita (de ahí sale el origen: Google, Instagram, directo…)
+    send(first ? { t: "view", f: "1", r: document.referrer, u: utm } : { t: "view" });
   }, [pathname, active]);
   return null;
 }

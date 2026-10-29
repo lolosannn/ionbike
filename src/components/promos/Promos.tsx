@@ -66,6 +66,33 @@ export function Topbar({ messages }: { messages: string[] }) {
   );
 }
 
+/** Una promo del banner del inicio (también la usa la vista previa del panel) */
+export function PromoSlide({ p }: { p: PromoData }) {
+  return (
+    <div className="promo-slide">
+      <div className="promo-slide-copy">
+        <span className="promo-chip">{p.tag ?? "Promo"}</span>
+        <h2 className="display">{p.title}</h2>
+        {p.text && <p>{p.text}</p>}
+        <div className="promo-slide-actions">
+          {p.href && (
+            <PromoLink href={p.href} className="btn btn-primary">{p.cta ?? "Ver promo"} <ArrowIcon /></PromoLink>
+          )}
+          <Countdown endsAt={p.endsAt} />
+        </div>
+      </div>
+      <div className={`promo-slide-art${p.image ? " has-image" : ""}`} aria-hidden="true">
+        {p.image ? <img src={p.image} alt="" /> : (
+          <>
+            <span className="promo-slide-word">{p.tag ?? "Promo"}</span>
+            <span className="promo-slide-icon"><PercentIcon size={72} /></span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /** Banner grande del inicio: si hay varias promos, pasan solas */
 export function PromoBanner() {
   const promos = usePromos("inicio");
@@ -75,27 +102,7 @@ export function PromoBanner() {
 
   return (
     <section className="section container promo-hero" aria-roledescription="carrusel" aria-label="Promociones" {...pause}>
-      <div key={p.id} className="promo-slide">
-        <div className="promo-slide-copy">
-          <span className="promo-chip">{p.tag ?? "Promo"}</span>
-          <h2 className="display">{p.title}</h2>
-          {p.text && <p>{p.text}</p>}
-          <div className="promo-slide-actions">
-            {p.href && (
-              <PromoLink href={p.href} className="btn btn-primary">{p.cta ?? "Ver promo"} <ArrowIcon /></PromoLink>
-            )}
-            <Countdown endsAt={p.endsAt} />
-          </div>
-        </div>
-        <div className={`promo-slide-art${p.image ? " has-image" : ""}`} aria-hidden="true">
-          {p.image ? <img src={p.image} alt="" /> : (
-            <>
-              <span className="promo-slide-word">{p.tag ?? "Promo"}</span>
-              <span className="promo-slide-icon"><PercentIcon size={72} /></span>
-            </>
-          )}
-        </div>
-      </div>
+      <PromoSlide key={p.id} p={p} />
       {promos.length > 1 && (
         <div className="promo-dots">
           {promos.map((q, i) => (

@@ -1,5 +1,5 @@
-// Promociones de la tienda. Hasta que esté el panel de administración se cargan acá;
-// después van a salir de la base de datos con esta misma forma.
+// Promociones de la tienda. En la tienda real se cargan desde el panel (/admin/promociones) y
+// se guardan en la base; estas de ejemplo se usan en la vista previa y como carga inicial (seed).
 //
 // Cada promo elige en qué lugares de la web aparece (`placements`):
 //   "barra"    → la barra amarilla de arriba, con los mensajes que van rotando (todas las páginas)

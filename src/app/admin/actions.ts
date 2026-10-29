@@ -13,6 +13,8 @@ import { changeOrderStatus, saveOrderNotes, type OrderAction } from "@/lib/admin
 import { inquiryStatuses, updateInquiry } from "@/lib/admin/inquiries";
 import { appointmentStatuses, createManualAppointment, updateAppointment, type ManualAppointment } from "@/lib/admin/appointments";
 import type { AppointmentStatus, InquiryStatus } from "@prisma/client";
+import { validatePromo } from "@/lib/admin/promo-form";
+import { deletePromo, savePromo, setPromoActive } from "@/lib/admin/promos";
 
 const isId = (id: unknown): id is string => typeof id === "string" && id.length > 0 && id.length <= 40;
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.slice(0, max) : "");
@@ -60,7 +62,7 @@ export async function login(_prev: LoginState, form: FormData): Promise<LoginSta
   await db.adminUser.update({ where: { id: user.id }, data: { failedLogins: 0, lockedUntil: null, lastLoginAt: new Date() } });
   await createSession(user.id);
   await logAdmin(user.id, "ingreso", email);
-  redirect("/admin/productos");
+  redirect("/admin/estadisticas");
 }
 
 export async function logout() {
@@ -146,4 +148,29 @@ export async function createAppointmentAction(raw: ManualAppointment) {
   const res = await createManualAppointment(input);
   if (res.ok) await logAdmin(admin.id, "turno.cargado", res.id, { dia: input.date, hora: input.time });
   return res;
+}
+
+export async function savePromoAction(raw: unknown) {
+  const admin = await requireAdmin();
+  const parsed = validatePromo(raw);
+  if (!parsed.ok) return parsed;
+  const res = await savePromo(parsed.data);
+  if (res.ok) await logAdmin(admin.id, parsed.data.id ? "promo.editada" : "promo.creada", `${parsed.data.title} (${res.id})`);
+  return res;
+}
+
+export async function deletePromoAction(id: string) {
+  const admin = await requireAdmin();
+  if (!isId(id)) return { ok: false, error: "Datos inválidos." };
+  const ok = await deletePromo(id);
+  if (ok) await logAdmin(admin.id, "promo.borrada", id);
+  return ok ? { ok: true } : { ok: false, error: "La promo ya no existe." };
+}
+
+export async function setPromoActiveAction(id: string, active: boolean) {
+  const admin = await requireAdmin();
+  if (!isId(id) || typeof active !== "boolean") return { ok: false };
+  const ok = await setPromoActive(id, active);
+  if (ok) await logAdmin(admin.id, active ? "promo.activada" : "promo.pausada", id);
+  return { ok };
 }

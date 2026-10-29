@@ -6,7 +6,7 @@ export const metadata = {
   description: "Qué datos personales guardamos, para qué los usamos y cómo ejercer tus derechos (Ley 25.326).",
 };
 
-const updated = "26 de octubre de 2026";
+const updated = "29 de octubre de 2026";
 
 export default function PrivacyPage() {
   const { legal } = store;
@@ -28,6 +28,8 @@ export default function PrivacyPage() {
         <ul>
           <li><strong>Cuando comprás:</strong> nombre y apellido, DNI, email, teléfono, dirección de envío, los productos del pedido y el medio de pago elegido.</li>
           <li><strong>Cuando sacás un turno en el taller:</strong> nombre, teléfono y, si los completás, email, datos de tu bici y comentarios.</li>
+          <li><strong>Cuando consultás por una bici a pedido:</strong> nombre, teléfono y, si los completás, email, el color o talle que te interesa y tu mensaje.</li>
+          <li><strong>Estadísticas de visitas:</strong> qué páginas se ven, desde qué sitio se llegó (por ejemplo Google o Instagram) y el tipo de dispositivo (celular o computadora). No guardamos la IP: cada visitante se cuenta con un código anónimo que cambia todos los días, así que no se puede saber quién sos ni seguirte de un día a otro.</li>
           <li><strong>Datos técnicos:</strong> la dirección IP y la fecha de cada visita quedan en los registros del servidor por seguridad (para frenar ataques y abusos).</li>
         </ul>
         <p>
@@ -35,14 +37,15 @@ export default function PrivacyPage() {
           Mercado Pago en su propia plataforma.
         </p>
         <p>
-          No usamos cookies de seguimiento ni publicidad. El carrito y el código postal que cargás se guardan solo en tu
+          No usamos cookies de seguimiento ni publicidad, ni servicios de estadísticas de terceros. El carrito y el código postal que cargás se guardan solo en tu
           navegador para que no los pierdas al recargar la página.
         </p>
 
         <h2>Para qué los usamos</h2>
         <ul>
           <li>Preparar, cobrar, facturar y entregar tu pedido, y atender cambios, devoluciones y garantías.</li>
-          <li>Reservar y gestionar tu turno del taller.</li>
+          <li>Reservar y gestionar tu turno del taller, y responder tus consultas por bicis a pedido.</li>
+          <li>Saber cuántas personas visitan la tienda y qué les interesa, para mejorarla (con datos anónimos).</li>
           <li>Comunicarnos con vos por WhatsApp, teléfono o email sobre tu pedido o turno.</li>
           <li>Cumplir obligaciones legales, contables e impositivas.</li>
         </ul>
@@ -58,8 +61,8 @@ export default function PrivacyPage() {
         <h2>Cuánto tiempo los guardamos</h2>
         <p>
           Los datos de los pedidos se conservan durante el plazo que exigen las normas contables e impositivas (hasta 10 años).
-          Los turnos del taller se conservan hasta 2 años después de la fecha del turno. Los registros técnicos del servidor,
-          hasta 90 días.
+          Los turnos del taller y las consultas por bicis a pedido se conservan hasta 2 años. Las estadísticas anónimas de
+          visitas, hasta 13 meses. Los registros técnicos del servidor, hasta 90 días.
         </p>
 
         <h2>Cómo los protegemos</h2>

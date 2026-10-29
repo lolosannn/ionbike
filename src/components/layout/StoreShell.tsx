@@ -12,10 +12,10 @@ import { isStaticDemo } from "@/lib/catalog";
 import { getPromos } from "@/lib/promos";
 
 /** Todo lo que rodea a las páginas de la tienda: barra, header, reseñas, footer y WhatsApp */
-export function StoreShell({ children }: { children: React.ReactNode }) {
+export async function StoreShell({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
-      <PromosProvider promos={getPromos()}>
+      <PromosProvider promos={await getPromos()}>
         {isStaticDemo && (
           <div className="demo-bar">Vista previa · los pagos y pedidos están desactivados</div>
         )}

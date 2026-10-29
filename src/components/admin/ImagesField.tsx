@@ -12,11 +12,13 @@ export function ImagesField({
   onChange,
   upload,
   max,
+  hint,
 }: {
   images: string[];
   onChange: (images: string[]) => void;
   upload: (file: File) => Promise<string>;
   max: number;
+  hint?: string;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [uploads, setUploads] = useState<Upload[]>([]);
@@ -80,7 +82,7 @@ export function ImagesField({
             onDrop={(e) => { if (dragIndex === null) return; e.preventDefault(); move(dragIndex, i); setDragIndex(null); }}
           >
             <img src={src} alt={`Foto ${i + 1}`} />
-            {i === 0 && <span className="adm-image-cover">Portada</span>}
+            {i === 0 && max > 1 && <span className="adm-image-cover">Portada</span>}
             <div className="adm-image-actions">
               <button type="button" onClick={() => move(i, i - 1)} disabled={i === 0} aria-label={`Mover la foto ${i + 1} a la izquierda`}>←</button>
               {i > 0 && <button type="button" onClick={() => move(i, 0)} aria-label={`Usar la foto ${i + 1} de portada`} title="Usar de portada">★</button>}
@@ -127,8 +129,8 @@ export function ImagesField({
         </ul>
       )}
       <p className="adm-hint">
-        La primera es la portada. Arrastralas para ordenarlas. JPG, PNG o WebP de hasta 15 MB: se achican y optimizan solas.
-        Ideal: fondo claro, producto entero y apaisada (4:3).
+        {hint ?? "La primera es la portada. Arrastralas para ordenarlas. Ideal: fondo claro, producto entero y apaisada (4:3)."}{" "}
+        JPG, PNG o WebP de hasta 15 MB: se achican y optimizan solas.
       </p>
     </div>
   );

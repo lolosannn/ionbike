@@ -16,7 +16,7 @@ export function LoginForm({ action }: { action?: (prev: LoginState, form: FormDa
         {!action && (
           <p className="adm-demo">
             Vista previa: en la tienda real acá se ingresa con email, contraseña y el código de la app de autenticación.{" "}
-            <Link href="/admin/productos">Entrar a la vista previa →</Link>
+            <Link href="/admin/estadisticas">Entrar a la vista previa →</Link>
           </p>
         )}
         <label className="adm-field">

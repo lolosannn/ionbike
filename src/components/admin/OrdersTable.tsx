@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { OrderStatus } from "@prisma/client";
 import type { OrderRow } from "@/lib/admin/orders";
-import { manualPayment, orderStatusLabels, paymentLabels, shippingLabels, timeAgo } from "@/lib/admin/labels";
+import { formatDateTime, manualPayment, orderStatusLabels, paymentLabels, shippingLabels, timeAgo } from "@/lib/admin/labels";
 import { formatPrice } from "@/lib/pricing";
 import { SearchIcon } from "@/components/icons";
 
@@ -89,7 +89,7 @@ export function OrdersTable({ rows, now }: { rows: OrderRow[]; now: number }) {
                   <td>
                     <Link href={`/admin/pedidos/${r.id}`} className="adm-order-cell">
                       <strong>#{r.number}</strong>
-                      <small title={new Date(r.createdAt).toLocaleString("es-AR")}>{timeAgo(r.createdAt, now)}</small>
+                      <small title={formatDateTime(r.createdAt)}>{timeAgo(r.createdAt, now)}</small>
                     </Link>
                   </td>
                   <td data-label="Cliente">{r.name}</td>
