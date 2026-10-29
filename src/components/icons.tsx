@@ -103,3 +103,20 @@ export const CalendarIcon = ({ size = 24 }: IconProps) => (
 export const PhoneIcon = ({ size = 24 }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" {...base}><path d="M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z" /></svg>
 );
+export const ShirtIcon = ({ size = 24 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...base}><path d="M9 3.5 4 6 2.5 10.5l3.5 1.3V21h12v-9.2l3.5-1.3L20 6l-5-2.5a3 3 0 0 1-6 0z" /></svg>
+);
+/** Piñón / plato de bici (repuestos) */
+export const SprocketIcon = ({ size = 24 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
+    <circle cx="12" cy="12" r="6.5" /><circle cx="12" cy="12" r="2" />
+    <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" />
+  </svg>
+);
+/** Casco de ciclismo (accesorios) */
+export const HelmetIcon = ({ size = 24 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
+    <path d="M2.5 15.5C2.5 9.5 7 5.5 12.5 5.5s9 3.8 9 9v1H6.5l-2 2.5H2.5z" />
+    <path d="M9 6.5l2 9M14 5.7l1 9.8M18.3 8l-.8 7.5" />
+  </svg>
+);
