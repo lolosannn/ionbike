@@ -7,6 +7,7 @@ import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
 import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
 import { HeroCarousel } from "@/components/layout/HeroCarousel";
+import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { publicFile, publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
 
@@ -25,6 +26,10 @@ const riderPhoto = publicImage("local", "cliente");
 const aboutPhotos = [1, 2, 4]
   .map((n) => ({ alt: about.photos[n - 1], src: publicImage("nosotros", String(n)) }))
   .filter((p) => p.src);
+
+// Video del hero: public/hero/hero.mp4 (sin audio), con portada public/hero/hero.jpg
+const heroVideo = publicFile("hero", "hero", ["mp4"]);
+const heroPoster = publicImage("hero", "hero");
 
 // Banners del carrusel (los que no tienen archivo en public/banners/ se saltean)
 const slides = banners.flatMap((b) => {
@@ -54,6 +59,13 @@ export default async function HomePage() {
 
   return (
     <>
+      {heroVideo && (
+        <section className="hero-video">
+          <h1 className="sr-only">{store.name}: bicicletas, repuestos y taller en Monte Grande</h1>
+          <AutoplayVideo src={heroVideo} poster={heroPoster ?? undefined} preload="auto" aria-hidden="true" />
+        </section>
+      )}
+
       <HeroCarousel slides={slides} />
 
       <section className="benefits" aria-label="Beneficios">
