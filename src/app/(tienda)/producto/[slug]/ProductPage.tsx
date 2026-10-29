@@ -10,16 +10,21 @@ import { Gallery } from "@/components/product/Gallery";
 import { SpecsAccordion } from "@/components/product/SpecsAccordion";
 import { ProductCard } from "@/components/product/ProductCard";
 import { PromoProductBox } from "@/components/promos/Promos";
+import { InquiryForm, type InquiryState } from "./InquiryForm";
 import { ArrowIcon, ChatIcon, PinIcon, RulerIcon, ShieldIcon, TruckIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  // Solo en la tienda real (la vista previa no tiene servidor)
+  inquire?: (prev: InquiryState, form: FormData) => Promise<InquiryState>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct((await params).slug);
   return { title: product?.name ?? "Producto", description: product?.description.slice(0, 160) };
 }
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({ params, inquire }: Props) {
   const product = await getProduct((await params).slug);
   if (!product) notFound();
   const related = await getRelatedProducts(product.categoryId, product.slug);
@@ -84,21 +89,12 @@ export default async function ProductPage({ params }: Props) {
           </section>
 
           {product.onRequest ? (
-            <div className="on-request">
-              <span className="badge badge-accent">A pedido</span>
-              <p>
-                Este modelo lo traemos por pedido. Escribinos y te confirmamos colores, talles, precio final y
-                plazo de entrega.
-              </p>
-              <a
-                className="btn btn-whatsapp btn-block"
-                href={whatsappUrl(`Hola! Quiero consultar por la ${product.name}`)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <WhatsappIcon size={20} /> Contactanos por WhatsApp
-              </a>
-            </div>
+            <InquiryForm
+              productId={product.id}
+              productName={product.name}
+              options={[...new Set(product.variants.map((v) => [v.color, v.size && `rodado/talle ${v.size}`].filter(Boolean).join(", ")).filter(Boolean))]}
+              action={inquire}
+            />
           ) : (
             <BuyBox
               product={{ slug: product.slug, name: product.name, price: product.price, image: product.images[0] ?? null, bulky: isBike }}

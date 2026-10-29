@@ -54,9 +54,16 @@ export default async function OrderPage({ params, searchParams }: Props) {
         </p>
       )}
 
+      {order.trackingCode && (order.status === "SHIPPED" || order.status === "DELIVERED") && (
+        <div className="notice" style={{ marginTop: 24 }}>
+          Tu pedido viaja por Andreani. Número de seguimiento: <strong>{order.trackingCode}</strong>{" "}
+          (seguilo en <a href="https://www.andreani.com/" target="_blank" rel="noreferrer">andreani.com</a>).
+        </div>
+      )}
+
       {order.status === "CANCELLED" && (
         <div className="notice" style={{ marginTop: 24 }}>
-          Este pedido se canceló porque venció el plazo para pagarlo. Si ya pagaste o lo querés retomar,{" "}
+          Este pedido se canceló. Si ya pagaste o lo querés retomar,{" "}
           <a href={whatsappUrl(`Hola! Consulto por el pedido #${order.number}`)} target="_blank" rel="noreferrer">escribinos por WhatsApp</a>.
         </div>
       )}

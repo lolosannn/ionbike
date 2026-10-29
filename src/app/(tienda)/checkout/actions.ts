@@ -7,6 +7,7 @@ import { attachQr, cancelPendingOrder, createOrder, expireStaleOrders, holdUntil
 import { allowed, hit } from "@/lib/rate-limit";
 import { isDni, isEmail, isPhone, onlyDigits, isPublicToken } from "@/lib/validation";
 import { store } from "@/config/store";
+import { track } from "@/lib/analytics";
 import { isValidDestination, type ShippingQuote } from "@/lib/shipping";
 import { createPreference, isMercadoPagoConfigured, isQrConfigured } from "@/lib/mercadopago";
 import type { CheckoutState } from "./CheckoutForm";
@@ -98,6 +99,7 @@ export async function placeOrder(_prev: CheckoutState, form: FormData): Promise<
     if (e instanceof OutOfStockError) return { error: `${e.message}. Actualizá tu carrito.` };
     throw e;
   }
+  await track("order", { path: "/checkout", value: order.total });
 
   if (paymentMethod === "QR") {
     try {

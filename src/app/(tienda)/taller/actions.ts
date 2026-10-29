@@ -5,6 +5,7 @@ import { workshopServices } from "@/config/workshop";
 import { createAppointment, SlotFullError, TooManyAppointmentsError } from "@/lib/appointments";
 import { isBookable } from "@/lib/workshop";
 import { allowed } from "@/lib/rate-limit";
+import { track } from "@/lib/analytics";
 import { isEmail, isPhone, onlyDigits } from "@/lib/validation";
 import type { BookingState } from "./WorkshopBooking";
 
@@ -46,5 +47,6 @@ export async function bookAppointment(_prev: BookingState, form: FormData): Prom
     }
     throw e;
   }
+  await track("booking", { path: "/taller" });
   return { booked: { date, time, services, name: data.name, bike: data.bike } };
 }

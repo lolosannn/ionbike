@@ -50,6 +50,7 @@ model Product {
   brandId     String?
   brand       Brand?    @relation(fields: [brandId], references: [id])
   variants    Variant[]
+  inquiries   Inquiry[]
 
   @@index([categoryId])
 }
@@ -91,6 +92,8 @@ model Appointment {
   bike      String?
   notes     String?
   status    AppointmentStatus @default(PENDING)
+  // Notas internas del taller (no las ve el cliente)
+  adminNotes String?
   createdAt DateTime          @default(now())
 
   @@index([date])
@@ -154,9 +157,45 @@ model Order {
   mpQrOrderId    String?
   mpQrData       String?
   mpQrExpiresAt  DateTime?
+  // Cuándo se cobró (para las estadísticas de ventas por día)
+  paidAt         DateTime?
+  // Número de seguimiento de Andreani
+  trackingCode   String?
+  // Notas internas del local (no las ve el cliente)
+  adminNotes     String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   items          OrderItem[]
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  RESERVED
+  WON
+  LOST
+}
+
+// Consulta por una bici a pedido (gama alta): el cliente deja sus datos desde la ficha
+model Inquiry {
+  id          String        @id @default(cuid())
+  productId   String?
+  product     Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  // Se guarda el nombre por si el producto se borra después
+  productName String
+  // Color, talle o lo que el cliente quiera aclarar
+  preference  String?
+  name        String
+  phone       String
+  email       String?
+  message     String?
+  status      InquiryStatus @default(NEW)
+  adminNotes  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -219,5 +258,51 @@ model AdminLog {
   createdAt DateTime   @default(now())
 
   @@index([createdAt])
+}
+
+// Promociones que se muestran en la web (ver src/config/promos.ts para los lugares)
+model Promo {
+  id         String    @id @default(cuid())
+  title      String
+  text       String?
+  tag        String?
+  href       String?
+  cta        String?
+  image      String?
+  // Desde / hasta, inclusive, en hora de Argentina ("AAAA-MM-DD")
+  startsOn   String?
+  endsOn     String?
+  // barra, inicio, listado, producto, carrito
+  placements String[]
+  // Slugs a los que aplica (vacío: promo general)
+  categories String[]
+  products   String[]
+  priority   Int       @default(0)
+  // Pausada a mano, aunque esté dentro de las fechas
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// Estadísticas propias, sin cookies: cada visita o evento con un identificador anónimo
+// del visitante que cambia todos los días (no se puede seguir a nadie de un día a otro).
+model AnalyticsEvent {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  // view, cart, order, paid, inquiry, booking
+  type      String
+  path      String?
+  // Hash diario de IP + navegador
+  visitor   String
+  // Dominio de origen (google.com, instagram.com…) o fuente utm
+  source    String?
+  // mobile, tablet, desktop
+  device    String?
+  productId String?
+  // Monto en centavos (pedidos y pagos)
+  value     Int?
+
+  @@index([createdAt])
+  @@index([type, createdAt])
 }
 

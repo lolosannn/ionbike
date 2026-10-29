@@ -47,6 +47,8 @@ export const limits = {
   // Ingreso al panel: además, cada cuenta se traba 15 minutos tras 5 intentos fallidos
   adminLogin: { max: 10, windowMs: 15 * 60_000 },
   adminUpload: { max: 120, windowMs: 10 * 60_000 },
+  stats: { max: 300, windowMs: 10 * 60_000 },
+  inquiry: { max: 5, windowMs: 10 * 60_000 },
 } as const;
 
 /** true si la IP todavía puede usar esa acción. */

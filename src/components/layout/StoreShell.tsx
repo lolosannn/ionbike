@@ -6,6 +6,7 @@ import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
 import { PromosProvider } from "@/components/promos/PromosProvider";
 import { Topbar } from "@/components/promos/Promos";
 import { WhatsappIcon } from "@/components/icons";
+import { Analytics } from "@/components/layout/Analytics";
 import { formatPrice } from "@/lib/pricing";
 import { isStaticDemo } from "@/lib/catalog";
 import { getPromos } from "@/lib/promos";
@@ -27,6 +28,7 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
         />
         <Header />
         <main>{children}</main>
+        <Analytics active={!isStaticDemo} />
         <ReviewsSection />
         <Footer />
         <a href={whatsappUrl()} className="wa-float" aria-label="Escribinos por WhatsApp" target="_blank" rel="noreferrer">

@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Destination } from "@/lib/shipping";
+import { trackCart } from "@/components/layout/Analytics";
 
 export type CartItem = {
   variantId: string;
@@ -72,6 +73,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [destination, ready]);
 
   const add = useCallback((item: CartItem) => {
+    trackCart(item.slug);
     setItems((prev) => {
       const existing = prev.find((i) => i.variantId === item.variantId);
       if (!existing) return [...prev, { ...item, quantity: Math.min(item.quantity, item.maxStock) }];

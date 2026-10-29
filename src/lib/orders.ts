@@ -6,6 +6,7 @@ import { variantLabel } from "@/lib/variants";
 import { hasCashDiscount } from "@/lib/pricing";
 import { andreaniQuote, isAndreaniConfigured } from "@/lib/andreani";
 import { createQrOrder, getQrOrder } from "@/lib/mercadopago";
+import { track } from "@/lib/analytics";
 import { estimateShipping, isBulkyCategory, isValidDestination, normalizeZip, type Destination, type ShippingQuote } from "@/lib/shipping";
 
 export class OutOfStockError extends Error {
@@ -176,27 +177,33 @@ export async function pendingOrdersFor(c: { dni: string; email: string; phone: s
  * y queda un aviso en el log para revisarlo a mano.
  */
 export async function markOrderPaid(orderId: string, mpPaymentId?: string) {
-  await db.$transaction(async (tx) => {
+  const paid = await db.$transaction(async (tx) => {
     let changed = await tx.order.updateMany({
       where: { id: orderId, status: "PENDING" },
-      data: { status: "PAID", mpPaymentId },
+      data: { status: "PAID", mpPaymentId, paidAt: new Date() },
     });
     let revived = false;
     if (changed.count === 0) {
       changed = await tx.order.updateMany({
         where: { id: orderId, status: "CANCELLED", mpPaymentId: null },
-        data: { status: "PAID", mpPaymentId },
+        data: { status: "PAID", mpPaymentId, paidAt: new Date() },
       });
       revived = changed.count > 0;
     }
-    if (changed.count === 0) return;
+    if (changed.count === 0) return false;
     const items = await tx.orderItem.findMany({ where: { orderId }, include: { variant: true } });
     for (const item of items) {
       await tx.product.update({ where: { id: item.variant.productId }, data: { salesCount: { increment: item.quantity } } });
       if (revived) await tx.variant.update({ where: { id: item.variantId }, data: { stock: { decrement: item.quantity } } });
     }
     if (revived) console.error(`Pedido ${orderId} pagado después de vencer: revisar que haya stock para entregarlo`);
+    return true;
   });
+  if (paid) {
+    const order = await db.order.findUnique({ where: { id: orderId }, select: { total: true } });
+    await track("paid", { value: order?.total });
+  }
+  return paid;
 }
 
 /** Genera (o renueva, si venció) el QR de Mercado Pago de un pedido pendiente. */
