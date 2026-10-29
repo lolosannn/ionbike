@@ -8,37 +8,41 @@ export type WorkshopService = {
   minutes: number;
   // Precio en centavos; null = "A confirmar"
   price: number | null;
+  // Precio anterior (tachado) en centavos, si el servicio tiene descuento
+  compareAt?: number;
+  // Aclaración del precio ("por rueda")
+  priceUnit?: string;
   icon: "service" | "full" | "tubeless" | "liquido" | "centrado" | "lavado" | "frenos";
 };
 
-// [DESCRIPCIONES, DURACIONES Y PRECIOS A CONFIRMAR CON EL TALLER]
+// [DESCRIPCIONES Y DURACIONES A CONFIRMAR CON EL TALLER]
 export const workshopServices: WorkshopService[] = [
   {
-    id: "service-general", name: "Service general", icon: "service", minutes: 60, price: null,
+    id: "service-general", name: "Service general", icon: "service", minutes: 60, price: 3000000, compareAt: 5000000,
     description: "Limpieza, regulación de cambios y frenos, lubricación de cadena y revisión general de la bici.",
   },
   {
-    id: "service-full", name: "Service full", icon: "full", minutes: 180, price: null,
+    id: "service-full", name: "Service full", icon: "full", minutes: 180, price: 4200000, compareAt: 7000000,
     description: "Desarme completo, limpieza profunda y engrase de rodamientos (dirección, caja pedalera y mazas), con ajuste total.",
   },
   {
-    id: "tubelizado", name: "Tubelizado de ruedas", icon: "tubeless", minutes: 60, price: null,
+    id: "tubelizado", name: "Tubelizado de ruedas", icon: "tubeless", minutes: 60, price: 12000000,
     description: "Pasamos tus ruedas a tubeless: cinta, válvulas y líquido sellador.",
   },
   {
-    id: "liquido-tubeless", name: "Reposición de líquido tubeless", icon: "liquido", minutes: 20, price: null,
+    id: "liquido-tubeless", name: "Reposición de líquido tubeless", icon: "liquido", minutes: 20, price: 2000000,
     description: "Cambio o reposición del líquido sellador para que tus cubiertas sigan sellando.",
   },
   {
-    id: "centrado", name: "Centrado de ruedas", icon: "centrado", minutes: 40, price: null,
+    id: "centrado", name: "Centrado de ruedas", icon: "centrado", minutes: 40, price: 1500000, priceUnit: "por rueda",
     description: "Centrado y tensado de rayos para que la rueda gire derecha y sin roces.",
   },
   {
-    id: "lavado", name: "Lavado de bicicleta", icon: "lavado", minutes: 40, price: null,
+    id: "lavado", name: "Lavado de bicicleta", icon: "lavado", minutes: 40, price: 2500000,
     description: "Lavado completo, secado y lubricación de la transmisión.",
   },
   {
-    id: "purgado", name: "Purgado de frenos", icon: "frenos", minutes: 40, price: null,
+    id: "purgado", name: "Purgado de frenos", icon: "frenos", minutes: 40, price: 2700000,
     description: "Purgado de frenos hidráulicos y cambio de líquido para recuperar el tacto de la palanca.",
   },
 ];

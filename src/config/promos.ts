@@ -63,9 +63,9 @@ export const promos: Promo[] = [
     priority: 2,
   },
   {
-    id: "service-20-off",
-    title: "Service completo con 20% OFF",
-    text: "Pedí tu turno en el taller: ajuste general, limpieza de transmisión y centrado de ruedas.",
+    id: "service-40-off",
+    title: "Service general y full con 40% OFF",
+    text: "Service general a $30.000 y service full a $42.000. Pedí tu turno en el taller.",
     href: "/taller",
     cta: "Pedir turno",
     from: "2026-10-01",

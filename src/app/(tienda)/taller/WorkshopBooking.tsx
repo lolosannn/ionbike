@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { workshopSchedule, workshopServices, type WorkshopService } from "@/config/workshop";
 import { whatsappUrl } from "@/config/store";
-import { formatPrice } from "@/lib/pricing";
+import { discountPct, formatPrice } from "@/lib/pricing";
 import { bookableDays, formatDay, servicesById, slotKey, slotsFor, todayKey, weekday } from "@/lib/workshop";
 import { CalendarIcon, ClockIcon, DropIcon, GearIcon, SparkleIcon, WhatsappIcon, WrenchIcon } from "@/components/icons";
 import { SpecIcon } from "@/components/product/SpecIcons";
@@ -33,7 +33,19 @@ const serviceIcons: Record<WorkshopService["icon"], React.ReactNode> = {
 };
 
 const weekdayShort = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-const priceText = (s: WorkshopService) => (s.price === null ? "A confirmar" : formatPrice(s.price));
+const priceText = (s: WorkshopService) =>
+  s.price === null ? "A confirmar" : `${formatPrice(s.price)}${s.priceUnit ? ` ${s.priceUnit}` : ""}`;
+
+function ServicePrice({ s }: { s: WorkshopService }) {
+  const off = s.price !== null ? discountPct(s.price, s.compareAt) : null;
+  return (
+    <span className="service-price">
+      {off && s.compareAt && <s>{formatPrice(s.compareAt)}</s>}
+      {priceText(s)}
+      {off && <em>{off}% OFF</em>}
+    </span>
+  );
+}
 
 function bookedMessage(b: NonNullable<BookingState>["booked"] & object) {
   const names = servicesById(b.services).map((s) => s.name).join(", ");
@@ -118,7 +130,7 @@ export function WorkshopBooking({ taken, action }: Props) {
                   <strong>{s.name}</strong>
                   <span>{s.description}</span>
                   <span className="service-meta">
-                    <span>{priceText(s)}</span>
+                    <ServicePrice s={s} />
                     <span><ClockIcon size={14} /> ~{s.minutes} min</span>
                   </span>
                 </span>
@@ -197,7 +209,7 @@ export function WorkshopBooking({ taken, action }: Props) {
           <p className="muted">Elegí uno o más servicios.</p>
         ) : (
           chosen.map((s) => (
-            <div key={s.id} className="summary-row"><span>{s.name}</span><span>{priceText(s)}</span></div>
+            <div key={s.id} className="summary-row"><span>{s.name}</span><ServicePrice s={s} /></div>
           ))
         )}
         <div className="summary-row"><span>Día</span><span>{date ? formatDay(date) : "—"}</span></div>
@@ -205,7 +217,7 @@ export function WorkshopBooking({ taken, action }: Props) {
         {minutes > 0 && <div className="summary-row"><span>Duración aprox.</span><span>{minutes} min</span></div>}
         <div className="summary-row total">
           <span>Total</span>
-          <span>{allPriced ? formatPrice(total) : chosen.length ? "A confirmar" : "—"}</span>
+          <span>{allPriced ? `${chosen.some((s) => s.priceUnit) ? "Desde " : ""}${formatPrice(total)}` : chosen.length ? "A confirmar" : "—"}</span>
         </div>
         {state?.error && <p className="alert" role="alert">{state.error}</p>}
         <button type="submit" className="btn btn-primary btn-block" disabled={pending || !chosen.length || !date || !time}>
