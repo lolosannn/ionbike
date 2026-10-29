@@ -12,6 +12,7 @@ const sections = [
   { href: "/admin/turnos", label: "Turnos del taller", count: "turnos", hint: "por confirmar" },
   { href: "/admin/productos", label: "Productos" },
   { href: "/admin/promociones", label: "Promociones" },
+  { href: "/admin/actividad", label: "Actividad" },
 ] as const;
 
 export function AdminNav({ counts }: { counts: AdminCounts }) {

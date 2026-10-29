@@ -61,7 +61,7 @@ Estado al 29 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](..
 | # | Punto | Quién | Detalle |
 |---|---|---|---|
 | 1 | Activar en GitHub: secret scanning, push protection, Dependabot alerts, CodeQL y protección de la rama principal | Dueño del repo | Settings → Code security, y Settings → Branches. |
-| 2 | Panel de administración | Desarrollo | Hecho: productos (ver arriba). Falta una pantalla para ver el registro de acciones y avisos por email de ingresos nuevos. Mantener `ADMIN_SECRET` fuera de cualquier backup de la base. |
+| 2 | Panel de administración | Desarrollo | Hecho (ver arriba), con la sección Actividad para revisar el registro y aviso en pantalla si hay varios ingresos fallidos. Falta: avisos por email de ingresos nuevos. Mantener `ADMIN_SECRET` fuera de cualquier backup de la base. |
 | 3 | CAPTCHA (Cloudflare Turnstile) | Desarrollo + cuenta Cloudflare | Los límites por IP y el honeypot frenan bots simples; uno distribuido en muchas IPs necesita CAPTCHA o un WAF (Cloudflare delante del servidor). |
 | 4 | Servidor (VPS) | Quien lo administre | Firewall solo con 22/80/443, SSH solo con llave, actualizaciones automáticas (`unattended-upgrades`), fail2ban. |
 | 5 | Backups de la base y las fotos | Quien lo administre | `pg_dump` diario y copia del volumen `uploads` (fotos del panel), cifrados y fuera del servidor, con prueba de restauración. |

@@ -5,6 +5,7 @@ import { demoCategories, demoProducts } from "@/lib/demo-store";
 import { promos as samplePromos } from "@/config/promos";
 import type { PromoForm } from "@/lib/admin/promo-form";
 import type { StatsData } from "@/lib/admin/stats-types";
+import type { ActivityRow } from "@/lib/admin/activity";
 import { holdUntil } from "@/lib/orders";
 import type { OrderDetail, OrderRow } from "@/lib/admin/orders";
 import type { AppointmentRow, InquiryRow } from "@/lib/admin/types";
@@ -240,4 +241,22 @@ export function demoStats(days: number): StatsData {
       ["/", 0.3], ["/categoria/bicicletas", 0.19], [`/producto/${demoProducts[0].slug}`, 0.08], ["/taller", 0.07], ["/ofertas", 0.06], ["/guia-de-talles", 0.05], ["/carrito", 0.04], ["/contacto", 0.03],
     ].map(([path, share]) => ({ path: path as string, views: Math.round(t.views * (share as number)), label: demoProducts.find((d) => `/producto/${d.slug}` === path)?.name })),
   };
+}
+
+// ---- Registro de actividad ----
+
+export function demoActivity(): ActivityRow[] {
+  const rows: [number, string | null, string, string | null, string | null][] = [
+    [0.02, "Pablo", "pedido.paid", "demo-pedido-118", null],
+    [0.03, "Pablo", "ingreso", "pablo@ionbikestore.com", null],
+    [0.4, "Pablo", "producto.editado", "bicicleta-mtb-zion-aspro-rodado-29-21v", '{"price":[565978,579990]}'],
+    [0.5, "Pablo", "promo.creada", "Hasta 15% OFF en bicis seleccionadas", null],
+    [1.2, "Lucas (taller)", "turno.confirmed", "demo-turno-3", null],
+    [1.25, "Lucas (taller)", "ingreso", "lucas@ionbikestore.com", null],
+    [2.1, null, "ingreso.fallido", "admin@ionbikestore.com", null],
+    [3, "Pablo", "salida", "pablo@ionbikestore.com", null],
+  ];
+  return rows.map(([days, user, action, target, detail], i) => ({
+    id: `demo-log-${i}`, createdAt: new Date(demoNow - days * 864e5).toISOString(), user, action, target, detail, ip: i === 6 ? "190.0.2.45" : "181.0.2.10",
+  }));
 }

@@ -37,6 +37,7 @@ En `/admin` (no aparece en la tienda ni en buscadores). Secciones:
 - **Consultas a pedido**: las bicis marcadas «A pedido» tienen en la ficha un formulario además del WhatsApp. Cada consulta queda acá y se sigue por estado (nueva, contactado, señó, vendida, no avanzó) con notas.
 - **Turnos del taller**: agenda por semana y lista de turnos por confirmar; confirmar, terminado (con aviso de «tu bici está lista» por WhatsApp), cancelar (libera el horario), notas, y carga de turnos que se toman por teléfono.
 - **Promociones**: alta, edición, pausa y borrado de las promos que se ven en la web (barra de arriba, banner del inicio con foto, tarjeta en los listados, sello en los productos y aviso en el carrito), con fechas, prioridad, a qué categorías o productos aplican y vista previa. Se guardan en la base; `src/config/promos.ts` queda como ejemplo para la vista previa y la carga inicial (`npm run db:seed`).
+- **Actividad**: registro de todo lo que se hace en el panel (ingresos, intentos fallidos, cambios de productos y precios, pedidos, turnos, promos), con usuario, hora e IP, y alerta si hay varios intentos fallidos en un día.
 - **Productos**:
 
 - Listado con buscador, filtro por categoría y por estado (publicados, ocultos, sin stock), y un interruptor para mostrar u ocultar cada producto en la tienda.
