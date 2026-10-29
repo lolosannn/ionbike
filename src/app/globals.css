@@ -218,6 +218,24 @@ button { cursor: pointer; }
 .tile-dark { background: var(--surface-2); color: var(--text); }
 .tile-accent { background: var(--accent); color: var(--on-accent); }
 .tile:hover { filter: brightness(1.05); }
+/* Bloques con ícono: ícono en círculo arriba y uno grande de fondo */
+.tile-icon { position: relative; overflow: hidden; isolation: isolate; }
+.tile-icon .tile-badge {
+  margin: 0; width: 60px; height: 60px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+  background: currentColor; flex: none;
+}
+.tile-icon .tile-badge svg { color: var(--accent); }
+.tile-accent .tile-badge svg { color: var(--accent); }
+.tile-light .tile-badge { color: var(--bg); }
+.tile-dark .tile-badge { color: var(--accent); }
+.tile-dark .tile-badge svg { color: var(--on-accent); }
+.tile-accent .tile-badge { color: var(--on-accent); }
+.tile-icon .tile-watermark {
+  position: absolute; right: -28px; bottom: -34px; margin: 0; z-index: -1; opacity: 0.1; line-height: 0;
+  transition: transform 0.4s;
+}
+.tile-icon .tile-watermark svg { stroke-width: 1.2; }
+.tile-icon:hover .tile-watermark { transform: rotate(-12deg) scale(1.05); }
 .tile-light:hover, .tile-accent:hover { color: var(--bg); }
 .tile-dark:hover { color: var(--text); }
 

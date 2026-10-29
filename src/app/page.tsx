@@ -8,14 +8,14 @@ import { BrandMarquee } from "@/components/layout/BrandMarquee";
 import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { publicFile, publicImage } from "@/lib/public-files";
-import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon } from "@/components/icons";
+import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon, HelmetIcon, ShirtIcon, SprocketIcon } from "@/components/icons";
 
 const brands = ["Zion", "SPY", "Polygon", "Eurobike", "Gravity"];
 
 const sections = [
-  { name: "Repuestos", slug: "repuestos", desc: "Transmisión, frenos, cubiertas y todo para que tu bici siga rodando.", tone: "tile-light" },
-  { name: "Accesorios", slug: "accesorios", desc: "Cascos, luces, candados, bolsos y más.", tone: "tile-dark" },
-  { name: "Indumentaria", slug: "indumentaria", desc: "Ropa y calzado para salir a rodar cómodo.", tone: "tile-accent" },
+  { name: "Repuestos", slug: "repuestos", Icon: SprocketIcon, desc: "Transmisión, frenos, cubiertas y todo para que tu bici siga rodando.", tone: "tile-light" },
+  { name: "Accesorios", slug: "accesorios", Icon: HelmetIcon, desc: "Cascos, luces, candados, bolsos y más.", tone: "tile-dark" },
+  { name: "Indumentaria", slug: "indumentaria", Icon: ShirtIcon, desc: "Ropa y calzado para salir a rodar cómodo.", tone: "tile-accent" },
 ];
 
 // Foto de la sección "Vení al local": public/local/cliente.jpg (o .png / .webp)
@@ -139,7 +139,9 @@ export default async function HomePage() {
       <section className="section container">
         <div className="tiles">
           {sections.map((s) => (
-            <Link key={s.slug} href={`/categoria/${s.slug}`} className={`tile ${s.tone}`}>
+            <Link key={s.slug} href={`/categoria/${s.slug}`} className={`tile tile-icon ${s.tone}`}>
+              <span className="tile-badge"><s.Icon size={30} /></span>
+              <span className="tile-watermark"><s.Icon size={190} /></span>
               <strong>{s.name}</strong>
               <p>{s.desc}</p>
               <span>Ver productos →</span>
