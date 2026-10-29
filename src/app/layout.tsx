@@ -3,6 +3,7 @@ import { store, whatsappUrl } from "@/config/store";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
 import { WhatsappIcon } from "@/components/icons";
 import { formatPrice } from "@/lib/pricing";
 import { isStaticDemo } from "@/lib/catalog";
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <Header />
           <main>{children}</main>
+          <ReviewsSection />
           <Footer />
           <a href={whatsappUrl()} className="wa-float" aria-label="Escribinos por WhatsApp" target="_blank" rel="noreferrer">
             <WhatsappIcon />

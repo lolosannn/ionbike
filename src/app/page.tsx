@@ -5,7 +5,6 @@ import { about, store, whatsappUrl } from "@/config/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
 import { BrandMarquee } from "@/components/layout/BrandMarquee";
-import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { publicFile, publicImage } from "@/lib/public-files";
 import { ArrowIcon, BikeIcon, PlayIcon, CardIcon, PercentIcon, PinIcon, RulerIcon, TruckIcon, WhatsappIcon, HelmetIcon, ShirtIcon, SprocketIcon } from "@/components/icons";
@@ -198,8 +197,6 @@ export default async function HomePage() {
           )}
         </div>
       </section>
-
-      <ReviewsSection />
     </>
   );
 }

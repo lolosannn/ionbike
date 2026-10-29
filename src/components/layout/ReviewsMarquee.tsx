@@ -85,10 +85,10 @@ export function ReviewsMarquee() {
   );
 }
 
-/** Sección completa de reseñas (inicio y contacto), a todo el ancho de la pantalla. */
+/** Sección completa de reseñas, abajo de todo en todas las páginas (va en el layout). */
 export function ReviewsSection() {
   return (
-    <section className="section reviews-section" aria-labelledby="resenas-titulo">
+    <section className="reviews-section" aria-labelledby="resenas-titulo">
       <div className="container reviews-head">
         <span className="eyebrow">Reseñas en Google</span>
         <h2 id="resenas-titulo" className="display">Lo que dicen nuestros clientes</h2>

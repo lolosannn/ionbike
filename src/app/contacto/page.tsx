@@ -4,7 +4,6 @@ import { ArrowIcon, BikeIcon, ClockIcon, MailIcon, PhoneIcon, PinIcon, PlayIcon,
 import { publicFile, publicImage } from "@/lib/public-files";
 import { AutoplayVideo } from "@/components/media/AutoplayVideo";
 import { StoreMap, directionsUrl } from "@/components/layout/StoreMap";
-import { ReviewsSection } from "@/components/layout/ReviewsMarquee";
 
 export const metadata = {
   title: "Contacto y quiénes somos",
@@ -108,7 +107,6 @@ export default function ContactPage() {
           </div>
         </section>
       </div>
-      <ReviewsSection />
     </>
   );
 }
