@@ -64,6 +64,15 @@ const nextConfig: NextConfig = staticDemo
             ],
           },
           { source: "/api/:path*", headers: [{ key: "Cache-Control", value: "no-store" }] },
+          {
+            // Panel de administración: nunca en cachés ni en buscadores
+            source: "/admin/:path*",
+            headers: [
+              { key: "Cache-Control", value: "no-store" },
+              { key: "X-Robots-Tag", value: "noindex, nofollow" },
+              { key: "Referrer-Policy", value: "same-origin" },
+            ],
+          },
         ];
       },
     };

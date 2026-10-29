@@ -14,7 +14,8 @@ ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-RUN mkdir -p .next/cache && chown node:node .next/cache
+# .next/cache y uploads (fotos que se suben desde el panel) son lo único escribible
+RUN mkdir -p .next/cache uploads && chown node:node .next/cache uploads
 USER node
 EXPOSE 3000
 CMD ["node", "server.js"]

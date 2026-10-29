@@ -44,6 +44,7 @@ export const demoProducts: (Product & { variants: Variant[] })[] = productData.m
       colorHex: palette[color] ?? null,
       size,
       stock: p.stock,
+      active: true,
       productId: p.slug,
     })),
   ),

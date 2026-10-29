@@ -6,7 +6,13 @@
 	# Nadie de afuera puede hacerse pasar por otra IP: Caddy pisa X-Forwarded-For
 	reverse_proxy app:3000
 
-	request_body {
+	# Las fotos del panel pueden pesar hasta 15 MB; el resto de los pedidos, 1 MB
+	@fotos path /admin/api/fotos
+	request_body @fotos {
+		max_size 16MB
+	}
+	@resto not path /admin/api/fotos
+	request_body @resto {
 		max_size 1MB
 	}
 

@@ -44,6 +44,9 @@ export const limits = {
   qrRenew: { max: 10, windowMs: 10 * 60_000 },
   // La página del QR consulta cada 5 segundos
   qrCheck: { max: 150, windowMs: 10 * 60_000 },
+  // Ingreso al panel: además, cada cuenta se traba 15 minutos tras 5 intentos fallidos
+  adminLogin: { max: 10, windowMs: 15 * 60_000 },
+  adminUpload: { max: 120, windowMs: 10 * 60_000 },
 } as const;
 
 /** true si la IP todavía puede usar esa acción. */

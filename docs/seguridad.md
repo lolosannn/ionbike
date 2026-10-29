@@ -1,6 +1,6 @@
 # Seguridad de la tienda
 
-Estado al 26 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](../SECURITY.md).
+Estado al 29 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](../SECURITY.md).
 
 ## Medidas implementadas
 
@@ -30,6 +30,18 @@ Estado al 26 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](..
 - El contenedor de la app corre como usuario sin privilegios, con sistema de archivos de solo lectura, sin capacidades de Linux y con `no-new-privileges`.
 - Ningún secreto entra en la imagen de Docker (`.dockerignore`); los secretos van en `.env` con permisos 600.
 
+### Panel de administración
+- Sin registro público: los usuarios se crean por consola en el servidor (`npm run admin`).
+- Ingreso con email, contraseña y **código de app de autenticación (2FA, TOTP)** en el mismo paso. El mismo código no sirve dos veces.
+- Contraseñas con scrypt y sal propia (mínimo 12 caracteres, se rechazan las obvias). El secreto del 2FA se guarda cifrado (AES-256-GCM) con `ADMIN_SECRET`, que vive solo en `.env`: con una copia de la base sola no se pueden generar códigos.
+- Mensaje de error único ("email, contraseña o código incorrectos") y la misma demora exista o no el email. Límite de 10 intentos por IP cada 15 minutos y bloqueo de la cuenta 15 minutos tras 5 fallos.
+- **Sesiones cortas**: se cierran tras 1 hora sin uso y siempre a las 8 horas. La cookie es `__Host-`, `HttpOnly`, `Secure` y `SameSite=Strict`; en la base se guarda solo el hash del token. Salir borra la sesión del servidor.
+- Cada página y cada acción del panel vuelve a validar la sesión en el servidor (no alcanza con esconder botones). Las acciones de Next verifican el origen del pedido; la subida de fotos además exige el mismo origen.
+- Todo lo que llega del navegador se vuelve a validar en el servidor (largos, precios, SKUs, links de fotos); los productos se guardan en una transacción, con aviso si otra persona los cambió mientras tanto.
+- **Fotos**: solo con sesión, hasta 15 MB, límite por IP; se decodifican y se vuelven a generar desde cero con sharp (WebP, sin metadatos), con nombre aleatorio. Nunca se sirve el archivo original. Se sirven con `nosniff` y CSP `sandbox`.
+- **Registro de acciones** (`AdminLog`): ingresos, fallos, bloqueos, salidas, fotos subidas y cada alta, cambio (qué campos), borrado, publicación u ocultamiento de productos, con usuario, IP y hora.
+- `/admin` va sin caché, con `noindex` y fuera de los buscadores.
+
 ### Dependencias y repositorio
 - `npm audit` sin vulnerabilidades (postcss y deepmerge-ts forzados a versiones corregidas con `overrides`).
 - Workflow `Seguridad` en GitHub Actions: `npm audit` y chequeo de tipos en cada push, cada PR y todos los lunes.
@@ -43,10 +55,10 @@ Estado al 26 de octubre de 2026. Para reportar una falla, ver [`SECURITY.md`](..
 | # | Punto | Quién | Detalle |
 |---|---|---|---|
 | 1 | Activar en GitHub: secret scanning, push protection, Dependabot alerts, CodeQL y protección de la rama principal | Dueño del repo | Settings → Code security, y Settings → Branches. |
-| 2 | Panel de administración | Desarrollo | Todavía no existe. Cuando se haga: login con 2FA, sesiones cortas, registro de acciones. Es lo más delicado del proyecto. |
+| 2 | Panel de administración | Desarrollo | Hecho: productos (ver arriba). Falta una pantalla para ver el registro de acciones y avisos por email de ingresos nuevos. Mantener `ADMIN_SECRET` fuera de cualquier backup de la base. |
 | 3 | CAPTCHA (Cloudflare Turnstile) | Desarrollo + cuenta Cloudflare | Los límites por IP y el honeypot frenan bots simples; uno distribuido en muchas IPs necesita CAPTCHA o un WAF (Cloudflare delante del servidor). |
 | 4 | Servidor (VPS) | Quien lo administre | Firewall solo con 22/80/443, SSH solo con llave, actualizaciones automáticas (`unattended-upgrades`), fail2ban. |
-| 5 | Backups de la base | Quien lo administre | `pg_dump` diario, cifrado y fuera del servidor, con prueba de restauración. |
+| 5 | Backups de la base y las fotos | Quien lo administre | `pg_dump` diario y copia del volumen `uploads` (fotos del panel), cifrados y fuera del servidor, con prueba de restauración. |
 | 6 | Monitoreo y alertas | Desarrollo | Hoy los avisos (pagos tardíos, montos menores) quedan solo en el log. Falta mandarlos por email o a un servicio como Sentry. |
 | 7 | Credenciales de Mercado Pago | Dueño | Usar las de producción solo en el servidor, activar 2FA en la cuenta y rotar el token si alguien que lo vio deja el proyecto. |
 | 8 | Datos legales reales | Dueño | Razón social y CUIT (`legal` en `store.ts`), datos bancarios, y confirmar la política de cambios (hoy 30 días). Hacer revisar los textos legales por un abogado o contador. |

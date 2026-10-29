@@ -10,7 +10,7 @@ export const isStaticDemo = process.env.DEMO_STATIC === "1";
 const cardInclude = {
   brand: true,
   category: { include: { parent: true } },
-  variants: true,
+  variants: { where: { active: true } },
 } satisfies Prisma.ProductInclude;
 
 type ProductWithRelations = Prisma.ProductGetPayload<{ include: typeof cardInclude }>;
@@ -158,7 +158,7 @@ export async function getProduct(slug: string) {
     include: {
       brand: true,
       category: { include: { parent: true } },
-      variants: { orderBy: [{ color: "asc" }, { size: "asc" }] },
+      variants: { where: { active: true }, orderBy: [{ color: "asc" }, { size: "asc" }] },
     },
   });
 }

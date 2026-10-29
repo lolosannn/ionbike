@@ -26,6 +26,28 @@ Tienda online propia de IonBikeStore (Monte Grande), en reemplazo de Tiendanube.
 - **Mapa del local** en el inicio y en contacto (Google Maps, sin clave de API).
 - **Taller** (`/taller`): los 7 servicios y agenda de turnos para dejar la bici. El cliente elige servicios, día y horario libre y deja sus datos; el turno se guarda (modelo `Appointment`) respetando el cupo por horario, y al final puede avisar al local por WhatsApp. Servicios, precios, horarios y cupos en `src/config/workshop.ts`.
 - Buscador, contacto, botón de arrepentimiento y botón flotante de WhatsApp.
+- **Panel de administración** (`/admin`): ver más abajo.
+
+## Panel de administración
+
+En `/admin` (no aparece en la tienda ni en buscadores). Por ahora tiene **Productos**:
+
+- Listado con buscador, filtro por categoría y por estado (publicados, ocultos, sin stock), y un interruptor para mostrar u ocultar cada producto en la tienda.
+- Alta, edición, duplicado y borrado de productos: nombre, link, descripción, fotos (se suben arrastrando, se ordenan y la primera es la portada), precio de lista y precio anterior tachado (con vista previa de cómo queda en la tienda), variantes de color y rodado/talle con su stock (o varias juntas: "Negro, Rojo" × "S, M, L"), especificaciones, categoría, marca (si es nueva se crea sola), publicado, destacado y a pedido.
+- Los cambios se ven en la tienda al instante. Si dos personas editan el mismo producto, la segunda en guardar recibe un aviso en vez de pisar los cambios.
+- Un producto que ya tuvo ventas no se puede borrar (queda en los pedidos): se oculta. Lo mismo con las variantes vendidas: se archivan.
+- Las fotos se vuelven a generar en el servidor (WebP, máximo 2000 px, sin datos de GPS ni de la cámara) y se guardan en `uploads/` (en Docker, el volumen `uploads`, que hay que sumar al backup).
+
+**Usuarios.** No hay registro desde la web. Cada usuario se crea desde el servidor y entra con email, contraseña y el código de una app de autenticación (Google Authenticator, Authy, 1Password…):
+
+```bash
+npm run admin -- crear email@dominio.com "Nombre"     # local
+docker compose run --rm admin crear email@dominio.com "Nombre"   # en el servidor
+```
+
+El comando pide la contraseña (mínimo 12 caracteres), muestra un QR para escanear con la app y pide un código para confirmar. Con el mismo comando se le renuevan contraseña y 2FA a alguien que perdió el celular; `desactivar email` le corta el acceso y `listar` muestra los usuarios. Requiere `ADMIN_SECRET` en `.env`.
+
+En la vista previa de GitHub Pages el panel se puede recorrer con el catálogo de ejemplo, sin ingreso y sin guardar nada.
 
 Las reglas comerciales (descuento por transferencia, envío gratis, cuotas, datos bancarios y de contacto) están en `src/config/store.ts`.
 
@@ -56,7 +78,7 @@ Los archivos `*.server.tsx` / `*.server.ts` son solo de la tienda real y `*.demo
 En un VPS con Docker:
 
 ```bash
-cp .env.example .env          # completar POSTGRES_PASSWORD, SITE_DOMAIN, SITE_URL (https://...), MP_*
+cp .env.example .env          # completar POSTGRES_PASSWORD, SITE_DOMAIN, SITE_URL (https://...), ADMIN_SECRET, MP_*
 chmod 600 .env
 docker compose up -d --build
 ```
@@ -74,7 +96,8 @@ Sin `MP_ACCESS_TOKEN` el checkout ofrece solo transferencia al alias y efectivo 
 
 ## Pendientes
 
-- [ ] Panel de administración: productos, fotos, stock, pedidos y turnos del taller (hoy los turnos se ven en la base de datos y llegan por WhatsApp si el cliente avisa).
+- [x] Panel de administración: productos, fotos, precios, variantes y stock.
+- [ ] Panel: pedidos, turnos del taller (hoy se ven en la base de datos y llegan por WhatsApp si el cliente avisa), promociones (hoy en `src/config/promos.ts`), categorías y registro de acciones.
 - [ ] Precios, duraciones y horarios reales del taller (`src/config/workshop.ts`). Agregar una variante a un producto existente tiene que ser rápido (hoy es lo que más tiempo les lleva).
 - [ ] Sincronización de stock con Mercado Libre vía Ecommap (hoy conectado a Tiendanube).
 - [ ] Chatbot de preguntas frecuentes.
