@@ -68,3 +68,43 @@ Para esto necesitamos: acceso al **dominio / DNS** (¿quién lo tiene?), un **se
 - [ ] Quién **mantiene** la web después del lanzamiento (servidor, backups, cambios) y costo mensual.
 - [ ] Revisión de los textos legales por un contador o abogado, y registro de la base ante la AAIP.
 - [ ] Fecha objetivo de lanzamiento.
+
+## 6. Por qué una web propia y no Tiendanube
+
+### Lo que ellos mismos marcaron de Tiendanube (y ya está resuelto)
+
+| Problema que nos contaron | Cómo queda en la web nueva |
+|---|---|
+| Agregar una variante a un producto es casi crearlo de cero | Se suma una variante (o varias juntas: "Negro, Rojo" × "S, M, L") en segundos. |
+| El checkout muestra el envío gratis y la diferencia de precio: confunde y hace abandonar | Si llega al mínimo, dice "Gratis" y listo. |
+| La transferencia va a un CVU aleatorio por el importe exacto: da desconfianza | Alias fijo del local, o QR que se paga desde MODO, Mercado Pago o la app de cualquier banco. |
+| La página no es atractiva ni transmite confianza | Diseño a medida: video de portada, reseñas con fotos, local y mapa, "Quiénes somos". |
+
+### Limitaciones de Tiendanube en general
+
+- **Costos que crecen con las ventas**: abono mensual y, según el plan, un costo por cada venta (salvo con Pago Nube, que es el del CVU aleatorio). Con una web propia no hay comisión de plataforma: solo la de Mercado Pago. *Preguntar cuánto pagan hoy por mes y por comisión para hacer la cuenta.*
+- **Cada función extra es otra app con otro abono**: turnos, chatbot, filtros avanzados, reseñas, guía de talles… y cada una con su diseño y su panel.
+- **Plantillas**: se puede cambiar colores y bloques, pero no el funcionamiento (checkout, ficha de producto, filtros, carrito).
+- **Checkout cerrado**: no se puede elegir cómo mostrar envíos, descuentos o formas de pago.
+- **Los datos son de la plataforma**: estadísticas limitadas a lo que ellos muestran; si mañana suben el precio o cambian las reglas, hay que aceptar.
+- **Pensado para cualquier rubro**, no para una bicicletería.
+
+### Lo que da la web propia (y Tiendanube no)
+
+- **Taller integrado**: los 7 servicios con precios, agenda de turnos con cupos por horario, y en el panel confirmar, avisar "tu bici está lista" por WhatsApp y cargar turnos tomados por teléfono.
+- **Bicis de gama alta "a pedido"**: se muestran aunque no haya stock, con formulario y WhatsApp con el modelo escrito; cada consulta se sigue en el panel (nueva, contactado, señó, vendida).
+- **Guía de talles** con calculadora por altura y video explicativo.
+- **Filtros de bicicletería**: rodado, talle, marca, color y precio; especificaciones por parte de la bici.
+- **Cuatro formas de pago claras**, con el precio final de cada una ya calculado en el carrito.
+- **Envíos con Andreani** cotizados en vivo y número de seguimiento que el cliente ve en su pedido.
+- **Promociones a medida**: barra de arriba, banner, sellos en productos y aviso en el carrito, con fechas y a qué categorías aplican.
+- **Estadísticas propias**: de dónde llegan (Google, Instagram, WhatsApp), embudo de compra, productos más vistos. Sin cookies.
+- **Seguridad**: ingreso al panel con contraseña y código del celular, y registro de quién cambió qué (precios, stock, pedidos).
+- **Todo en un solo panel**, hecho para que lo usen los chicos del local.
+- **Crece con el negocio**: lo que pidan se programa a medida, sin depender de que exista una app.
+- **Los datos y la web son del local**: clientes, pedidos, estadísticas y el código.
+
+### Lo que hay que decirles de frente
+
+- La web propia necesita **servidor, backups y mantenimiento**: alguien se ocupa (definir quién y cuánto sale por mes).
+- Hoy Ecommap se conecta con Tiendanube: **la conexión con la web nueva hay que desarrollarla** (ver punto 2). Hasta que esté probada, Tiendanube sigue andando.
